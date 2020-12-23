@@ -1,5 +1,57 @@
 function final_arts = find_offbeat(arts,allowable_nums,goal_diff,max_off)
 
+%% New way
+%{
+Look at first artifact (our candidate s). Then see if there are at least allowable_nums
+correctly spaced from it (s, s+freq, s+2freq, etc.). If there are, this is
+our s, and extra ones can be ignored. If not, move on to the 2nd artifact
+as our candidate s.
+%}
+
+seq = nan;
+
+for a = 1:length(arts)
+    
+    % candidate s (first time)
+    s = arts(a);
+    
+    on_beat = a;
+    
+    % Loop through the other arts and see how many are within an allowable
+    % distance
+    for b = a+1:length(arts)
+        
+        new = arts(b);
+        
+        % If the two mod the goal diff aren't too far off
+        if abs(mod(new-s,goal_diff)) < max_off
+            
+            % Add it to the number that are on beat
+            on_beat = [on_beat;b];
+            
+        end
+        
+    end
+    
+    % Check how many are on beat
+    if length(on_beat) >= min(allowable_nums)
+        
+        % If enough are on beat, then this is the correct sequence
+        seq = on_beat;
+        break
+        
+    end
+    
+    % If not enough on beat, try the next one
+    
+end
+
+if isnan(seq), error('Did not find it'); end
+
+final_arts = seq;
+
+%% Old probably too computationally intensive way
+%{
 %{
 Idea is that I will loop through allowable_nums and for all n artifacts
 look at all n choose allowable_nums possible sets. I will see if I can get
@@ -35,7 +87,12 @@ for i = 1:length(allowable_nums)
         set_diff = diff(set);
         
         % see if any difference is outside the allowable range
-        out_of_range = any(set_diff > goal_diff + max_off | set_diff < goal_diff - max_off);
+        for k = 1:length(allowable_nums)
+            multiplier = allowable_nums(1) - allowable_nums(k) + 1;
+            
+            % FIX THIS THIS ISN'T RIGHT
+            out_of_range = any(set_diff > goal_diff*multiplier + max_off | set_diff < goal_diff*multiplier - max_off);
+        end
         
         if out_of_range == 0
             found_it = 1;
@@ -59,5 +116,6 @@ end
 final_arts = arts(good_set);
 
 % Confirm that the 
+%}
 
 end

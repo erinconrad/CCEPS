@@ -2,11 +2,12 @@ function cceps
 
 
 %% Parameters
-stim.pulse_width = 300e-3;
+stim.pulse_width = 300e-6;
 stim.train_duration = 30;
 stim.stim_freq = 1;
 stim.current = 3;
 stim.fs = 512;
+
 
 %% Get EEG data
 values = make_fake_eeg(stim);
@@ -29,10 +30,16 @@ end
 final_artifacts = identify_stim_chs(artifacts,stim);
 
 %% Identify separate electrode trials
-trials = identify_diff_trials(final_artifacts,stim);
+elecs = identify_diff_trials(final_artifacts,stim);
 
-%% Perform signal averaging over each electrode trial
+%% Perform signal averaging
+elecs = signal_average(values,elecs,stim);
 
+%% Identify CCEP waveforms
+elecs = get_waveforms(elecs,stim);
+
+%% Build a network
+A = build_network(elecs,'n1',nchs);
 
 
 end

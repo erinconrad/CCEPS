@@ -8,7 +8,9 @@ number of stims per electrode and that they are reasonably spaced)
 
 n_art = size(artifacts,1);
 pw = stim.pulse_width * stim.fs;
-pw_range = [pw - 100, pw + 100];
+goal_diff = stim.stim_freq * stim.fs;
+max_off = pw*2;
+allowable_nums = [stim.train_duration:-1:stim.train_duration-5];
 
 % Get a list of unique channels stimulated
 all_chs = unique(artifacts(:,3));
@@ -38,7 +40,9 @@ for ich = 1:length(elecs)
     if isempty(elecs(ich).arts), continue; end
     
     arts = elecs(ich).arts;
-    offbeat = find_offbeat(arts);
+    on_beat = find_offbeat(arts,allowable_nums,goal_diff,max_off);
+    
+    elecs(ich).arts = arts(on_beat);
 end
 
 end

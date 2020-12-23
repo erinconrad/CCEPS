@@ -1,8 +1,9 @@
 function fake_eeg = make_fake_eeg(stim)
 
 %% Parameters
-nsamples = 1e5;
-nchs = 10;
+nseconds = 1000;
+nsamples = nseconds * stim.fs;
+nchs = 2;
 
 %% Fake EEG signal with pulses
 pw = round(stim.pulse_width * stim.fs);
@@ -10,17 +11,36 @@ pw = round(stim.pulse_width * stim.fs);
 % initialize sample
 fake_eeg = zeros(nsamples,nchs);
 
-% Pulses in channels 1 and 2, bigger in ch 1
-fake_eeg(1e4:1e4+pw,1) = 20;
-fake_eeg(3e4:3e4+pw,1) = 20;
-fake_eeg(1e4:1e4+pw,2) = 10;
-fake_eeg(3e4:3e4+pw,2) = 10;
+% Make pulses in ch 1
+offset = 500;
+amp = 100;
+for i = 1:stim.train_duration
+    pulse_time_start = i*stim.stim_freq*stim.fs + offset;
+    pulse_time_end = pulse_time_start + pw;
+    fake_eeg(round(pulse_time_start):round(pulse_time_end),1) = amp;
+end
 
-% Another pulse in channels 3 and 4
-fake_eeg(4e4:4e4+pw,3) = 20;
-fake_eeg(4e4:4e4+pw,4) = 10;
-fake_eeg(4e4:4e4+pw,1) = 10;
+last_pulse_end = stim.train_duration*stim.stim_freq*stim.fs + offset + pw;
 
+% Add a misplaced pulse in ch 1
+fake_eeg(2700:2700+pw,1) = amp;
+
+% Smaller pulses at same time in 2
+for i = 1:stim.train_duration
+    pulse_time_start = i*stim.stim_freq*stim.fs + offset;
+    pulse_time_end = pulse_time_start + pw;
+    fake_eeg(round(pulse_time_start):round(pulse_time_end),2) = amp/2;
+end
+
+% Make pulses in ch 2
+for i = 1:stim.train_duration
+    pulse_time_start = i*stim.stim_freq*stim.fs + last_pulse_end + offset;
+    pulse_time_end = pulse_time_start + pw;
+    fake_eeg(round(pulse_time_start):round(pulse_time_end),2) = amp;
+end
+
+% Add a misplaced pulse in ch 1
+fake_eeg(3100 + last_pulse_end:3100+pw + last_pulse_end,2) = amp;
 
 % Add random noise
 fake_eeg = fake_eeg + 0.2*randn(nsamples,nchs);
