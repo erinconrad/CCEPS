@@ -2,6 +2,12 @@ function cceps
 
 
 %% Parameters
+% ieeg parameters
+dataName = '***';
+pwfile = '/Users/erinconrad/Desktop/research/gen_tools/eri_ieeglogin.bin';
+times = []; % if empty, returns full duration
+
+% Stimulation parameters
 stim.pulse_width = 300e-6;
 stim.train_duration = 30;
 stim.stim_freq = 1;
@@ -10,10 +16,14 @@ stim.fs = 512;
 
 
 %% Get EEG data
-values = make_fake_eeg(stim);
+%values = make_fake_eeg(stim);
+
+data = download_eeg(dataName,pwfile,times);
+values = data.values;
+if stim.fs ~= data.fs, error('what'); end
 
 
-%% Do pre-processing
+%% Do pre-processing??
 
 %% Identify stimulation artifacts
 % Loop over EEG
