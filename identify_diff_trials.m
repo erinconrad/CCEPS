@@ -41,8 +41,11 @@ for ich = 1:length(elecs)
     
     arts = elecs(ich).arts;
     on_beat = find_offbeat(arts,allowable_nums,goal_diff,max_off);
-    
-    elecs(ich).arts = arts(on_beat);
+    if isnan(on_beat)
+        elecs(ich).arts = [];
+    else
+        elecs(ich).arts = arts(on_beat);
+    end
 end
 
 end

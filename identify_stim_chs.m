@@ -16,6 +16,7 @@ Procede in this fashion for all channels
 %}
 
 pw = stim.pulse_width * stim.fs; % pulse width in samples
+too_close = 100;
 
 % Initialize the final list of artifacts
 final_artifacts = [];
@@ -23,8 +24,12 @@ final_artifacts = [];
 for ich = 1:length(artifacts)
     curr_ch = artifacts{ich};
     
+    if isempty(curr_ch), continue; end
+    
     % Loop through all artifacts on that channel
     for a = 1:size(curr_ch,1)
+        
+        
         
         % set the candidate stim channel for artifact a to be ich
         index_artifact = curr_ch(a,:);
@@ -36,24 +41,26 @@ for ich = 1:length(artifacts)
         for jch = 1:length(artifacts)
             
             check_ch = artifacts{jch};
+            if isempty(check_ch), continue; end
             
             % Find artifacts that occur within pwx2 of the index artifact
-            close = abs(check_ch(:,1) -  index_time) < pw*2;
+            close = abs(check_ch(:,1) -  index_time) < too_close;
             
             % If more than one, throw an error
-            if sum(close) > 1, error('what'); end
+           % if sum(close) > 1, error('what'); end
             
             % if empty, continue
             if sum(close) == 0, continue; end
             
             % See which stim artifact is larger
-            if index_amp < check_ch(close,2)
+            if index_amp < max(check_ch(close,2))
                 
                 % if new one larger, set this as the index ch, time,
                 % amplitude
                 index_ch = jch;
-                index_amp = check_ch(close,2);
-                index_time = check_ch(close,1);
+                [index_amp,I] = max(check_ch(close,2));
+                fclose = find(close);
+                index_time = check_ch(fclose(I),1);
                 
             end
             
@@ -67,10 +74,10 @@ for ich = 1:length(artifacts)
             continue;
         end
         
-        close_final = abs(final_artifacts(:,1) - index_time) < pw *2;
+        close_final = abs(final_artifacts(:,1) - index_time) < too_close;
         
         % If close_final has more than one entry, throw an error
-        if sum(close_final) > 1, error('what'); end
+        %if sum(close_final) > 1, error('what'); end
         
         % if close_final empty, I will add this new artifact to the final
         % list
@@ -79,7 +86,7 @@ for ich = 1:length(artifacts)
         else
             % If one entry, compare the amplitude
             comparison = final_artifacts(close_final,:);
-            if comparison(2) < index_amp
+            if max(comparison(2)) < index_amp
                % replace the current entry with the new index
                final_artifacts(close_final,:) = [index_time index_amp index_ch];
             end

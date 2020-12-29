@@ -10,7 +10,7 @@ for ich = 1:length(elecs)
     end
     
     % Get stim artifacts
-    arts = elecs(ich).arts;
+    arts = elecs(ich).arts(:,1);
 
     % Get the indices to take 
     idx = [arts+idx_to_take(1),arts+idx_to_take(2)];
@@ -39,7 +39,7 @@ for ich = 1:length(elecs)
     end
     
     elecs(ich).stim_idx = -idx_to_take(1);
-    
+    elecs(ich).times = time_to_take;
 end
 
 end

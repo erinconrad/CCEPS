@@ -8,9 +8,13 @@ our s, and extra ones can be ignored. If not, move on to the 2nd artifact
 as our candidate s.
 %}
 
+final_arts = [];
+start = 1;
+which_seq = 1;
+while 1
 seq = nan;
 
-for a = 1:length(arts)
+for a = start:length(arts)
     
     % candidate s (first time)
     s = arts(a);
@@ -24,7 +28,13 @@ for a = 1:length(arts)
         new = arts(b);
         
         % If the two mod the goal diff aren't too far off
-        if abs(mod(new-s,goal_diff)) < max_off
+        if abs(mod(new-s,goal_diff)) < max_off && new-s > 100
+            
+            if ~isempty(on_beat)
+                if abs(new-arts(on_beat(end))) < 100
+                    continue
+                end
+            end
             
             % Add it to the number that are on beat
             on_beat = [on_beat;b];
@@ -46,9 +56,19 @@ for a = 1:length(arts)
     
 end
 
-if isnan(seq), error('Did not find it'); end
+%if isnan(seq), error('Did not find it'); end
 
-final_arts = seq;
+
+if isnan(seq)
+    break
+else
+    final_arts = [final_arts;seq, which_seq*ones(size(seq,1),1)];
+    % allow for possibility of multiple sequences
+    start = seq(end)+1;
+    which_seq = which_seq + 1;
+end
+
+end
 
 %% Old probably too computationally intensive way
 %{
