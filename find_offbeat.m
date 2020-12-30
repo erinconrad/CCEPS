@@ -1,4 +1,4 @@
-function final_arts = find_offbeat(arts,allowable_nums,goal_diff,max_off)
+function final_arts = find_offbeat(arts,stim)
 
 %% New way
 %{
@@ -7,6 +7,10 @@ correctly spaced from it (s, s+freq, s+2freq, etc.). If there are, this is
 our s, and extra ones can be ignored. If not, move on to the 2nd artifact
 as our candidate s.
 %}
+goal_diff = stim.stim_freq * stim.fs;
+max_num_repeat = 35;
+max_off = 3;
+allowable_nums = [stim.train_duration:-1:stim.train_duration-5];
 
 final_arts = [];
 start = 1;
@@ -28,7 +32,7 @@ for a = start:length(arts)
         new = arts(b);
         
         % If the two mod the goal diff aren't too far off
-        if abs(mod(new-s,goal_diff)) < max_off && new-s > 100
+        if abs(mod(new-s,goal_diff)) < max_off && new-s > 100 && abs(new-s) < goal_diff*max_num_repeat
             
             if ~isempty(on_beat)
                 if abs(new-arts(on_beat(end))) < 100
@@ -41,6 +45,11 @@ for a = start:length(arts)
             
         end
         
+        % break if too far apart
+        if abs(new-s) > goal_diff*max_num_repeat
+            break
+        end
+        
     end
     
     % Check how many are on beat
@@ -51,6 +60,8 @@ for a = start:length(arts)
         break
         
     end
+    
+    
     
     % If not enough on beat, try the next one
     

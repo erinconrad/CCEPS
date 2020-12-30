@@ -1,5 +1,7 @@
 function A= build_network(elecs,which,nchs,chLabels)
 
+keep_chs = get_chs_to_ignore(chLabels);
+
 % Should I normalize??
 chs = 1:nchs;
 
@@ -16,14 +18,14 @@ for ich = 1:length(elecs)
     
 end
 
-stim_chs = chs(~isnan(sum(A,2)));
+stim_chs = chs(nansum(A,2)>0);
 
 if 1
-    imagesc(A(stim_chs,:))
-    yticks(1:length(stim_chs))
-    xticks(chs)
-    yticklabels(chLabels(stim_chs))
-    xticklabels(chLabels(chs))
+    imagesc(A(stim_chs,keep_chs)')
+    xticks(1:length(stim_chs))
+    yticks(1:sum(keep_chs))
+    xticklabels(chLabels(stim_chs))
+    yticklabels(chLabels(keep_chs))
     
 end
 

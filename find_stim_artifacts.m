@@ -34,7 +34,8 @@ end
 %% Find the points that cross above the threshold
 thresh_C = median(C) + n_stds*std(C);
 above_thresh = C > thresh_C;
-amps = C(above_thresh);
+amps = C(above_thresh)-median(C);
+unsigned = eeg(above_thresh)-median(eeg);
 
 % Get index
 peak_idx = round(lags((above_thresh)) + nsamples/2);
@@ -42,7 +43,7 @@ peak_idx = round(lags((above_thresh)) + nsamples/2);
 
 peak_idx_out = peak_idx';
 amps_out = amps;
-out = [peak_idx_out,amps_out];
+out = [peak_idx_out,amps_out,unsigned];
 %}
 %% Remove redundant peaks
 %{

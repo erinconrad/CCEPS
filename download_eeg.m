@@ -21,13 +21,16 @@ end_index = round(times(2)*fs);
 
 %values = session.data.getvalues([start_index:end_index],':');
 
-% Break the number of channels in half to avoid wacky server errors
-
+% Break the number of channels in chunks
 nchs = size(channelLabels,1);
 %error('look');
-values1 = session.data.getvalues([start_index:end_index],1:floor(nchs/2));
-values2 = session.data.getvalues([start_index:end_index],floor(nchs/2)+1:nchs);
-values = [values1,values2];
+values = zeros(end_index-start_index+1,nchs);
+nchunks = 10;
+for i = 1:nchunks
+    values(:,floor(nchs/nchunks)*(i-1)+1:min(floor(nchs/nchunks)*i,nchs)) =...
+        session.data.getvalues([start_index:end_index],...
+        floor(nchs/nchunks)*(i-1)+1:min(floor(nchs/nchunks)*i,nchs));
+end
 %}
 
 data.values = values;

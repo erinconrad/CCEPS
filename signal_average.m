@@ -5,6 +5,8 @@ time_to_take = [-100e-3 800e-3];
 idx_to_take = round(stim.fs * time_to_take);
 
 for ich = 1:length(elecs)
+    
+    fprintf('\nDoing ch %d of %d',ich,length(elecs));
     if isempty(elecs(ich).arts)
         continue;
     end
@@ -20,13 +22,12 @@ for ich = 1:length(elecs)
     
     % Loop over all other channels
     for jch = 1:size(values,2)
-        
-        eeg = values(:,jch);
+       % fprintf('\n   Doing subchannel %d of %d',jch,size(values,2));
         
         % get those bits of eeg
         eeg_bits = zeros(length(arts),idx(1,2)-idx(1,1)+1);
         for j = 1:size(idx,1)
-            eeg_bits(j,:) = eeg(idx(j,1):idx(j,2));
+            eeg_bits(j,:) = values(idx(j,1):idx(j,2),jch);
         end
 
         % Average the eeg
