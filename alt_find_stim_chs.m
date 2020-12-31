@@ -19,7 +19,7 @@ end
 %% Parameters
 min_num_close = 10;
 max_distance = 10;
-discrepancy_bipolar = 0.8;
+discrepancy_bipolar = 0.85;
 
 % Loop through electrodes
 for ich = 1:length(artifacts)
@@ -48,10 +48,13 @@ for ich = 1:length(artifacts)
                 time_diff = curr_seq(:,1) - test_seq(:,1)'; % matrix with all possible time differences
                 num_close = sum(sum(abs(time_diff) < max_distance));
                 
+                %if ich == 67 && jch == 68, error('what'); end
+                
                 % Are there enough close? If so, it's the same sequence
                 if num_close > min_num_close
                     
-                   % if ich == 65 && jch == 66, error('what'); end
+                    
+                   % if ich == 67, error('what'); end
                     
                     % See which has higher amplitudes
                     curr_amps = sum(abs(curr_seq(:,2)));
@@ -75,7 +78,7 @@ for ich = 1:length(artifacts)
                             artifacts{ich}(artifacts{ich}(:,4) == s,:) = [];
                             break
                         elseif isempty(test_elec_num)
-                            artifacts{jch}(artifacts{jch}(:,4) == s,:) = [];
+                            artifacts{jch}(artifacts{jch}(:,4) == s2,:) = [];
                             continue;
                         end
                         
@@ -89,7 +92,7 @@ for ich = 1:length(artifacts)
                         if test_elec_num == curr_elec_num - 1 && strcmp(curr_elec_label,test_elec_label) % jch lower, keep that one
                             artifacts{ich}(artifacts{ich}(:,4) == s,:) = [];
                         elseif curr_elec_num == test_elec_num - 1 && strcmp(curr_elec_label,test_elec_label) % ich lower, keep that one
-                            artifacts{jch}(artifacts{jch}(:,4) == s,:) = [];
+                            artifacts{jch}(artifacts{jch}(:,4) == s2,:) = [];
                         else % keep higher amplitude one
                             if test_amps > curr_amps
                                 artifacts{ich}(artifacts{ich}(:,4) == s,:) = [];

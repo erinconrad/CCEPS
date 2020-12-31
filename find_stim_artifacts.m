@@ -4,11 +4,11 @@ function out = find_stim_artifacts(stim,eeg)
 
 %% Parameters
 approach = 'abs';
-n_stds = 5;
-too_close = 10;
+n_stds = 8; %5
+%too_close = 10;
 
 %% Generate rectangular pulse function (used to find artifact)
-times = linspace(0,size(eeg,1)/stim.fs,size(eeg,1));
+%times = linspace(0,size(eeg,1)/stim.fs,size(eeg,1));
 nsamples = size(eeg,1);
 pulse = zeros(nsamples,1);
 pw = round(stim.pulse_width * stim.fs);

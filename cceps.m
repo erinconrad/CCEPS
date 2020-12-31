@@ -2,19 +2,18 @@ function cceps
 
 
 %{
-Should add something to remove cases in which the amplitude around the stim
-is too high
 
 play around with waveform detector
+
+Remove bad electrodes
 
 %}
 
 %% Parameters
 % ieeg parameters
-dataName = 'HUP211_CCEP';
+dataName = 'HUP212_CCEP';
 pwfile = '/Users/erinconrad/Desktop/research/gen_tools/eri_ieeglogin.bin';
-times = [12946 13592];%[18893 21999];%[12946 13592]; % if empty, returns full duration
-ex_time = 13486;
+times = [18893 21999];%[12946 13592]; % if empty, returns full duration
 
 % Stimulation parameters
 stim.pulse_width = 300e-6;
@@ -46,22 +45,22 @@ fprintf('\nGot data\n');
 nchs = size(values,2);
 artifacts = cell(nchs,1);
 for ich = 1:nchs
-    eeg = values(:,ich);
-    artifacts{ich} = find_stim_artifacts(stim,eeg);
+    artifacts{ich} = find_stim_artifacts(stim,values(:,ich));
 end
+old_artifacts = artifacts;
+
+%% Remove those that are not on beat
 for ich = 1:nchs
-    if isempty(artifacts{ich})
+    if isempty(old_artifacts{ich})
         continue;
     else
-        on_beat = find_offbeat(artifacts{ich}(:,1),stim);
+        on_beat = find_offbeat(old_artifacts{ich}(:,1),stim);
     end
     if ~isempty(on_beat)
-        artifacts{ich} = [artifacts{ich}(on_beat(:,1),:),on_beat(:,2)]; 
+        artifacts{ich} = [old_artifacts{ich}(on_beat(:,1),:),on_beat(:,2)]; 
     else
         artifacts{ich} = [];
     end
-    
-    
 end
 
 
@@ -69,27 +68,35 @@ end
 %final_artifacts = identify_stim_chs(artifacts,stim);
 
 elecs = alt_find_stim_chs(artifacts,stim,data.chLabels);
-%% Identify separate electrode trials
-%elecs = identify_diff_trials(final_artifacts,stim);
+
+
+
+%% Say which electrodes have stim
+n_stim = 0;
+for i = 1:length(elecs)
+    if ~isempty(elecs(i).arts)
+        fprintf('%s (elec %d) has stim.\n',data.chLabels{i},i);
+        n_stim = n_stim + 1;
+    end
+end
+fprintf('%d electrodes have stim.\n',n_stim);
 
 %% Perform signal averaging
 elecs = signal_average(values,elecs,stim);
 
-%% Say which electrodes have stim
-for i = 1:length(elecs)
-    if ~isempty(elecs(i).arts)
-        fprintf('%s (elec %d) has stim.\n',data.chLabels{i},i);
-    end
-end
 
 %% Plot a long view of the stim and the relevant electrodes
 show_stim(elecs,values,data.chLabels,[])
+
+%% Plot the average for an example
+figure; plot(elecs(134).n1(:,1))
+show_avg(elecs,stim,data.chLabels,7,20)
 
 %% Identify CCEP waveforms
 elecs = get_waveforms(elecs,stim,data.chLabels);
 
 %% Build a network
-A = build_network(elecs,'n1',nchs,data.chLabels);
+build_network(elecs,stim,'n1',nchs,data.chLabels,1);
 
 
 end

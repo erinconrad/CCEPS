@@ -8,8 +8,8 @@ our s, and extra ones can be ignored. If not, move on to the 2nd artifact
 as our candidate s.
 %}
 goal_diff = stim.stim_freq * stim.fs;
-max_num_repeat = 35;
-max_off = 3;
+max_num_repeat = 32;
+max_off = 20e-3*stim.fs;
 allowable_nums = [stim.train_duration:-1:stim.train_duration-5];
 
 final_arts = [];
