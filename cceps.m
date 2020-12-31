@@ -3,6 +3,8 @@ function cceps
 
 %{
 
+fix timing in get waveforms
+
 play around with waveform detector
 
 Remove bad electrodes
@@ -96,7 +98,7 @@ show_avg(elecs,stim,data.chLabels,7,20)
 elecs = get_waveforms(elecs,stim,data.chLabels);
 
 %% Build a network
-build_network(elecs,stim,'n1',nchs,data.chLabels,1);
+build_network(elecs,stim,'n1',nchs,data.chLabels,2);
 
 
 end

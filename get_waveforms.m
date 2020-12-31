@@ -6,8 +6,9 @@ function elecs = get_waveforms(elecs,stim,chLabels)
 idx_before_stim = 20;
 n1_time = [16e-3 50e-3];
 n2_time = [50e-3 300e-3];
-stim_time = [-5e-3 13e-3];
+stim_time = [-5e-3 10e-3];
 stim_val_thresh = 5e4;
+rel_thresh = 5;
 
 
 n1_idx = floor(n1_time*stim.fs)+1;
@@ -42,7 +43,7 @@ for ich = 1:length(elecs)
         baseline = mean(eeg(1:stim_idx-idx_before_stim));
       
         % Get the eeg in the stim time
-        stim_eeg = eeg(temp_stim_idx(1):temp_stim_idx(2));
+        stim_eeg = abs(eeg(temp_stim_idx(1):temp_stim_idx(2))-baseline);
         
 
         % Get the eeg in the n1 and n2 time
@@ -102,12 +103,20 @@ for ich = 1:length(elecs)
         n2(jch,:) = [n2_peak,n2_peak_idx];
         
         
+        % If sum of abs value in stim period is above a certain threshold
+        % relative to sum of abs value in n1 period, throw out n1
+        if sum(stim_eeg) > rel_thresh * sum(n1_eeg_abs)
+            n1(jch,:) = [nan nan];
+        end
+        
         % If the sum of the absolute value in the stim period is above a
         % certain threshold, throw out n1 because I am likely to catch stim
         % rather than n1
+        %{
         if sum(abs(stim_eeg)) > stim_val_thresh
             n1(jch,:) = [nan nan];
         end
+        %}
         
     end
     
