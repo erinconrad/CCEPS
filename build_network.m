@@ -1,5 +1,7 @@
 function A= build_network(elecs,stim,which,nchs,chLabels,normalize)
 
+thresh_amp = 6;
+
 keep_chs = get_chs_to_ignore(chLabels);
 
 % Should I normalize??
@@ -18,6 +20,8 @@ for ich = 1:length(elecs)
     A(ich,:) = arr(:,1);
     
 end
+
+A(A<thresh_amp) = nan;
 
 %% Remove ignore chs
 stim_chs = chs(nansum(A,2)>0);
@@ -51,13 +55,14 @@ if 1
     figure
     set(gcf,'position',[1 11 1400 794])
     tight_subplot(1,1,[0.01 0.01],[0.05 0.02],[.05 .02]);
-    imagesc(A)
+    im = imagesc(A);
     xticks(1:length(stim_chs))
     yticks(1:length(response_chs))
     xticklabels(chLabels(stim_chs))
     yticklabels(chLabels(response_chs))
     xlabel('Stim electrode')
     ylabel('Response electrode')
+    set(im,'AlphaData',~isnan(A))
 end
 
 in_degree = nansum(A,2);

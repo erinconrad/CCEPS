@@ -9,6 +9,8 @@ play around with waveform detector
 
 Remove bad electrodes
 
+clever way to display anatomic connections
+
 %}
 
 %% Parameters

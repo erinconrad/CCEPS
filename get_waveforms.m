@@ -10,7 +10,6 @@ stim_time = [-5e-3 10e-3];
 stim_val_thresh = 5e4;
 rel_thresh = 5;
 
-
 n1_idx = floor(n1_time*stim.fs)+1;
 n2_idx = floor(n2_time*stim.fs)+1;
 stim_indices = round(stim_time*stim.fs);
@@ -112,8 +111,8 @@ for ich = 1:length(elecs)
         % If the sum of the absolute value in the stim period is above a
         % certain threshold, throw out n1 because I am likely to catch stim
         % rather than n1
-        %{
-        if sum(abs(stim_eeg)) > stim_val_thresh
+        
+        if sum((stim_eeg)) > stim_val_thresh
             n1(jch,:) = [nan nan];
         end
         %}
