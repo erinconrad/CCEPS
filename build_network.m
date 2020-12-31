@@ -73,14 +73,18 @@ out_degree = nansum(A,1);
 [out_degree,I] = sort(out_degree,'descend');
 out_degree_chs = stim_chs(I);
 
+if normalize == 1 || normalize == 0
 fprintf('\nThe highest in-degree channels (note normalization!) are:\n');
 for i = 1:10
-    fprintf('%s\n',chLabels{in_degree_chs(i)});
+    fprintf('%s (in-degree = %1.1f)\n',chLabels{in_degree_chs(i)},in_degree(i));
+end
 end
 
+if normalize == 2 || normalize == 0
 fprintf('\nThe highest out-degree channels (note normalization!) are:\n');
 for i = 1:10
-    fprintf('%s\n',chLabels{out_degree_chs(i)});
+    fprintf('%s (out-degree = %1.1f)\n',chLabels{out_degree_chs(i)},out_degree(i));
+end
 end
 
 
