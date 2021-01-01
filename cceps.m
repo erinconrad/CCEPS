@@ -39,6 +39,9 @@ if stim.fs ~= data.fs
 end
 fprintf('\nGot data\n');
 
+%% Get anatomic locations
+ana = anatomic_location(dataName,data.chLabels);
+
 %% plot example time
 %plot_example_time(values,ex_time,times(1),stim,data.chLabels,1:length(data.chLabels))
 
@@ -100,7 +103,7 @@ show_avg(elecs,stim,data.chLabels,7,20)
 elecs = get_waveforms(elecs,stim,data.chLabels);
 
 %% Build a network
-build_network(elecs,stim,'n1',nchs,data.chLabels,2);
+build_network(elecs,stim,'n1',nchs,data.chLabels,ana,1);
 
 
 end
