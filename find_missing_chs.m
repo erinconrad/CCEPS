@@ -25,4 +25,14 @@ for i = 1:length(elecs)
     
     
 end
+
+fprintf('\nMistakenly found stim on:\n')
+for i = 1:length(extra)
+    fprintf('%s\n',chLabels{extra(i)});
+end
+
+fprintf('\nMissed stim on:\n')
+for i = 1:length(missing)
+    fprintf('%s\n',chLabels{missing(i)});
+end
 end
