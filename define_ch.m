@@ -18,7 +18,7 @@ for ich = 1:length(chLabels)
     elecs(ich).arts = [];
 end
 
-%% Group similar timed stims
+%% Group similarly timed stims
 group = {};
 
 % Loop through electrode sequences
@@ -113,6 +113,8 @@ for i = 1:length(group)
     
     two_highest = chs(I(1:2));
     
+    % If similar in amplitude, suspect these are the two channels
+    % stimulated in a bipolar fashion. Pick the lowest numbered one.
     if amps(2)/amps(1) > discrepancy_bipolar % if they're close in amplitude
         % In this case, assign it to the lowest numbered
         % one

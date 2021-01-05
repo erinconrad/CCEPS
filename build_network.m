@@ -54,23 +54,31 @@ end
 
 
 %% Convert electrode labels to anatomic locations
-response_ana = ana(response_chs);
-stim_ana = ana(stim_chs);
+if isempty(ana)
+    response_labels = chLabels(response_chs);
+    stim_labels = chLabels(stim_chs);
+    mean_positions_response = 1:length(response_labels);
+    mean_positions_stim = 1:length(stim_labels);
+    
+else
+    response_ana = ana(response_chs);
+    stim_ana = ana(stim_chs);
 
-[response_labels,ia,ic] = unique(response_ana,'stable');
-mean_positions_response = zeros(length(response_labels),1);
-for i = 1:length(response_labels)-1
-    mean_positions_response(i) = mean(ia(i):ia(i+1));
+    [response_labels,ia,ic] = unique(response_ana,'stable');
+    mean_positions_response = zeros(length(response_labels),1);
+    for i = 1:length(response_labels)-1
+        mean_positions_response(i) = mean(ia(i):ia(i+1));
+    end
+    mean_positions_response(end) = mean(ia(end):length(response_ana));
+
+
+    [stim_labels,ia,ic] = unique(stim_ana,'stable');
+    mean_positions_stim = zeros(length(stim_labels),1);
+    for i = 1:length(stim_labels)-1
+        mean_positions_stim(i) = mean(ia(i):ia(i+1));
+    end
+    mean_positions_stim(end) = mean(ia(end):length(stim_ana));
 end
-mean_positions_response(end) = mean(ia(end):length(response_ana));
-
-
-[stim_labels,ia,ic] = unique(stim_ana,'stable');
-mean_positions_stim = zeros(length(stim_labels),1);
-for i = 1:length(stim_labels)-1
-    mean_positions_stim(i) = mean(ia(i):ia(i+1));
-end
-mean_positions_stim(end) = mean(ia(end):length(stim_ana));
 
 ch_info.stim_pos = mean_positions_stim;
 ch_info.response_pos = mean_positions_response;

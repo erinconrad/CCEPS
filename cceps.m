@@ -15,9 +15,9 @@ clever way to display anatomic connections
 
 %% Parameters
 % ieeg parameters
-dataName = 'HUP212_CCEP';
+dataName = 'HUP211_CCEP';%'HUP212_CCEP';
 pwfile = '/Users/erinconrad/Desktop/research/gen_tools/eri_ieeglogin.bin';
-times = [18893 21999];%[12946 13592]; % if empty, returns full duration
+times = [12946 13592];%[18893 21999];%[12946 13592]; % if empty, returns full duration
 
 % Stimulation parameters
 stim.pulse_width = 300e-6;
@@ -100,7 +100,7 @@ elecs = signal_average(values,elecs,stim);
 
 
 %% Plot a long view of the stim and the relevant electrodes
-show_stim(elecs,values,data.chLabels,[18 19])
+show_stim(elecs,values,data.chLabels,[])
 
 %% Plot the average for an example
 %figure; plot(elecs(134).n1(:,1))

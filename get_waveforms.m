@@ -3,11 +3,11 @@ function elecs = get_waveforms(elecs,stim,chLabels)
 
 %% Parameters
 idx_before_stim = 20;
-n1_time = [11e-3 30e-3];
+n1_time = [10e-3 30e-3];
 n2_time = [50e-3 300e-3];
 stim_time = [-5e-3 10e-3];
 stim_val_thresh = 5e4;
-rel_thresh = 5;
+rel_thresh = 4;
 
 n1_idx = floor(n1_time*stim.fs);
 n2_idx = floor(n2_time*stim.fs);

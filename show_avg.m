@@ -7,7 +7,7 @@ tight_subplot(1,1,[0.01 0.01],[0.15 0.10],[.02 .02]);
 
 %% Parameters
 idx_before_stim = 20;
-n1_time = [16e-3 50e-3];
+n1_time = [10e-3 30e-3];
 n2_time = [50e-3 300e-3];
 
 n1_idx = floor(n1_time*stim.fs)+1;
@@ -77,6 +77,6 @@ title(sprintf('Stim: %s, Response: %s\nN1 at %1.1f ms',...
 mydir  = pwd;
 idcs   = strfind(mydir,'/');
 newdir = mydir(1:idcs(end)-1);
-%print(gcf,[newdir,'/cceps_results/CCEP_',chLabels{ich},'_',chLabels{jch}],'-dpng');
+print(gcf,[newdir,'/cceps_results/CCEP_',chLabels{ich},'_',chLabels{jch}],'-dpng');
 
 end

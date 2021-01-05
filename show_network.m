@@ -12,7 +12,7 @@ normalize = ch_info.normalize;
 
 im = imagesc(A);
 cmap = colormap(parula);
-cmap = [0.8 0.8 0.8;cmap];
+cmap = [0.85 0.85 0.85;cmap];
 colormap(cmap);
 %{
 xticks(1:length(stim_chs))

@@ -37,6 +37,8 @@ switch pt_name
             end
             
         end 
+    otherwise
+        ana = [];
 end
 
 end
