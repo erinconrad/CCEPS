@@ -28,4 +28,7 @@ period, time-locked to the stimulus artifact
 with some basic artifact rejection
 7) It then builds a CCEPs network based on either N1 or N2 amplitude.
 
+Erin Conrad
+University of PA, 2020
+
 %}
