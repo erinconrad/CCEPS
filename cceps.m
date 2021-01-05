@@ -73,7 +73,7 @@ stim_chs = true_stim(dataName);
 elecs = signal_average(values,elecs,stim);
 
 %% Plot a long view of the stim and the relevant electrodes
-show_stim(elecs,values,data.chLabels,[])
+%show_stim(elecs,values,data.chLabels,[])
 
 %% Plot the average for an example
 %show_avg(elecs,stim,data.chLabels,'LH06','LA10')
