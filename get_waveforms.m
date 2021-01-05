@@ -1,18 +1,17 @@
 function elecs = get_waveforms(elecs,stim,chLabels)
 
-% Should I normalize???
 
 %% Parameters
 idx_before_stim = 20;
-n1_time = [16e-3 50e-3];
+n1_time = [11e-3 30e-3];
 n2_time = [50e-3 300e-3];
 stim_time = [-5e-3 10e-3];
 stim_val_thresh = 5e4;
 rel_thresh = 5;
 
-n1_idx = floor(n1_time*stim.fs)+1;
-n2_idx = floor(n2_time*stim.fs)+1;
-stim_indices = round(stim_time*stim.fs);
+n1_idx = floor(n1_time*stim.fs);
+n2_idx = floor(n2_time*stim.fs);
+stim_indices = floor(stim_time*stim.fs);
 
 
 % Loop over elecs
@@ -65,12 +64,13 @@ for ich = 1:length(elecs)
         [n2_peak,n2_peak_idx] = max(n2_z_score);
         
         
+        
         if 0
             plot(linspace(elecs(ich).times(1),elecs(ich).times(2),length(eeg)),eeg)
             hold on
             plot([elecs(ich).times(1) (stim_idx-idx_before_stim)/stim.fs+elecs(ich).times(1)],[baseline baseline])
-            plot((n1_peak_idx+ temp_n1_idx(1)-2)/stim.fs+elecs(ich).times(1),...
-                eeg(n1_peak_idx+ temp_n1_idx(1)-1),'o')
+            plot((n1_peak_idx+ temp_n1_idx(1))/stim.fs+elecs(ich).times(1),...
+                eeg(n1_peak_idx+ temp_n1_idx(1)),'o')
             title(sprintf('Stim: %s, CCEP: %s\nN1 at %1.1f ms',...
                 chLabels{ich},chLabels{jch},((n1_peak_idx + temp_n1_idx(1) -2)/stim.fs+elecs(ich).times(1))*1e3))
             pause
@@ -96,8 +96,7 @@ for ich = 1:length(elecs)
         
         
         
-        % store
-        
+        % store   
         n1(jch,:) = [n1_peak,n1_peak_idx];
         n2(jch,:) = [n2_peak,n2_peak_idx];
         
@@ -107,6 +106,11 @@ for ich = 1:length(elecs)
         if sum(stim_eeg) > rel_thresh * sum(n1_eeg_abs)
             n1(jch,:) = [nan nan];
         end
+        %{
+        if max(stim_eeg) > rel_thresh*max(n1_eeg_abs)
+            n1(jch,:) = [nan nan];
+        end
+        %}
         
         % If the sum of the absolute value in the stim period is above a
         % certain threshold, throw out n1 because I am likely to catch stim

@@ -1,5 +1,10 @@
 function show_avg(elecs,stim,chLabels,ich,jch)
 
+figure
+set(gcf,'position',[215 385 1226 413])
+tight_subplot(1,1,[0.01 0.01],[0.15 0.10],[.02 .02]);
+
+
 %% Parameters
 idx_before_stim = 20;
 n1_time = [16e-3 50e-3];
@@ -48,22 +53,30 @@ n2_z_score = n2_eeg_abs/baseline_sd;
 [n1_peak,n1_peak_idx] = max(n1_z_score);
 [n2_peak,n2_peak_idx] = max(n2_z_score);
 
-figure
-set(gcf,'position',[215 385 1226 413])
-plot(linspace(elecs(ich).times(1),elecs(ich).times(2),length(eeg)),eeg)
+
+plot(linspace(elecs(ich).times(1),elecs(ich).times(2),length(eeg)),eeg,'k',...
+    'linewidth',2)
 hold on
 %{
 plot([elecs(ich).times(1) (stim_idx-idx_before_stim)/stim.fs+elecs(ich).times(1)],[baseline baseline])
-plot((n1_peak_idx+ temp_n1_idx(1)-2)/stim.fs+elecs(ich).times(1),...
-    eeg(n1_peak_idx+ temp_n1_idx(1)-1),'o')
-plot((n2_peak_idx+ temp_n2_idx(1)-2)/stim.fs+elecs(ich).times(1),...
-    eeg(n2_peak_idx+ temp_n2_idx(1)-1),'o')
 %}
-title(sprintf('Stim: %s, CCEP: %s\nN1 at %1.1f ms',...
+n1p=plot((n1_peak_idx+ temp_n1_idx(1)-2)/stim.fs+elecs(ich).times(1),...
+    eeg(n1_peak_idx+ temp_n1_idx(1)-1),'b+','markersize',15,'linewidth',2);
+n2p=plot((n2_peak_idx+ temp_n2_idx(1)-2)/stim.fs+elecs(ich).times(1),...
+    eeg(n2_peak_idx+ temp_n2_idx(1)-1),'bX','markersize',15,'linewidth',2);
+yticklabels([])
+xlabel('Time relative to stimulus (s)')
+title(sprintf('Stim: %s, Response: %s',...
+    chLabels{ich},chLabels{jch}))
+legend([n1p,n2p],{'N1','N2'},'fontsize',20)
+set(gca,'fontsize',20)
+%{
+title(sprintf('Stim: %s, Response: %s\nN1 at %1.1f ms',...
     chLabels{ich},chLabels{jch},((n1_peak_idx + temp_n1_idx(1) -2)/stim.fs+elecs(ich).times(1))*1e3))
+%}
 mydir  = pwd;
 idcs   = strfind(mydir,'/');
 newdir = mydir(1:idcs(end)-1);
-print(gcf,[newdir,'/cceps_results/CCEP_waveform'],'-dpng');
+%print(gcf,[newdir,'/cceps_results/CCEP_',chLabels{ich},'_',chLabels{jch}],'-dpng');
 
 end

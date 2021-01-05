@@ -7,14 +7,27 @@ offset = 0;
 first_art = inf;
 last_art = 0;
 
+
 if isempty(which_elecs)
     which_elecs = 1:length(chLabels);
+end
+
+if iscell(which_elecs)
+new_which_elecs = zeros(length(which_elecs),1);
+for i = 1:length(which_elecs)
+    
+    new_which_elecs(i) = find(strcmp(which_elecs{i},chLabels));
+    
+end
+
+which_elecs = new_which_elecs;
 end
 
 stim_elecs = [];
 
 % Get the samples of interest and non-empty indices
 for ich = 1:length(which_elecs)
+    
     if isempty(elecs(which_elecs(ich)).arts), continue; end
     
     stim_elecs = [stim_elecs;which_elecs(ich)];
@@ -41,7 +54,8 @@ for ich = 1:length(stim_elecs)
     
     eeg = values(:,(stim_elecs(ich)));
     ch_offsets(ich) = offset;
-    ch_bl(ich) = -offset + max(elecs(stim_elecs(ich)).arts(:,3))-5e3;
+    %ch_bl(ich) = -offset + max(elecs(stim_elecs(ich)).arts(:,3))-5e3;
+    ch_bl(ich) = -offset + max(eeg)-5e3;
     plot(eeg-offset,'k');
     hold on
     plot(arts,eeg(arts)-offset,'bo')

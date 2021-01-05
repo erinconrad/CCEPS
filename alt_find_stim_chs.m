@@ -57,8 +57,14 @@ for ich = 1:length(artifacts)
                    % if ich == 67, error('what'); end
                     
                     % See which has higher amplitudes
-                    curr_amps = sum(abs(curr_seq(:,2)));
-                    test_amps = sum(abs(test_seq(:,2)));
+                    % Take the highest 10 because there is sometimes a ramp
+                    % up
+                    %curr_amps = sum(abs(curr_seq(:,2)));
+                    %test_amps = sum(abs(test_seq(:,2)));
+                    sorted_curr_amps = sort(abs(curr_seq(:,2)),'descend');
+                    sorted_test_amps = sort(abs(test_seq(:,2)),'descend');
+                    curr_amps = sum(sorted_curr_amps(1:10));
+                    test_amps = sum(sorted_test_amps(1:10));
                     
                     % if close in amplitude, may be the two channels of a
                     % bipolar stim

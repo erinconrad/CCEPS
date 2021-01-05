@@ -1,4 +1,5 @@
-function A= build_network(elecs,stim,which,nchs,chLabels,ana,normalize)
+function [A,ch_info]= build_network(elecs,stim,which,nchs,chLabels,ana,normalize,do_plot)
+
 
 thresh_amp = 6;
 
@@ -50,6 +51,8 @@ channel
     
 end
 
+
+
 %% Convert electrode labels to anatomic locations
 response_ana = ana(response_chs);
 stim_ana = ana(stim_chs);
@@ -57,46 +60,24 @@ stim_ana = ana(stim_chs);
 [response_labels,ia,ic] = unique(response_ana,'stable');
 mean_positions_response = zeros(length(response_labels),1);
 for i = 1:length(response_labels)-1
-    mean_positions_response(i) = min(ia(i):ia(i+1));
+    mean_positions_response(i) = mean(ia(i):ia(i+1));
 end
-mean_positions_response(end) = min(ia(end):length(response_ana));
+mean_positions_response(end) = mean(ia(end):length(response_ana));
 
 
 [stim_labels,ia,ic] = unique(stim_ana,'stable');
 mean_positions_stim = zeros(length(stim_labels),1);
 for i = 1:length(stim_labels)-1
-    mean_positions_stim(i) = min(ia(i):ia(i+1));
+    mean_positions_stim(i) = mean(ia(i):ia(i+1));
 end
-mean_positions_stim(end) = min(ia(end):length(stim_ana));
+mean_positions_stim(end) = mean(ia(end):length(stim_ana));
 
-%% PLot
-if 1
-    figure
-    set(gcf,'position',[1 11 1400 794])
-    tight_subplot(1,1,[0.01 0.01],[0.15 0.02],[.12 .02]);
-    im = imagesc(A);
-    %{
-    xticks(1:length(stim_chs))
-    yticks(1:length(response_chs))
-    xticklabels(chLabels(stim_chs))
-    yticklabels(chLabels(response_chs))
-    %}
-    
-    xticks(mean_positions_stim)
-    yticks(mean_positions_response)
-    xticklabels(stim_labels)
-    yticklabels(response_labels)
-    
-    xticks
-    xlabel('Stim electrode','fontsize',20)
-    ylabel('Response electrode','fontsize',20)
-    set(im,'AlphaData',~isnan(A))
-    set(gca,'fontsize',20)
-    mydir  = pwd;
-    idcs   = strfind(mydir,'/');
-    newdir = mydir(1:idcs(end)-1);
-    print(gcf,[newdir,'/cceps_results/CCEP_network'],'-dpng');
-end
+ch_info.stim_pos = mean_positions_stim;
+ch_info.response_pos = mean_positions_response;
+ch_info.stim_labels = stim_labels;
+ch_info.response_labels = response_labels;
+ch_info.normalize = normalize;
+
 
 in_degree = nansum(A,2);
 [in_degree,I] = sort(in_degree,'descend');
@@ -120,14 +101,27 @@ for i = 1:10
 end
 end
 
+if do_plot == 1
+%% PLot
+figure
+set(gcf,'position',[1 11 1400 794])
+tight_subplot(1,1,[0.01 0.01],[0.15 0.02],[.12 .02]);
+show_network(A,ch_info);
+mydir  = pwd;
+idcs   = strfind(mydir,'/');
+newdir = mydir(1:idcs(end)-1);
+print(gcf,[newdir,'/cceps_results/CCEP_network'],'-dpng');
 
 while 1
     [x,y] = ginput;
     if length(x) > 1, x = x(end); end
     if length(y) > 1, y = y(end); end
+    
     show_avg(elecs,stim,chLabels,stim_chs(round(x)),response_chs(round(y)))
+    
     pause
     close(gcf)
+end
 end
 
 end

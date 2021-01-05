@@ -19,8 +19,8 @@ lags = -maxlag:maxlag;
 switch approach
     
     case 'abs'
-    % take the absolute value of the signal
-    C = abs(eeg);
+    % take the absolute value of the signal minus the median
+    C = abs(eeg-median(eeg));
     
     
     case 'cov'
@@ -32,10 +32,14 @@ end
 
 
 %% Find the points that cross above the threshold
-thresh_C = median(C) + n_stds*std(C);
+%thresh_C = median(C) + n_stds*std(C);
+thresh_C = n_stds*std(eeg);
 above_thresh = C > thresh_C;
-amps = C(above_thresh)-median(C);
+amps = C(above_thresh);
+%amps = C(above_thresh)-median(C);
 unsigned = eeg(above_thresh)-median(eeg);
+
+
 
 % Get index
 peak_idx = round(lags((above_thresh)) + nsamples/2);
@@ -172,10 +176,10 @@ out = [peak_idx,amps];
 if 0
     figure;
     subplot(2,1,1)
-    plot(times,eeg)
+    plot(eeg)
     hold on
     %plot(times(peak_idx),eeg(peak_idx),'o')
-    plot(times(peak_idx_out),eeg(peak_idx_out),'o')
+    plot((peak_idx_out),eeg(peak_idx_out),'o')
 
 
     subplot(2,1,2)

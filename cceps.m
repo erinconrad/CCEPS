@@ -26,7 +26,10 @@ stim.stim_freq = 1;
 stim.current = 3;
 stim.fs = 512;
 
-
+% Plotting prep
+mydir  = pwd;
+idcs   = strfind(mydir,'/');
+newdir = mydir(1:idcs(end)-1);
 
 %% Get EEG data
 %values = make_fake_eeg(stim);
@@ -74,36 +77,59 @@ end
 %% Narrow down the list of stimulation artifacts to just one channel each
 %final_artifacts = identify_stim_chs(artifacts,stim);
 
-elecs = alt_find_stim_chs(artifacts,stim,data.chLabels);
+%elecs = alt_find_stim_chs(artifacts,stim,data.chLabels);
+ elecs = define_ch(artifacts,stim,data.chLabels);
 
 
 
 %% Say which electrodes have stim
-n_stim = 0;
-for i = 1:length(elecs)
-    if ~isempty(elecs(i).arts)
-        fprintf('%s (elec %d) has stim.\n',data.chLabels{i},i);
-        n_stim = n_stim + 1;
-    end
+stim_chs = true_stim(dataName);
+[extra,missing] = find_missing_chs(elecs,stim_chs,data.chLabels);
+fprintf('\nMistakenly found stim on:\n')
+for i = 1:length(extra)
+    fprintf('%s\n',data.chLabels{extra(i)});
 end
-fprintf('%d electrodes have stim.\n',n_stim);
+
+fprintf('\nMissed stim on:\n')
+for i = 1:length(missing)
+    fprintf('%s\n',data.chLabels{missing(i)});
+end
 
 %% Perform signal averaging
 elecs = signal_average(values,elecs,stim);
 
 
 %% Plot a long view of the stim and the relevant electrodes
-show_stim(elecs,values,data.chLabels,[])
+show_stim(elecs,values,data.chLabels,[18 19])
 
 %% Plot the average for an example
-figure; plot(elecs(134).n1(:,1))
-show_avg(elecs,stim,data.chLabels,7,20)
+%figure; plot(elecs(134).n1(:,1))
+show_avg(elecs,stim,data.chLabels,'LH06','LA10')
 
 %% Identify CCEP waveforms
 elecs = get_waveforms(elecs,stim,data.chLabels);
 
 %% Build a network
-build_network(elecs,stim,'n1',nchs,data.chLabels,ana,1);
+[A,ch_info] = build_network(elecs,stim,'n1',nchs,data.chLabels,ana,1,1);
 
+%% Pretty plot
+%{
+figure
+set(gcf,'position',[1 11 1400 900])
+gap = 0.05;
+[ha,pos]=tight_subplot(2,1,[gap 0.01],[0.15 0.02],[.12 .02]);
+
+pos_diff = pos{1}(4)/2;
+
+axes(ha(1))
+set(ha(1),'pos',[pos{1}(1) pos{1}(2)+pos_diff pos{1}(3) pos{1}(4)-pos_diff])
+show_avg(elecs,stim,data.chLabels,'LF01','LE03')
+
+axes(ha(2))
+set(ha(2),'pos',[pos{2}(1) pos{2}(2) pos{2}(3) pos{2}(4)+pos_diff-gap])
+show_network(A,ch_info);
+
+print(gcf,[newdir,'/cceps_results/pretty_ex'],'-dpng');
+%}
 
 end

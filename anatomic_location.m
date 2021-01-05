@@ -15,9 +15,9 @@ switch pt_name
             
             switch label_non_num
                 case 'LC'
-                    ana{ich} = 'posterior\newlinehippocampus';
+                    ana{ich} = 'hippocampus';%'posterior\newlinehippocampus';
                 case 'LB'
-                    ana{ich} = 'anterior\newlinehippocampus';
+                    ana{ich} = 'hippocampus';%'anterior\newlinehippocampus';
                 case 'LA'
                     ana{ich} = 'amygdala';
                 case 'LD'
@@ -29,11 +29,11 @@ switch pt_name
                 case 'LG'
                     ana{ich} = 'pars\newlinetriangularis';
                 case 'LH'
-                    ana{ich} = 'inferior\newlinefrontal\newlinegyrus';
+                    ana{ich} = 'inferior\newlinefrontal gyrus';
                 case 'LI'
                     ana{ich} = 'anterior\newlinecingulate';
                 case 'LJ'
-                    ana{ich} = 'middle\newlinefrontal\newlinegyrus';
+                    ana{ich} = 'middle\newlinefrontal gyrus';
             end
             
         end 

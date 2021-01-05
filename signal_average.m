@@ -6,7 +6,7 @@ idx_to_take = round(stim.fs * time_to_take);
 
 for ich = 1:length(elecs)
     
-    fprintf('\nDoing ch %d of %d',ich,length(elecs));
+    %fprintf('\nDoing ch %d of %d',ich,length(elecs));
     if isempty(elecs(ich).arts)
         continue;
     end
