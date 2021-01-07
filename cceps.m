@@ -12,9 +12,8 @@ consider additional processing (like a notch filter)
 
 %% Parameters
 % ieeg parameters
-dataName = 'HUP212_CCEP';%'HUP211_CCEP'
+dataName = 'HUP212_CCEP';
 pwfile = '/Users/erinconrad/Desktop/research/gen_tools/eri_ieeglogin.bin';
-times = [18893 21999];%[12946 13592]; % times in seconds surrounding the stim session
 
 % Stimulation parameters
 stim.pulse_width = 300e-6; % pulse width in seconds
@@ -28,12 +27,16 @@ idcs   = strfind(mydir,'/');
 newdir = mydir(1:idcs(end)-1);
 
 %% Get EEG data
+% Get times; this function needs to be updated as new patients are added
+times = select_pt_times(dataName);
+
 data = download_eeg(dataName,pwfile,times);
 values = data.values;
 stim.fs = data.fs;
 fprintf('\nGot data\n');
 
 %% Get anatomic locations
+% This function needs to be updated as new patients are added
 ana = anatomic_location(dataName,data.chLabels);
 
 %% Identify stimulation artifacts
@@ -61,7 +64,6 @@ end
 
 
 %% Narrow down the list of stimulation artifacts to just one channel each
-%elecs = alt_find_stim_chs(artifacts,stim,data.chLabels);
 elecs = define_ch(artifacts,stim,data.chLabels);
 
 
@@ -69,18 +71,28 @@ elecs = define_ch(artifacts,stim,data.chLabels);
 stim_chs = true_stim(dataName);
 [extra,missing] = find_missing_chs(elecs,stim_chs,data.chLabels);
 
+%filtered_values = do_filters(values,stim.fs);
+
 %% Perform signal averaging
 elecs = signal_average(values,elecs,stim);
 
 %% Plot a long view of the stim and the relevant electrodes
-%show_stim(elecs,values,data.chLabels,[])
+%show_stim(elecs,values,data.chLabels,[20:24])
 
 %% Plot the average for an example
-%show_avg(elecs,stim,data.chLabels,'LH06','LA10')
+%{
+figure
+set(gcf,'position',[215 385 1226 413])
+tight_subplot(1,1,[0.01 0.01],[0.15 0.10],[.02 .02]);
+show_avg(elecs,stim,data.chLabels,'LB02','LA01')
+%}
 
 %% Identify CCEP waveforms
 elecs = get_waveforms(elecs,stim,data.chLabels);
 
 %% Build a network
-[A,ch_info] = build_network(elecs,stim,'n1',nchs,data.chLabels,ana,1,1);
+[A,ch_info] = build_network(elecs,stim,'N1',nchs,data.chLabels,ana,2,0);
+
+%% Pretty plot
+pretty_plot(A,elecs,ch_info,stim,'LJ01','LD04',data.chLabels,ana)
 

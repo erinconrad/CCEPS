@@ -7,7 +7,7 @@ n1_time = [10e-3 30e-3];
 n2_time = [50e-3 300e-3];
 stim_time = [-5e-3 10e-3];
 stim_val_thresh = 5e4;
-rel_thresh = 4;
+rel_thresh = 3;
 
 n1_idx = floor(n1_time*stim.fs);
 n2_idx = floor(n2_time*stim.fs);
@@ -35,8 +35,7 @@ for ich = 1:length(elecs)
     
         % Get the eeg
         eeg = elecs(ich).avg(:,jch);
-       
-        
+
         % Get the baseline
         baseline = mean(eeg(1:stim_idx-idx_before_stim));
       
@@ -62,6 +61,7 @@ for ich = 1:length(elecs)
         % find the identity of the peaks
         [n1_peak,n1_peak_idx] = max(n1_z_score);
         [n2_peak,n2_peak_idx] = max(n2_z_score);
+        old_n1_peak = n1_peak_idx;
         
         
         
@@ -77,15 +77,8 @@ for ich = 1:length(elecs)
             hold off
         end
         %}
-        %{
-        plot(eeg)
-        hold on
-        plot([1 stim_idx - idx_before_stim],[baseline baseline]);
-        plot(n1_peak_idx+ temp_n1_idx(1)-1,eeg(n1_peak_idx+temp_n1_idx(1)-1),'o')
-        xt = get(gca, 'XTick');                                 
-        set(gca, 'XTick', xt, 'XTickLabel', xt/stim.fs+elecs(ich).times(1))
-        pause
-        hold off
+        %
+        
         %}
         
         
@@ -106,7 +99,7 @@ for ich = 1:length(elecs)
         if sum(stim_eeg) > rel_thresh * sum(n1_eeg_abs)
             n1(jch,:) = [nan nan];
         end
-        %{
+        %
         if max(stim_eeg) > rel_thresh*max(n1_eeg_abs)
             n1(jch,:) = [nan nan];
         end
@@ -121,11 +114,29 @@ for ich = 1:length(elecs)
         end
         %}
         
+        if 0
+           figure
+            set(gcf,'position',[106 388 1335 410])
+            plot(eeg,'linewidth',2)
+            hold on
+            plot([temp_stim_idx(1) temp_stim_idx(1)],get(gca,'ylim'),'k--')
+            plot([temp_stim_idx(2) temp_stim_idx(2)],get(gca,'ylim'),'k--')
+
+            plot([temp_n1_idx(1) temp_n1_idx(1)],get(gca,'ylim'),'k')
+            plot([temp_n1_idx(2) temp_n1_idx(2)],get(gca,'ylim'),'k')
+
+            plot(old_n1_peak+ temp_n1_idx(1)-1,eeg(old_n1_peak+temp_n1_idx(1)-1),'o')
+            xt = get(gca, 'XTick');                                 
+            set(gca, 'XTick', xt, 'XTickLabel', xt/stim.fs+elecs(ich).times(1))
+            pause
+            hold off 
+        end
+        
     end
     
     % add to struct
-    elecs(ich).n1 = n1;
-    elecs(ich).n2 = n2;
+    elecs(ich).N1 = n1;
+    elecs(ich).N2 = n2;
     
 end
 

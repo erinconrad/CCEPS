@@ -1,11 +1,11 @@
-function [A,ch_info]= build_network(elecs,stim,which,nchs,chLabels,ana,normalize,do_plot)
+function [A,ch_info]= build_network(elecs,stim,which,nchs,chLabels,...
+    ana,normalize,do_plot)
 
 
 thresh_amp = 6;
 
 keep_chs = get_chs_to_ignore(chLabels);
 
-% Should I normalize??
 chs = 1:nchs;
 response_chs = chs;
 
@@ -21,6 +21,7 @@ for ich = 1:length(elecs)
     A(ich,:) = arr(:,1);
     
 end
+
 
 A(A<thresh_amp) = nan;
 
@@ -63,7 +64,35 @@ if isempty(ana)
 else
     response_ana = ana(response_chs);
     stim_ana = ana(stim_chs);
+    
+    response_ana_char = cellfun(@char,response_ana,'UniformOutput',false);
+    response_ana_char = cellfun(@(x) reshape(x,1,[]),response_ana_char,'UniformOutput',false);
+    [response_labels_idx,ia,ic] = unique(response_ana_char,'stable');
+    mean_positions_response = zeros(length(response_labels_idx),1);
+    edge_positions_response = zeros(length(response_labels_idx),1);
+    for i = 1:length(response_labels_idx)-1
+        mean_positions_response(i) = mean(ia(i):ia(i+1))-0.5;
+        edge_positions_response(i) = ia(i)-0.5;
+    end
+    mean_positions_response(end) = mean(ia(end):length(response_ana))-0.5;
+    edge_positions_response(end) = [ia(end)-0.5];
+    response_labels = response_ana(ia);
+    
+    stim_ana_char = cellfun(@char,stim_ana,'UniformOutput',false);
+    stim_ana_char = cellfun(@(x) reshape(x,1,[]),stim_ana_char,'UniformOutput',false);
+    [stim_labels_idx,ia,ic] = unique(stim_ana_char,'stable');
+    mean_positions_stim = zeros(length(stim_labels_idx),1);
+    edge_positions_stim = zeros(length(stim_labels_idx),1);
+    for i = 1:length(stim_labels_idx)-1
+        mean_positions_stim(i) = mean(ia(i):ia(i+1))-0.5;
+        edge_positions_stim(i) = ia(i)-0.5;
+    end
+    mean_positions_stim(end) = mean(ia(end):length(stim_ana))-0.5;
+    edge_positions_stim(end) = [ia(end)-0.5];
+    stim_labels = stim_ana(ia);
 
+    
+    %{
     [response_labels,ia,ic] = unique(response_ana,'stable');
     mean_positions_response = zeros(length(response_labels),1);
     for i = 1:length(response_labels)-1
@@ -78,6 +107,7 @@ else
         mean_positions_stim(i) = mean(ia(i):ia(i+1));
     end
     mean_positions_stim(end) = mean(ia(end):length(stim_ana));
+    %}
 end
 
 ch_info.stim_pos = mean_positions_stim;
@@ -85,6 +115,9 @@ ch_info.response_pos = mean_positions_response;
 ch_info.stim_labels = stim_labels;
 ch_info.response_labels = response_labels;
 ch_info.normalize = normalize;
+ch_info.response_edges = edge_positions_response;
+ch_info.stim_edges = edge_positions_stim;
+ch_info.waveform = which;
 
 
 in_degree = nansum(A,2);
@@ -95,25 +128,30 @@ out_degree = nansum(A,1);
 [out_degree,I] = sort(out_degree,'descend');
 out_degree_chs = stim_chs(I);
 
+all_labels = ana(chs);
+ana_word = justify_labels(all_labels,'none');
+
 if normalize == 1 || normalize == 0
 fprintf('\nThe highest in-degree channels (note normalization!) are:\n');
 for i = 1:10
-    fprintf('%s (in-degree = %1.1f)\n',chLabels{in_degree_chs(i)},in_degree(i));
+    fprintf('%s (%s) (in-degree = %1.1f)\n',...
+        chLabels{in_degree_chs(i)},ana_word{in_degree_chs(i)},in_degree(i));
 end
 end
 
 if normalize == 2 || normalize == 0
 fprintf('\nThe highest out-degree channels (note normalization!) are:\n');
 for i = 1:10
-    fprintf('%s (out-degree = %1.1f)\n',chLabels{out_degree_chs(i)},out_degree(i));
+    fprintf('%s (%s) (out-degree = %1.1f)\n',...
+        chLabels{out_degree_chs(i)},ana_word{out_degree_chs(i)},out_degree(i));
 end
 end
 
 if do_plot == 1
 %% PLot
 figure
-set(gcf,'position',[1 11 1400 794])
-tight_subplot(1,1,[0.01 0.01],[0.15 0.02],[.12 .02]);
+set(gcf,'position',[1 11 1400 900])
+tight_subplot(1,1,[0.01 0.01],[0.10 0.02],[.12 .02]);
 show_network(A,ch_info);
 mydir  = pwd;
 idcs   = strfind(mydir,'/');
@@ -124,8 +162,10 @@ while 1
     [x,y] = ginput;
     if length(x) > 1, x = x(end); end
     if length(y) > 1, y = y(end); end
-    
-    show_avg(elecs,stim,chLabels,stim_chs(round(x)),response_chs(round(y)))
+    figure
+    set(gcf,'position',[215 385 1226 413])
+    tight_subplot(1,1,[0.01 0.01],[0.15 0.10],[.02 .02]);
+    show_avg(elecs,stim,chLabels,stim_chs(round(x)),response_chs(round(y)),1)
     
     pause
     close(gcf)

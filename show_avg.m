@@ -1,8 +1,6 @@
-function show_avg(elecs,stim,chLabels,ich,jch)
+function show_avg(elecs,stim,chLabels,ich,jch,plot_title)
 
-figure
-set(gcf,'position',[215 385 1226 413])
-tight_subplot(1,1,[0.01 0.01],[0.15 0.10],[.02 .02]);
+
 
 
 %% Parameters
@@ -60,23 +58,33 @@ hold on
 %{
 plot([elecs(ich).times(1) (stim_idx-idx_before_stim)/stim.fs+elecs(ich).times(1)],[baseline baseline])
 %}
+
 n1p=plot((n1_peak_idx+ temp_n1_idx(1)-2)/stim.fs+elecs(ich).times(1),...
-    eeg(n1_peak_idx+ temp_n1_idx(1)-1),'b+','markersize',15,'linewidth',2);
+    eeg(n1_peak_idx+ temp_n1_idx(1)-1),'bX','markersize',30,'linewidth',4);
+%{
 n2p=plot((n2_peak_idx+ temp_n2_idx(1)-2)/stim.fs+elecs(ich).times(1),...
     eeg(n2_peak_idx+ temp_n2_idx(1)-1),'bX','markersize',15,'linewidth',2);
+%}
 yticklabels([])
 xlabel('Time relative to stimulus (s)')
+%{
 title(sprintf('Stim: %s, Response: %s',...
     chLabels{ich},chLabels{jch}))
-legend([n1p,n2p],{'N1','N2'},'fontsize',20)
-set(gca,'fontsize',20)
-%{
-title(sprintf('Stim: %s, Response: %s\nN1 at %1.1f ms',...
-    chLabels{ich},chLabels{jch},((n1_peak_idx + temp_n1_idx(1) -2)/stim.fs+elecs(ich).times(1))*1e3))
 %}
+%lp = legend([n1p,n2p],{'N1','N2'},'fontsize',20);
+set(gca,'fontsize',30)
+set(gca,'fontname','Monospac821 BT')
+if plot_title == 1
+title(sprintf('Stim: %s, Response: %s, N1 at %1.1f ms',...
+    chLabels{ich},chLabels{jch},((n1_peak_idx + temp_n1_idx(1) -2)/stim.fs+elecs(ich).times(1))*1e3))
+end
+xlim([elecs(ich).times(1) elecs(ich).times(2)])
+%}
+%{
 mydir  = pwd;
 idcs   = strfind(mydir,'/');
 newdir = mydir(1:idcs(end)-1);
 print(gcf,[newdir,'/cceps_results/CCEP_',chLabels{ich},'_',chLabels{jch}],'-dpng');
+%}
 
 end
