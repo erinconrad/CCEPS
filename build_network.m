@@ -46,7 +46,7 @@ elseif normalize == 2
 % Normalize by response ch
 %{
 So this normalizes the response according to other stims for that response
-channel
+channel. This is good for out-degree.
 %}   
     A = (A-nanmean(A,2))./nanstd(A,0,2);
     
@@ -133,7 +133,7 @@ ana_word = justify_labels(all_labels,'none');
 
 if normalize == 1 || normalize == 0
 fprintf('\nThe highest in-degree channels (note normalization!) are:\n');
-for i = 1:10
+for i = 1:min(10,length(in_degree))
     fprintf('%s (%s) (in-degree = %1.1f)\n',...
         chLabels{in_degree_chs(i)},ana_word{in_degree_chs(i)},in_degree(i));
 end
@@ -141,7 +141,7 @@ end
 
 if normalize == 2 || normalize == 0
 fprintf('\nThe highest out-degree channels (note normalization!) are:\n');
-for i = 1:10
+for i = 1:min(10,length(out_degree))
     fprintf('%s (%s) (out-degree = %1.1f)\n',...
         chLabels{out_degree_chs(i)},ana_word{out_degree_chs(i)},out_degree(i));
 end
