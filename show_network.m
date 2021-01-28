@@ -24,7 +24,7 @@ cmap = colormap(parula);
 cmap = [0.85 0.85 0.85;cmap];
 colormap(cmap);
 c = colorbar('location','northoutside','fontsize',30);
-c.Label.String = sprintf('%s (z-score)',ch_info.waveform);
+c.Label.String = sprintf('Normalized %s (z-score)',ch_info.waveform);
 %{
 xticks(1:length(stim_chs))
 yticks(1:length(response_chs))

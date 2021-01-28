@@ -1,5 +1,7 @@
 function ana = get_abbreviations(ana)
 
+add_side = 0;
+
 for ich = 1:length(ana)
     abb = [];
     full_name = ana{ich};
@@ -28,15 +30,17 @@ for ich = 1:length(ana)
         abb = 'OF';
     end
     
-    % Get first part of full name
-    C = strsplit(full_name,' ');
-    side = C{1};
-    if strcmp(side,'left') || strcmp(side,'Left')
-        abb = ['L',abb];
-    elseif strcmp(side,'right') || strcmp(side,'Right')
-        abb = ['R',abb];
-    else
-        continue;
+    if add_side
+        % Get first part of full name
+        C = strsplit(full_name,' ');
+        side = C{1};
+        if strcmp(side,'left') || strcmp(side,'Left')
+            abb = ['L',abb];
+        elseif strcmp(side,'right') || strcmp(side,'Right')
+            abb = ['R',abb];
+        else
+            continue;
+        end
     end
     
     ana{ich} = abb;

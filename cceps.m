@@ -99,9 +99,9 @@ show_avg(elecs,stim,data.chLabels,'LB02','LA01')
 elecs = get_waveforms(elecs,stim,chLabels);
 
 %% Build a network
-[A,ch_info] = build_network(elecs,stim,'N1',nchs,chLabels,ana,2,0);
+[A,ch_info] = build_network(elecs,stim,'N1',nchs,chLabels,ana,2,1);
 
 %% Pretty plot
-pretty_plot(A,elecs,ch_info,stim,'LF1','LF6',chLabels,ana)
-%pretty_plot(A,elecs,ch_info,stim,'LJ1','LD4',chLabels,ana)
+%pretty_plot(A,elecs,ch_info,stim,'LF1','LF6',chLabels,ana)
+pretty_plot(A,elecs,ch_info,stim,'LJ1','LD4',chLabels,ana)
 

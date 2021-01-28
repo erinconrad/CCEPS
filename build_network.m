@@ -23,12 +23,13 @@ for ich = 1:length(elecs)
 end
 
 
-A(A<thresh_amp) = nan;
+
 
 %% Remove ignore chs
 stim_chs = chs(nansum(A,2)>0);
 A = A(stim_chs,keep_chs)';
 response_chs = response_chs(keep_chs);
+A0 = A;
 
 %% Normalize
 if normalize == 0 
@@ -52,7 +53,7 @@ channel. This is good for out-degree.
     
 end
 
-
+A(A0<thresh_amp) = nan;
 
 %% Convert electrode labels to anatomic locations
 if isempty(ana)

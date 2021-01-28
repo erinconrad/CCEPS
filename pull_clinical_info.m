@@ -54,10 +54,10 @@ if iscell(T.Electrodes)
 end
 
 %% Add clinical stim seizure electrodes
-if iscell(T.StimSeizureElecs)
-    for s = 1:length(T.StimSeizureElecs)
-        if ~isempty(T.StimSeizureElecs{s})
-            clinical.clinical.stim_sz_elecs = [clinical.clinical.stim_sz_elecs;T.StimSeizureElecs{s}];
+if iscell(T.ClinicalStimSeizureElecs)
+    for s = 1:length(T.ClinicalStimSeizureElecs)
+        if ~isempty(T.ClinicalStimSeizureElecs{s})
+            clinical.clinical.stim_sz_elecs = [clinical.clinical.stim_sz_elecs;T.ClinicalStimSeizureElecs{s}];
         else
             break
         end
