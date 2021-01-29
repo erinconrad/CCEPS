@@ -121,7 +121,7 @@ out.chLabels = chLabels;
 out.waveform = wav;
 out.how_to_normalize = how_to_normalize;
 out.A = A;
-out.ch_info;
+out.ch_info = ch_info;
 
 save([newdir,sprintf('out_%s',dataName)],'out');
 
