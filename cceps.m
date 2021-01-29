@@ -26,9 +26,12 @@ mydir  = pwd;
 idcs   = strfind(mydir,'/');
 newdir = mydir(1:idcs(end)-1);
 
-%% Get pw location
+%% Get pw and ieeg location
 locations = cceps_files; % Need to make a file pointing to you own path
 pwfile = locations.pwfile;
+if isempty(locations.ieeg_folder) == 0
+    addpath(genpath(locations.ieeg_folder));
+end
 
 %% Pull clinical info
 clinical = pull_clinical_info(dataName);
