@@ -12,8 +12,7 @@ consider additional processing (like a notch filter)
 
 %% Parameters
 % ieeg parameters
-dataName = 'HUP212_CCEP';
-pwfile = '/Users/erinconrad/Desktop/research/gen_tools/eri_ieeglogin.bin';
+dataName = 'HUP211_CCEP';
 
 % Stimulation parameters
 stim.pulse_width = 300e-6; % pulse width in seconds
@@ -24,6 +23,10 @@ stim.stim_freq = 1; % frequency (in Hz) of stimulation
 mydir  = pwd;
 idcs   = strfind(mydir,'/');
 newdir = mydir(1:idcs(end)-1);
+
+%% Get pw location
+locations = cceps_files; % Need to make a file pointing to you own path
+pwfile = locations.pwfile;
 
 %% Pull clinical info
 clinical = pull_clinical_info(dataName);
