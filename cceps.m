@@ -13,7 +13,7 @@ consider additional processing (like a notch filter)
 %% Parameters
 % ieeg parameters
 if ~exist('dataName','var')
-    dataName = 'HUP211_CCEP';
+    dataName = 'HUP213_CCEP';
 end
 
 % which waveform to plot
@@ -56,7 +56,7 @@ fprintf('\nGot data\n');
 
 %% Get anatomic locations
 % This function needs to be updated as new patients are added
-ana = anatomic_location(chLabels,clinical,1);
+ana = anatomic_location(chLabels,clinical,0);
 
 %% Identify stimulation artifacts
 % Loop over EEG
@@ -123,6 +123,8 @@ out.how_to_normalize = how_to_normalize;
 out.A = A;
 out.ch_info = ch_info;
 out.ana = ana;
+out.extra = extra;
+out.missing = missing;
 
 save([newdir,'/cceps_results/',sprintf('out_%s',dataName)],'out');
 
