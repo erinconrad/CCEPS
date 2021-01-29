@@ -128,5 +128,5 @@ save([newdir,'/cceps_results/',sprintf('out_%s',dataName)],'out');
 
 %% Pretty plot
 %pretty_plot(out,'LF1','LF6')
-pretty_plot(out,'LJ1','LD4')
+%pretty_plot(out,'LJ1','LD4')
 
