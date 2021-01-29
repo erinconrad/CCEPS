@@ -3,7 +3,11 @@ function clinical = pull_clinical_info(name)
 file_name = 'Stim info.xlsx';
 
 % Get sheetnames
-sn = sheetnames(file_name);
+if exist('sheetnames',5) == 0
+    [~,sn,~] = xlsfinfo(file_name);
+else
+    sn = sheetnames(file_name);
+end
 
 found_it = 0;
 
