@@ -122,10 +122,11 @@ out.waveform = wav;
 out.how_to_normalize = how_to_normalize;
 out.A = A;
 out.ch_info = ch_info;
+out.ana = ana;
 
-save([newdir,sprintf('out_%s',dataName)],'out');
+save([newdir,'/cceps_results/',sprintf('out_%s',dataName)],'out');
 
 %% Pretty plot
-%pretty_plot(A,elecs,ch_info,stim,'LF1','LF6',chLabels,ana)
-%pretty_plot(A,elecs,ch_info,stim,'LJ1','LD4',chLabels,ana)
+%pretty_plot(out,'LF1','LF6')
+pretty_plot(out,'LJ1','LD4')
 

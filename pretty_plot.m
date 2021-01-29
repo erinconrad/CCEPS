@@ -1,7 +1,14 @@
-function pretty_plot(A,elecs,ch_info,stim,stim_ch,response_ch,chLabels,ana)
+function pretty_plot(out,stim_ch,response_ch)
 
 gap = 0.1;
 bump = 0.15;
+
+stim = out.stim;
+elecs = out.elecs;
+chLabels = out.chLabels;
+A = out.A;
+ch_info = out.ch_info;
+ana = out.ana;
 
 if ischar(stim_ch)
     stim_ch_idx = find(strcmp(stim_ch,chLabels));
@@ -49,6 +56,6 @@ annotation('textbox',[0,pos{2}(2)+pos{2}(4)+bump-0.03,0.1,0.1],'String','B',...
 mydir  = pwd;
 idcs   = strfind(mydir,'/');
 newdir = mydir(1:idcs(end)-1);
-print(gcf,[newdir,'/cceps_results/figure1'],'-dpng');
+print(gcf,[newdir,'/cceps_results/plots/figure1'],'-dpng');
 
 end
