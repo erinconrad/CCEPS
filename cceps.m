@@ -12,7 +12,9 @@ consider additional processing (like a notch filter)
 
 %% Parameters
 % ieeg parameters
-dataName = 'HUP211_CCEP';
+if ~exist('dataName','var')
+    dataName = 'HUP211_CCEP';
+end
 
 % Stimulation parameters
 stim.pulse_width = 300e-6; % pulse width in seconds
