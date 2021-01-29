@@ -157,7 +157,7 @@ show_network(A,ch_info);
 mydir  = pwd;
 idcs   = strfind(mydir,'/');
 newdir = mydir(1:idcs(end)-1);
-print(gcf,[newdir,'/cceps_results/CCEP_network'],'-dpng');
+%print(gcf,[newdir,'/cceps_results/CCEP_network'],'-dpng');
 
 while 1
     [x,y] = ginput;
