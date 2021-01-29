@@ -16,6 +16,10 @@ if ~exist('dataName','var')
     dataName = 'HUP211_CCEP';
 end
 
+% which waveform to plot
+wav = 'N1';
+how_to_normalize = 2;
+
 % Stimulation parameters
 stim.pulse_width = 300e-6; % pulse width in seconds
 stim.train_duration = 30; % train duration (# stims) in seconds
@@ -107,9 +111,21 @@ show_avg(elecs,stim,data.chLabels,'LB02','LA01')
 elecs = get_waveforms(elecs,stim,chLabels);
 
 %% Build a network
-[A,ch_info] = build_network(elecs,stim,'N1',nchs,chLabels,ana,2,1);
+[A,ch_info] = build_network(elecs,stim,wav,nchs,chLabels,ana,how_to_normalize,0);
+
+%% Save info
+out.name = dataName;
+out.elecs = elecs;
+out.stim = stim;
+out.chLabels = chLabels;
+out.waveform = wav;
+out.how_to_normalize = how_to_normalize;
+out.A = A;
+out.ch_info;
+
+save([newdir,sprintf('out_%s',dataName)],'out');
 
 %% Pretty plot
 %pretty_plot(A,elecs,ch_info,stim,'LF1','LF6',chLabels,ana)
-pretty_plot(A,elecs,ch_info,stim,'LJ1','LD4',chLabels,ana)
+%pretty_plot(A,elecs,ch_info,stim,'LJ1','LD4',chLabels,ana)
 
