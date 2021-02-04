@@ -1,4 +1,4 @@
-function elecs = signal_average(values,elecs,stim)
+function elecs = signal_average(values,elecs,stim,chLabels,do_bipolar)
 
 %% Parameters 
 time_to_take = [-100e-3 800e-3];
@@ -27,7 +27,11 @@ for ich = 1:length(elecs)
         % get those bits of eeg
         eeg_bits = zeros(length(arts),idx(1,2)-idx(1,1)+1);
         for j = 1:size(idx,1)
-            eeg_bits(j,:) = values(idx(j,1):idx(j,2),jch);
+            if do_bipolar
+                eeg_bits(j,:) = bipolar_montage(values(idx(j,1):idx(j,2),:),jch,chLabels);
+            else
+                eeg_bits(j,:) = values(idx(j,1):idx(j,2),jch);
+            end
         end
 
         % Average the eeg

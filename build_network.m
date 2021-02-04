@@ -2,7 +2,7 @@ function [A,ch_info]= build_network(elecs,stim,which,nchs,chLabels,...
     ana,normalize,do_plot)
 
 
-thresh_amp = 6;
+thresh_amp = 4;
 
 keep_chs = get_chs_to_ignore(chLabels);
 
@@ -47,7 +47,9 @@ elseif normalize == 2
 % Normalize by response ch
 %{
 So this normalizes the response according to other stims for that response
-channel. This is good for out-degree.
+channel. This sees how big the response on the channel is compared to the
+average response on that channel when stimming many channels. A high value
+means that the response in channel i to stimming channel j is high for i.
 %}   
     A = (A-nanmean(A,2))./nanstd(A,0,2);
     
@@ -166,7 +168,7 @@ while 1
     figure
     set(gcf,'position',[215 385 1226 413])
     tight_subplot(1,1,[0.01 0.01],[0.15 0.10],[.02 .02]);
-    show_avg(elecs,stim,chLabels,stim_chs(round(x)),response_chs(round(y)),1)
+    show_avg(elecs,stim,chLabels,stim_chs(round(x)),response_chs(round(y)),which,1)
     
     pause
     close(gcf)

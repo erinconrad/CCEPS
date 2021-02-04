@@ -28,6 +28,25 @@ for ich = 1:length(ana)
         abb = 'MFG';
     elseif contains(full_name,'orbitofrontal')
         abb = 'OF';
+    elseif contains(full_name,'superior frontal gyrus')
+        abb = 'SFG';
+    elseif contains(full_name,'temporal pole')
+        abb = 'TP';
+    elseif contains(full_name,'mid cingulate')
+        abb = 'MC';
+    elseif contains(full_name,'parietal') && contains(full_name,'MEG')
+        abb = 'PMEG';
+    elseif contains(full_name,'frontal eye field')
+        abb = 'FEF';
+    elseif contains(full_name,'frontal pole')
+        abb = 'FP';
+    else
+        C = strsplit(full_name,' ');
+        side = C{1};
+        side_length = length(side);
+        abb = full_name;
+        abb(1:side_length) = [];
+        
     end
     
     if add_side

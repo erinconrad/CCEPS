@@ -102,6 +102,8 @@ for i = 1:length(group)
     % Get the mode times - this will be our stim times
     mode_times = mode(times,2); 
     
+    %
+    
     % Now get the two highest amplitude channels - one of these will be our
     % channel
     [amps,I] = sort(amps,'descend');
@@ -115,7 +117,7 @@ for i = 1:length(group)
     
     % If similar in amplitude, suspect these are the two channels
     % stimulated in a bipolar fashion. Pick the lowest numbered one.
-    if amps(2)/amps(1) > discrepancy_bipolar % if they're close in amplitude
+   % if amps(2)/amps(1) > discrepancy_bipolar % if they're close in amplitude
         % In this case, assign it to the lowest numbered
         % one
         curr_label = chLabels{two_highest(1)};
@@ -149,9 +151,9 @@ for i = 1:length(group)
             
         end
                         
-    else
-        elecs(chs(I(1))).arts = mode_times;
-    end
+   % else
+   %     elecs(chs(I(1))).arts = mode_times;
+   % end
         
 end
 

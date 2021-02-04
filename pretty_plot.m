@@ -9,6 +9,7 @@ chLabels = out.chLabels;
 A = out.A;
 ch_info = out.ch_info;
 ana = out.ana;
+wav = out.waveform;
 
 if ischar(stim_ch)
     stim_ch_idx = find(strcmp(stim_ch,chLabels));
@@ -36,7 +37,7 @@ set(gcf,'position',[1 11 700 800])
 
 axes(ha(1))
 set(ha(1),'position',[pos{1}(1),pos{1}(2)+bump+gap,pos{1}(3),pos{1}(4)-bump-gap])
-show_avg(elecs,stim,chLabels,stim_ch,response_ch,0);
+show_avg(elecs,stim,chLabels,stim_ch,response_ch,wav,0);
 %{
 lp_pos = get(lp,'position');
 set(lp,'position',[0.05,pos{1}(2)+bump+gap+0.02,lp_pos(3),lp_pos(4)])

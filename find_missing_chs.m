@@ -1,4 +1,4 @@
-function [extra,missing] = find_missing_chs(elecs,true_stim,chLabels)
+function [extra,missing,elecs] = find_missing_chs(elecs,true_stim,chLabels)
 
 missing = [];
 extra = [];
@@ -19,6 +19,9 @@ for i = 1:length(elecs)
         % Did I mistakenly find it?
         if ~isempty(elecs(i).arts)
             extra = [extra;i];
+            
+            % Remove it
+            elecs(i).arts = [];
         end
     end
     
@@ -30,6 +33,7 @@ fprintf('\nMistakenly found stim on:\n')
 for i = 1:length(extra)
     fprintf('%s\n',chLabels{extra(i)});
 end
+fprintf('\nI removed these.\n')
 
 fprintf('\nMissed stim on:\n')
 for i = 1:length(missing)

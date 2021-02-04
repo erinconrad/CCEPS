@@ -3,9 +3,9 @@ function elecs = get_waveforms(elecs,stim,chLabels)
 
 %% Parameters
 idx_before_stim = 20;
-n1_time = [10e-3 30e-3];
+n1_time = [15e-3 30e-3];
 n2_time = [50e-3 300e-3];
-stim_time = [-5e-3 10e-3];
+stim_time = [-5e-3 15e-3];
 stim_val_thresh = 5e4;
 rel_thresh = 3;
 
@@ -25,9 +25,9 @@ for ich = 1:length(elecs)
     stim_idx = elecs(ich).stim_idx;
     
     % redefine n1 and n2 relative to beginning of eeg
-    temp_n1_idx = n1_idx + stim_idx;
-    temp_n2_idx = n2_idx + stim_idx;
-    temp_stim_idx = stim_indices + stim_idx;
+    temp_n1_idx = n1_idx + stim_idx - 1;
+    temp_n2_idx = n2_idx + stim_idx - 1;
+    temp_stim_idx = stim_indices + stim_idx - 1;
     
     
     % Loop over channels within this elec
@@ -84,8 +84,8 @@ for ich = 1:length(elecs)
         
         
         % redefine idx relative to time after stim
-        n1_peak_idx = n1_peak_idx + temp_n1_idx(1) - stim_idx;
-        n2_peak_idx = n2_peak_idx + temp_n2_idx(1) - stim_idx;
+        n1_peak_idx = n1_peak_idx + temp_n1_idx(1) - 1 - stim_idx - 1;
+        n2_peak_idx = n2_peak_idx + temp_n2_idx(1) - 1 - stim_idx - 1;
         
         
         
