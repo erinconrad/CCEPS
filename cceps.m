@@ -9,11 +9,11 @@ play around with waveform detector
 consider additional processing (like a notch filter)
 
 %}
-tic
+
 %% Parameters
 % ieeg parameters
 if ~exist('dataName','var')
-    dataName = 'HUP212_CCEP';
+    dataName = 'HUP211_CCEP';
 end
 
 % which waveform to plot
@@ -30,6 +30,7 @@ mydir  = pwd;
 idcs   = strfind(mydir,'/');
 newdir = mydir(1:idcs(end)-1);
 
+
 %% Get pw and ieeg location
 locations = cceps_files; % Need to make a file pointing to you own path
 pwfile = locations.pwfile;
@@ -40,10 +41,30 @@ end
 %% Pull clinical info
 clinical = pull_clinical_info(dataName);
 stim.current = clinical.current;
+times_in = clinical.time_breaks;
+if isempty(times_in)
+    nloops = 1;
+else
+    nloops = length(times_in);
+end
 
+for in = 1:nloops
+tic
 %% Get EEG data
-% Get times; this function needs to be updated as new patients are added
-times = [clinical.start_time,clinical.end_time];
+if isempty(times_in)
+    times = [clinical.start_time,clinical.end_time];
+else
+    times = [times_in(in) times_in(in+1)];
+end
+%times = [clinical.start_time,clinical.end_time];
+
+
+% Load output file if it already exists
+if exist([newdir,'/cceps_results/',sprintf('out_%s',dataName)],'file') ~= 0
+    load([newdir,'/cceps_results/',sprintf('out_%s',dataName)]); % loads a structure called 'out'
+else
+    out = [];
+end
 
 data = download_eeg(dataName,pwfile,times);
 chLabels = data.chLabels;
@@ -112,8 +133,8 @@ show_avg(elecs,stim,data.chLabels,'LB02','LA01')
 %% Identify CCEP waveforms
 elecs = get_waveforms(elecs,stim,chLabels);
 
-%% Build a network
-[A,ch_info] = build_network(elecs,stim,wav,nchs,chLabels,ana,how_to_normalize,1);
+%% Merge old and new elecs
+elecs = merge_elecs(out,elecs,chLabels);
 
 %% Save info
 out.name = dataName;
@@ -122,18 +143,25 @@ out.stim = stim;
 out.chLabels = chLabels;
 out.waveform = wav;
 out.how_to_normalize = how_to_normalize;
-out.A = A;
-out.ch_info = ch_info;
+%out.A = A;
+%out.ch_info = ch_info;
 out.ana = ana;
 out.extra = extra;
 out.missing = missing;
 
 save([newdir,'/cceps_results/',sprintf('out_%s',dataName)],'out');
+end
+
+%% Build a network
+[A,ch_info] = build_network(elecs,stim,wav,nchs,chLabels,ana,how_to_normalize,0);
+out.A = A;
+out.ch_info = ch_info;
+save([newdir,'/cceps_results/',sprintf('out_%s',dataName)],'out');
 
 %% Pretty plot
 %pretty_plot(out,'LF1','LF6')
-pretty_plot(out,'LJ1','LD7')
+%pretty_plot(out,'LJ1','LD7')
 %pretty_plot(out,'LH5','LE7')
 
-%show_avg(elecs,stim,chLabels,'LC6','LB9',wav,1)
+%show_avg(elecs,stim,chLabels,'LM3','LE7',wav,1)
 

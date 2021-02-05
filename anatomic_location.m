@@ -5,6 +5,11 @@ if isempty(clinical)
     return
 end
 
+if ~isfield(clinical,'map')
+    ana = [];
+    return
+end
+
 ana = cell(length(chLabels),1);
 
 

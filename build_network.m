@@ -63,6 +63,8 @@ if isempty(ana)
     stim_labels = chLabels(stim_chs);
     mean_positions_response = 1:length(response_labels);
     mean_positions_stim = 1:length(stim_labels);
+    edge_positions_response = [];
+    edge_positions_stim = []; 
     
 else
     response_ana = ana(response_chs);
@@ -131,7 +133,11 @@ out_degree = nansum(A,1);
 [out_degree,I] = sort(out_degree,'descend');
 out_degree_chs = stim_chs(I);
 
-all_labels = ana(chs);
+if isempty(ana)
+    all_labels = chLabels;
+else
+    all_labels = ana(chs);
+end
 ana_word = justify_labels(all_labels,'none');
 
 if normalize == 1 || normalize == 0

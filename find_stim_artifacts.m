@@ -4,7 +4,7 @@ function out = find_stim_artifacts(stim,eeg)
 
 %% Parameters
 approach = 'abs';
-n_stds = 8; %5
+n_stds = 5; %5
 %too_close = 10;
 
 %% Generate rectangular pulse function (used to find artifact)
@@ -20,7 +20,7 @@ switch approach
     
     case 'abs'
     % take the absolute value of the signal minus the median
-    C = abs(eeg-median(eeg));
+    C = abs(eeg-nanmedian(eeg));
     
     
     case 'cov'
@@ -33,11 +33,11 @@ end
 
 %% Find the points that cross above the threshold
 %thresh_C = median(C) + n_stds*std(C);
-thresh_C = n_stds*std(eeg);
+thresh_C = n_stds*nanstd(eeg);
 above_thresh = C > thresh_C;
 amps = C(above_thresh);
 %amps = C(above_thresh)-median(C);
-unsigned = eeg(above_thresh)-median(eeg);
+unsigned = eeg(above_thresh)-nanmedian(eeg);
 
 
 

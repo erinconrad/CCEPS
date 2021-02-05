@@ -21,7 +21,7 @@ for i = 1:length(elecs)
             extra = [extra;i];
             
             % Remove it
-            elecs(i).arts = [];
+           % elecs(i).arts = [];
         end
     end
     
@@ -33,7 +33,7 @@ fprintf('\nMistakenly found stim on:\n')
 for i = 1:length(extra)
     fprintf('%s\n',chLabels{extra(i)});
 end
-fprintf('\nI removed these.\n')
+%fprintf('\nI removed these.\n')
 
 fprintf('\nMissed stim on:\n')
 for i = 1:length(missing)

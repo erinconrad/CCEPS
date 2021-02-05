@@ -38,6 +38,7 @@ clinical.sz = {};
 clinical.current_test_elecs = {};
 
 
+
 %% Add easy stuff
 clinical.name = name;
 clinical.current = T.Current(1);
@@ -45,6 +46,7 @@ clinical.start_time = T.MainStimStartTime(1);
 clinical.end_time = T.MainStimEndTime(1);
 clinical.other = T.Other(1);
 clinical.clinical_effects = T.ClinicalEffects(1);
+clinical.time_breaks = T.TimeBreaks(~isnan(T.TimeBreaks));
 
 %% Add stim electrodes
 if iscell(T.Electrodes)
@@ -114,9 +116,12 @@ if iscell(T.CurrentTestElectrodes)
 end
 
 %% Add electrode map
+if iscell(T.Electrode)
 for m = 1:length(T.Electrode)
+    %if ~isempty(T.Electrode)
     clinical.map(m).electrode = T.Electrode{m};
     clinical.map(m).target = T.AnatomicalTarget{m};
+end
 end
 
 end
