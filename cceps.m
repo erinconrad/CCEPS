@@ -45,7 +45,7 @@ times_in = clinical.time_breaks;
 if isempty(times_in)
     nloops = 1;
 else
-    nloops = length(times_in);
+    nloops = length(times_in)-1;
 end
 
 for in = 1:nloops
@@ -60,8 +60,8 @@ end
 
 
 % Load output file if it already exists
-if exist([newdir,'/cceps_results/',sprintf('out_%s',dataName)],'file') ~= 0
-    load([newdir,'/cceps_results/',sprintf('out_%s',dataName)]); % loads a structure called 'out'
+if exist([newdir,'/cceps_results/',sprintf('out_%s.mat',dataName)],'file') ~= 0
+    load([newdir,'/cceps_results/',sprintf('out_%s.mat',dataName)]); % loads a structure called 'out'
 else
     out = [];
 end
