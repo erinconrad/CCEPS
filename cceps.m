@@ -30,23 +30,27 @@ mydir  = pwd;
 idcs   = strfind(mydir,'/');
 newdir = mydir(1:idcs(end)-1);
 
+% Check if cceps_results exists, create folder if not, create it:
+if ~exist(fullfile(newdir, 'cceps_results'),'dir')
+    mkdir(fullfile(newdir,'cceps_results'))
+end
+
+if ~exist(fullfile(newdir, 'cceps_results', 'plots'),'dir')
+    mkdir(fullfile(newdir,'cceps_results', 'plots'))
+end
+
 
 %% Get pw and ieeg location
 locations = cceps_files; % Need to make a file pointing to you own path
 pwfile = locations.pwfile;
+loginname = locations.loginname;
 if isempty(locations.ieeg_folder) == 0
     addpath(genpath(locations.ieeg_folder));
 end
 
 %% Pull clinical info
-clinical = pull_clinical_info(dataName);
-stim.current = clinical.current;
-times_in = clinical.time_breaks;
-if isempty(times_in)
-    nloops = 1;
-else
-    nloops = length(times_in)-1;
-end
+
+
 
 for in = 1:nloops
 tic
@@ -58,7 +62,6 @@ else
 end
 %times = [clinical.start_time,clinical.end_time];
 
-
 % Load output file if it already exists
 if exist([newdir,'/cceps_results/',sprintf('out_%s.mat',dataName)],'file') ~= 0
     load([newdir,'/cceps_results/',sprintf('out_%s.mat',dataName)]); % loads a structure called 'out'
@@ -66,7 +69,7 @@ else
     out = [];
 end
 
-data = download_eeg(dataName,pwfile,times);
+data = download_eeg(dataName,loginname, pwfile,times);
 chLabels = data.chLabels;
 % Remove leading zeros
 chLabels = remove_leading_zeros(chLabels);

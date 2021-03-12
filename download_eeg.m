@@ -1,10 +1,9 @@
-function data = download_eeg(dataName,pwname,times)
+function data = download_eeg(dataName, loginname, pwname, times)
 
 % This is a tool to return information from a specified iEEG dataset
 
 
 %% Unchanging parameters
-loginname = 'erinconr';
 session = IEEGSession(dataName, loginname, pwname);
 fs = session.data.sampleRate;
 channelLabels = session.data.channelLabels;
