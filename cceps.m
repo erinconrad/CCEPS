@@ -13,7 +13,7 @@ consider additional processing (like a notch filter)
 %% Parameters
 % ieeg parameters
 if ~exist('dataName','var')
-    dataName = 'HUP211_CCEP';
+    dataName = 'HUP212_CCEP';
 end
 
 % which waveform to plot
@@ -162,6 +162,7 @@ save([newdir,'/cceps_results/',sprintf('out_%s',dataName)],'out');
 %pretty_plot(out,'LF1','LF6')
 %pretty_plot(out,'LJ1','LD7')
 %pretty_plot(out,'LH5','LE7')
+%pretty_plot(out,'LA8','LN10')
 
 %show_avg(elecs,stim,chLabels,'LM3','LE7',wav,1)
 

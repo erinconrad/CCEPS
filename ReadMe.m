@@ -4,10 +4,20 @@
 This code takes data from cortical stimulation sessions and measures
 cortico-cortical evoked potentials (CCEPs).
 
-To run the code, first open up the script cceps.m and modify the dataName,
-the times of the stimulation session (in seconds according to ieeg.org
-times) and the path to your ieeg.org password file. Also modify the
-stimulation parameters as needed.
+Before running the code, you will need to create a file called cceps_files
+somewhere in your path, that will output a structure with the following
+elements:
+locations.pwfile (containing the path to your ieeg password)
+locations.ieeg_folder (containing the path to ieeg codebase)
+
+You will also need access to a spreadsheet called 'Stim info.xlsx' (in the
+github repository), which contains information specific to the CCEPs
+dataset including the stimulation time period, the electrodes
+stimulated, and anatomical locations of different electrodes.
+
+Next, open up the script cceps.m and modify the dataName of the IEEG.org
+CCEPS file you want to analyze. Also, modify the stimulation parameters if
+needed.
 
 Then, navigate to the folder containing cceps.m and run
 >> cceps

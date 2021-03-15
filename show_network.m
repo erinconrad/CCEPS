@@ -62,10 +62,10 @@ end
 %}
 
 %xticks
-xlabel('Stimulation electrode','fontsize',30)
-ylabel('Response electrode','fontsize',30)
+xlabel('Stimulation electrode','fontsize',25)
+ylabel('Response electrode','fontsize',25)
 %set(im,'AlphaData',~isnan(A))
-set(gca,'fontsize',30)
+set(gca,'fontsize',25)
 set(gca,'fontname','Monospac821 BT');
 
 

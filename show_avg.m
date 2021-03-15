@@ -75,15 +75,31 @@ n1p=plot((n1_peak_idx+ temp_n1_idx(1)-2)/stim.fs+elecs(ich).times(1),...
 n2p=plot((n2_peak_idx+ temp_n2_idx(1)-2)/stim.fs+elecs(ich).times(1),...
     eeg(n2_peak_idx+ temp_n2_idx(1)-1),'bX','markersize',15,'linewidth',2);
 %}
-yticklabels([])
-xlabel('Time relative to stimulus (s)')
+%yticklabels([])
+
+set(gca,'fontsize',25)
+set(gca,'fontname','Monospac821 BT')
+ylim([-40 20]);
+yl = get(gca,'ylim');
+yticks([yl(1),yl(2)])
+yticklabels({sprintf('%d uV',yl(1)),sprintf('%d uV',yl(2))})
+xticklocs = [0 0.6];
+xticks(xticklocs)
+temp_xticklabels = cell(length(xticks),1);
+for i = 1:length(xticks)
+    temp_xticklabels{i} = sprintf('%d ms',xticklocs(i)*1000);
+end
+xticklabels(temp_xticklabels);
+plot([0 0],ylim,'k--','linewidth',2);
+text(0,12,'\leftarrowStimulation','fontsize',25)
+%xlabel('Time relative to stimulus (s)')
+%ylabel('Amplitude (uV)')
 %{
 title(sprintf('Stim: %s, Response: %s',...
     chLabels{ich},chLabels{jch}))
 %}
 %lp = legend([n1p,n2p],{'N1','N2'},'fontsize',20);
-set(gca,'fontsize',30)
-set(gca,'fontname','Monospac821 BT')
+
 if plot_title == 1
 title(sprintf('Stim: %s, Response: %s, %s at %1.1f ms',...
     chLabels{ich},chLabels{jch},wav,time*1e3))
