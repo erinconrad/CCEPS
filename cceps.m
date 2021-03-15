@@ -50,6 +50,14 @@ end
 
 %% Pull clinical info
 
+clinical = pull_clinical_info(dataName);
+stim.current = clinical.current;
+times_in = clinical.time_breaks;
+if isempty(times_in)
+    nloops = 1;
+else
+    nloops = length(times_in)-1;
+end
 
 
 for in = 1:nloops
@@ -162,7 +170,7 @@ out.ch_info = ch_info;
 save([newdir,'/cceps_results/',sprintf('out_%s',dataName)],'out');
 
 %% Pretty plot
-%pretty_plot(out,'LF1','LF6')
+pretty_plot(out,'LF1','LF6')
 %pretty_plot(out,'LJ1','LD7')
 %pretty_plot(out,'LH5','LE7')
 
