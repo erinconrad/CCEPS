@@ -2,8 +2,6 @@
 
 %{
 Remaining to-do's
-- [] separate into folders
-- [] add example locations file
 - [] fix timing in get waveforms
 - [] play around with waveform detector
 - [] consider additional processing (like a notch filter)
