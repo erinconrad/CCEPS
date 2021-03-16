@@ -137,6 +137,7 @@ elecs = get_waveforms(elecs,stim,chLabels);
 elecs = merge_elecs(out,elecs,chLabels);
 
 %% Save info
+%
 out.name = dataName;
 out.elecs = elecs;
 out.stim = stim;
@@ -148,12 +149,13 @@ out.how_to_normalize = how_to_normalize;
 out.ana = ana;
 out.extra = extra;
 out.missing = missing;
+%}
 
 save([newdir,'/cceps_results/',sprintf('out_%s',dataName)],'out');
 end
 
 %% Build a network
-[A,ch_info] = build_network(elecs,stim,wav,nchs,chLabels,ana,how_to_normalize,0);
+[A,ch_info] = build_network(elecs,stim,wav,nchs,chLabels,ana,how_to_normalize,1);
 out.A = A;
 out.ch_info = ch_info;
 save([newdir,'/cceps_results/',sprintf('out_%s',dataName)],'out');

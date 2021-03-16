@@ -79,7 +79,7 @@ n2p=plot((n2_peak_idx+ temp_n2_idx(1)-2)/stim.fs+elecs(ich).times(1),...
 
 set(gca,'fontsize',25)
 set(gca,'fontname','Monospac821 BT')
-ylim([-40 20]);
+%ylim([-40 20]);
 yl = get(gca,'ylim');
 yticks([yl(1),yl(2)])
 yticklabels({sprintf('%d uV',yl(1)),sprintf('%d uV',yl(2))})
