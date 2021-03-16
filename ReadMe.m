@@ -15,6 +15,9 @@ output results)
 -locations.pwfile (containing the path to your ieeg password)
 -locations.ieeg_folder (containing the path to ieeg codebase)
 
+See the script cceps_files_example.m for an example of how to structure
+this file.
+
 You will also need access to a spreadsheet called 'Stim info.xlsx' (in the
 github repository), which contains information specific to the CCEPs
 dataset including the stimulation time period, the electrodes
