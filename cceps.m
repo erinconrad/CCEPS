@@ -1,12 +1,12 @@
 
 
 %{
-
-fix timing in get waveforms
-
-play around with waveform detector
-
-consider additional processing (like a notch filter)
+Remaining to-do's
+- [] separate into folders
+- [] add example locations file
+- [] fix timing in get waveforms
+- [] play around with waveform detector
+- [] consider additional processing (like a notch filter)
 
 %}
 
@@ -26,31 +26,20 @@ stim.pulse_width = 300e-6; % pulse width in seconds
 stim.train_duration = 30; % train duration (# stims) in seconds
 stim.stim_freq = 1; % frequency (in Hz) of stimulation
 
-% Plotting prep
-mydir  = pwd;
-idcs   = strfind(mydir,'/');
-newdir = mydir(1:idcs(end)-1);
-
-% Check if cceps_results exists, create folder if not, create it:
-if ~exist(fullfile(newdir, 'cceps_results'),'dir')
-    mkdir(fullfile(newdir,'cceps_results'))
-end
-
-if ~exist(fullfile(newdir, 'cceps_results', 'plots'),'dir')
-    mkdir(fullfile(newdir,'cceps_results', 'plots'))
-end
-
-
-%% Get pw and ieeg location
+%% Get various path locations
 locations = cceps_files; % Need to make a file pointing to you own path
 pwfile = locations.pwfile;
 loginname = locations.loginname;
+script_folder = locations.script_folder;
+results_folder = locations.results_folder;
+
+% add paths
+addpath(genpath(script_folder));
 if isempty(locations.ieeg_folder) == 0
     addpath(genpath(locations.ieeg_folder));
 end
 
 %% Pull clinical info
-
 clinical = pull_clinical_info(dataName);
 stim.current = clinical.current;
 times_in = clinical.time_breaks;
@@ -156,21 +145,19 @@ out.stim = stim;
 out.chLabels = chLabels;
 out.waveform = wav;
 out.how_to_normalize = how_to_normalize;
-%out.A = A;
-%out.ch_info = ch_info;
 out.ana = ana;
 out.extra = extra;
 out.missing = missing;
 %}
 
-save([newdir,'/cceps_results/',sprintf('out_%s',dataName)],'out');
+save([results_folder,sprintf('out_%s',dataName)],'out');
 end
 
 %% Build a network
-[A,ch_info] = build_network(elecs,stim,wav,nchs,chLabels,ana,how_to_normalize,1);
+[A,ch_info] = build_network(elecs,stim,wav,nchs,chLabels,ana,how_to_normalize,0);
 out.A = A;
 out.ch_info = ch_info;
-save([newdir,'/cceps_results/',sprintf('out_%s',dataName)],'out');
+save([results_folder,sprintf('out_%s',dataName)],'out');
 
 %% Pretty plot
 %pretty_plot(out,'LF1','LF6')
