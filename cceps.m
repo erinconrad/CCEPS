@@ -61,8 +61,8 @@ end
 %times = [clinical.start_time,clinical.end_time];
 
 % Load output file if it already exists
-if exist([newdir,'/cceps_results/',sprintf('out_%s.mat',dataName)],'file') ~= 0
-    load([newdir,'/cceps_results/',sprintf('out_%s.mat',dataName)]); % loads a structure called 'out'
+if exist([results_folder,sprintf('out_%s.mat',dataName)],'file') ~= 0
+    load([results_folder,sprintf('out_%s.mat',dataName)]); % loads a structure called 'out'
 else
     out = [];
 end
