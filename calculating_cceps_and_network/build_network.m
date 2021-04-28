@@ -1,6 +1,29 @@
-function [A,ch_info]= build_network(elecs,stim,which,nchs,chLabels,...
-    ana,normalize,do_plot)
+function [A,ch_info]= build_network(out,do_plot)
 
+%{ 
+[A,ch_info]= build_network(elecs,stim,which,nchs,chLabels,...
+    ana,normalize,do_plot)
+ %}
+
+%% Get various path locations
+locations = cceps_files; % Need to make a file pointing to you own path
+script_folder = locations.script_folder;
+results_folder = locations.results_folder;
+
+% add paths
+addpath(genpath(script_folder));
+if isempty(locations.ieeg_folder) == 0
+    addpath(genpath(locations.ieeg_folder));
+end
+
+%% unpack
+elecs = out.elecs;
+stim = out.stim;
+which = out.waveform;
+chLabels = out.chLabels;
+ana = out.ana;
+normalize = out.how_to_normalize;
+nchs = length(chLabels);
 
 thresh_amp = 4;
 
@@ -174,7 +197,7 @@ while 1
     figure
     set(gcf,'position',[215 385 1226 413])
     tight_subplot(1,1,[0.01 0.01],[0.15 0.10],[.02 .02]);
-    show_avg(elecs,stim,chLabels,stim_chs(round(x)),response_chs(round(y)),which,1)
+    show_avg(out,stim_chs(round(x)),response_chs(round(y)),0)
     
     pause
     close(gcf)

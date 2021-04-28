@@ -146,22 +146,25 @@ out.how_to_normalize = how_to_normalize;
 out.ana = ana;
 out.extra = extra;
 out.missing = missing;
+out.clinical = clinical;
 %}
 
 save([results_folder,sprintf('out_%s',dataName)],'out');
 end
 
 %% Build a network
-[A,ch_info] = build_network(elecs,stim,wav,nchs,chLabels,ana,how_to_normalize,0);
+[A,ch_info] = build_network(out,0);
+%[A,ch_info] = build_network(elecs,stim,wav,nchs,chLabels,ana,how_to_normalize,0);
 out.A = A;
 out.ch_info = ch_info;
 save([results_folder,sprintf('out_%s',dataName)],'out');
 
 %% Pretty plot
-%pretty_plot(out,'LF1','LF6')
-%pretty_plot(out,'LJ1','LD7')
-%pretty_plot(out,'LH5','LE7')
+%pretty_plot(out,'LF1','LF6') HUP211
+%pretty_plot(out,'LJ1','LD7') HUP 212
+%pretty_plot(out,'LH6','LE9') %LH6 LE9 HUP213
 %pretty_plot(out,'LA8','LN10')
+% pretty_plot(out,'LE9','LF5') % chop
 
 %show_avg(elecs,stim,chLabels,'LM3','LE7',wav,1)
 

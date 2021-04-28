@@ -1,16 +1,23 @@
-function show_avg(elecs,stim,chLabels,ich,jch,wav,plot_title)
+function show_avg(out,ich,jch,save_plot)
 
+plot_title = 0;
 
+%% Get various path locations
+locations = cceps_files; % Need to make a file pointing to you own path
+script_folder = locations.script_folder;
+results_folder = locations.results_folder;
 
-%{
-%% Parameters
-idx_before_stim = 20;
-n1_time = [10e-3 30e-3];
-n2_time = [50e-3 300e-3];
+% add paths
+addpath(genpath(script_folder));
 
-n1_idx = floor(n1_time*stim.fs)+1;
-n2_idx = floor(n2_time*stim.fs)+1;
-%}
+%% Unpack out struct
+elecs = out.elecs;
+stim = out.stim;
+chLabels = out.chLabels;
+wav = out.waveform;
+C = strsplit(out.name,'_');
+name_first = C{1};
+
 
 if ischar(ich)
     ich = find(strcmp(ich,chLabels));
@@ -22,67 +29,37 @@ end
 
 stim_idx = elecs(ich).stim_idx;
     
-%{
-% redefine n1 and n2 relative to beginning of eeg
-temp_n1_idx = n1_idx + stim_idx;
-temp_n2_idx = n2_idx + stim_idx;
-%}
+
 
 % Get the eeg
 eeg = elecs(ich).avg(:,jch);
 
-%{
-% Get the baseline
-baseline = mean(eeg(1:stim_idx-idx_before_stim));
+n1_arr = elecs(ich).N1;
+n2_arr = elecs(ich).N2;
+n1_idx = stim_idx+n1_arr(jch,2) + 1;
+n2_idx = stim_idx+n2_arr(jch,2) + 1;
 
+if save_plot
+    figure
+    set(gcf,'position',[168 424 1273 374]);
+end
 
-% Get the eeg in the n1 and n2 time
-n1_eeg = eeg(temp_n1_idx(1):temp_n1_idx(2));
-n2_eeg = eeg(temp_n2_idx(1):temp_n2_idx(2));
+n1_time = convert_indices_to_times(n1_idx,stim.fs,elecs(ich).times(1));
+n2_time = convert_indices_to_times(n2_idx,stim.fs,elecs(ich).times(1));
 
-% subtract baseline
-n1_eeg_abs = abs(n1_eeg-baseline);
-n2_eeg_abs = abs(n2_eeg-baseline);
-
-% Get sd of baseline
-baseline_sd = std(eeg(1:stim_idx-idx_before_stim));
-
-% convert n1_eeg_abs to z score
-n1_z_score = n1_eeg_abs/baseline_sd;
-n2_z_score = n2_eeg_abs/baseline_sd;
-
-% find the identity of the peaks
-[n1_peak,n1_peak_idx] = max(n1_z_score);
-[n2_peak,n2_peak_idx] = max(n2_z_score);
-%}
-arr = elecs(ich).(wav);
-idx = stim_idx+arr(jch,2);
-time = idx/stim.fs+elecs(ich).times(1);
-
-plot(linspace(elecs(ich).times(1),elecs(ich).times(2),length(eeg)),eeg,'k',...
-    'linewidth',2)
+eeg_times = convert_indices_to_times(1:length(eeg),stim.fs,elecs(ich).times(1));
+plot(eeg_times,eeg,'k','linewidth',2);
 hold on
-plot(time,eeg(idx),'bX','markersize',20,'linewidth',4);
-%{
-plot([elecs(ich).times(1) (stim_idx-idx_before_stim)/stim.fs+elecs(ich).times(1)],[baseline baseline])
-%}
+plot(n1_time,eeg(n1_idx),'bX','markersize',20,'linewidth',4);
+%plot(n2_time,eeg(n2_idx),'go','markersize',20,'linewidth',4);
 
-%{
-n1p=plot((n1_peak_idx+ temp_n1_idx(1)-2)/stim.fs+elecs(ich).times(1),...
-    eeg(n1_peak_idx+ temp_n1_idx(1)-1),'bX','markersize',30,'linewidth',4);
-%}
-%{
-n2p=plot((n2_peak_idx+ temp_n2_idx(1)-2)/stim.fs+elecs(ich).times(1),...
-    eeg(n2_peak_idx+ temp_n2_idx(1)-1),'bX','markersize',15,'linewidth',2);
-%}
-%yticklabels([])
+
 
 set(gca,'fontsize',25)
 set(gca,'fontname','Monospac821 BT')
-%ylim([-40 20]);
 yl = get(gca,'ylim');
 yticks([yl(1),yl(2)])
-yticklabels({sprintf('%d uV',yl(1)),sprintf('%d uV',yl(2))})
+yticklabels({sprintf('%d uV',round(yl(1))),sprintf('%d uV',round(yl(2)))})
 xticklocs = [0 0.6];
 xticks(xticklocs)
 temp_xticklabels = cell(length(xticks),1);
@@ -91,26 +68,16 @@ for i = 1:length(xticks)
 end
 xticklabels(temp_xticklabels);
 plot([0 0],ylim,'k--','linewidth',2);
-text(0,12,'\leftarrowStimulation','fontsize',25)
-%xlabel('Time relative to stimulus (s)')
-%ylabel('Amplitude (uV)')
-%{
-title(sprintf('Stim: %s, Response: %s',...
-    chLabels{ich},chLabels{jch}))
-%}
-%lp = legend([n1p,n2p],{'N1','N2'},'fontsize',20);
 
-if plot_title == 1
-title(sprintf('Stim: %s, Response: %s, %s at %1.1f ms',...
-    chLabels{ich},chLabels{jch},wav,time*1e3))
-end
-xlim([elecs(ich).times(1) elecs(ich).times(2)])
-%}
 %{
-mydir  = pwd;
-idcs   = strfind(mydir,'/');
-newdir = mydir(1:idcs(end)-1);
-print(gcf,[newdir,'/cceps_results/CCEP_',chLabels{ich},'_',chLabels{jch}],'-dpng');
+title(sprintf('%s Stim: %s, Response: %s',...
+    name_first ,chLabels{ich},chLabels{jch}))
 %}
+
+xlim([elecs(ich).times(1) elecs(ich).times(2)])
+
+if save_plot
+    print(gcf,[results_folder,'plots/',name_first ,'_',chLabels{ich},'_',chLabels{jch}],'-dpng');
+end
 
 end

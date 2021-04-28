@@ -1,5 +1,11 @@
 function pretty_plot(out,stim_ch,response_ch)
 
+%% Get various path locations
+locations = cceps_files; % Need to make a file pointing to you own path
+results_folder = locations.results_folder;
+script_folder = locations.script_folder;
+addpath(genpath(script_folder));
+
 gap = 0.08;
 bump = 0.12;
 
@@ -39,7 +45,7 @@ set(gcf,'position',[1 11 700 800])
 
 axes(ha(1))
 set(ha(1),'position',[pos{1}(1),pos{1}(2)+bump+gap,pos{1}(3),pos{1}(4)-bump-gap])
-show_avg(elecs,stim,chLabels,stim_ch,response_ch,wav,0);
+show_avg(out,stim_ch,response_ch,0);
 %{
 lp_pos = get(lp,'position');
 set(lp,'position',[0.05,pos{1}(2)+bump+gap+0.02,lp_pos(3),lp_pos(4)])
@@ -56,9 +62,7 @@ annotation('textbox',[0,pos{1}(2)+pos{1}(4)-0.06,0.1,0.1],'String','A',...
 annotation('textbox',[0,pos{2}(2)+pos{2}(4)+bump,0.1,0.1],'String','B',...
     'linestyle','none','fontsize',35);
 
-mydir  = pwd;
-idcs   = strfind(mydir,'/');
-newdir = mydir(1:idcs(end)-1);
-print(gcf,[newdir,'/cceps_results/plots/figure1'],'-dpng');
+
+print(gcf,[results_folder,'plots/figure1'],'-dpng');
 
 end
