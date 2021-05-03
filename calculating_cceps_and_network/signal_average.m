@@ -19,6 +19,7 @@ for ich = 1:length(elecs)
     
     % Initialize avg
     elecs(ich).avg = zeros(idx(1,2)-idx(1,1)+1,size(values,2));
+    elecs(ich).all = zeros(idx(1,2)-idx(1,1)+1,size(values,2),size(idx,1));
     
     % Loop over all other channels
     for jch = 1:size(values,2)
@@ -32,6 +33,7 @@ for ich = 1:length(elecs)
             else
                 eeg_bits(j,:) = values(idx(j,1):idx(j,2),jch);
             end
+            elecs(ich).all(:,jch,j) = eeg_bits(j,:);
         end
 
         % Average the eeg
