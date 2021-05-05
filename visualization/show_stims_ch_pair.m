@@ -44,8 +44,31 @@ bits(1,1) = 1;
 bits(end,2) = size(values,1);
 
 
+
 avg = squeeze(out.elecs(sch).avg(:,rch));
 nt = size(bits,1);
+
+% Get alt avg
+all_traces = nan(bits(1,end)-bits(1,1)+1,nt);
+
+for t = 1:nt
+    vals = bipolar_montage(values(bits(t,1):bits(t,end),:),rch,chLabels);
+    %vals = values(bits(t,1):bits(t,end),rch);
+    if length(vals) < size(all_traces,1)
+        vals = [vals;repmat(vals(end),size(all_traces,1)-length(vals),1)];
+    end
+
+    if length(vals) > size(all_traces,1)
+        vals(end-(length(vals)-size(all_traces,1))+1:end) = [];
+    end
+    all_traces(:,t) = vals;
+end
+
+alt_avg = nanmean(all_traces,2);
+if 0
+    plot(alt_avg);
+end
+
 tw = surround_times;
 pt = linspace(tw(1),tw(2),size(avg,1));
 st = 1;
@@ -65,7 +88,7 @@ ax = subplot(1,2,1);
 
 for t = 1:nt
     all_pt = linspace(tw(1),tw(2),bits(t,end)-bits(t,1)+1);
-    vals = values(bits(t,1):bits(t,end),rch);
+    vals = bipolar_montage(values(bits(t,1):bits(t,end),:),rch,chLabels);
     plot(all_pt,vals,'color',[0.5 0.5 0.5])    
     hold on
 end
@@ -74,7 +97,7 @@ xlabel('Time (s)')
 ylabel('\muV')
 xlim([tw(1) tw(2)])
 all_pt = linspace(tw(1),tw(2),bits(st,end)-bits(st,1)+1);
-vals = values(bits(st,1):bits(st,end),rch);
+vals = bipolar_montage(values(bits(st,1):bits(st,end),:),rch,chLabels);
 hst = plot(all_pt,vals,'color','k','linewidth',2);
 htext= text(all_pt(end),median(vals),sprintf('Trial %d',st),'fontsize',20);
 gdata.hst = hst;
@@ -85,6 +108,7 @@ gdata.st = st;
 gdata.bits = bits;
 gdata.rch = rch;
 gdata.tw = tw;
+gdata.chLabels = chLabels;
 guidata(f,gdata);
 set(f,'keypressfcn',@(h,evt) arrow_through(h,evt));
     %n = input('\nEnter trial number you wish to highlight\n');
@@ -112,6 +136,7 @@ bits = gdata.bits;
 rch = gdata.rch;
 tw = gdata.tw;
 ax = gdata.ax;
+chLabels = gdata.chLabels;
 
 if strcmp(str,'downarrow')
     st = max(1,st-1);
@@ -129,11 +154,12 @@ delete(htext)
 % plot new
 axes(ax);
 all_pt = linspace(tw(1),tw(2),bits(st,end)-bits(st,1)+1);
-vals = values(bits(st,1):bits(st,end),rch);
+vals = bipolar_montage(values(bits(st,1):bits(st,end),:),rch,chLabels);
 hst = plot(all_pt,vals,'color','k','linewidth',2);
 htext= text(all_pt(end),median(vals),sprintf('Trial %d',st),'fontsize',20);
 gdata.hst = hst;
 gdata.htext = htext;
 gdata.st = st;
 guidata(H,gdata);
+
 end
