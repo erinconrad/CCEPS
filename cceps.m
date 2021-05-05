@@ -12,7 +12,7 @@ Remaining to-do's
 % data name to run (look for variable in workspace, otherwise use this
 % default)
 if ~exist('dataName','var')
-    dataName = 'HUP216_CCEP';
+    dataName = 'HUP212_CCEP';
 end
 
 % which waveform to plot
