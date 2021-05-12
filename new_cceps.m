@@ -65,6 +65,9 @@ stim.fs = data.fs;
 t = toc;
 fprintf('\nGot data in %1.1f minutes\n',t/60);
 
+%% Get anatomic locations
+ana = anatomic_location(chLabels,clinical,1);
+
 %% Get stim periods
 periods = identify_stim_periods(data.layer.ann.event,chLabels,stim.fs,clinical.start_time);
 
