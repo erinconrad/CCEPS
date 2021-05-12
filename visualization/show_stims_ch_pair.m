@@ -1,5 +1,7 @@
 function show_stims_ch_pair(out,sch,rch)
-% 77, 82
+
+%% Parameters
+do_bipolar = 0;
 
 %% Get various path locations
 locations = cceps_files; % Need to make a file pointing to you own path
@@ -52,8 +54,11 @@ nt = size(bits,1);
 all_traces = nan(bits(1,end)-bits(1,1)+1,nt);
 
 for t = 1:nt
-    vals = bipolar_montage(values(bits(t,1):bits(t,end),:),rch,chLabels);
-    %vals = values(bits(t,1):bits(t,end),rch);
+    if do_bipolar
+        vals = bipolar_montage(values(bits(t,1):bits(t,end),:),rch,chLabels);
+    else
+        vals = values(bits(t,1):bits(t,end),rch);
+    end
     if length(vals) < size(all_traces,1)
         vals = [vals;repmat(vals(end),size(all_traces,1)-length(vals),1)];
     end
@@ -88,7 +93,11 @@ ax = subplot(1,2,1);
 
 for t = 1:nt
     all_pt = linspace(tw(1),tw(2),bits(t,end)-bits(t,1)+1);
-    vals = bipolar_montage(values(bits(t,1):bits(t,end),:),rch,chLabels);
+    if do_bipolar
+        vals = bipolar_montage(values(bits(t,1):bits(t,end),:),rch,chLabels);
+    else
+        vals = values(bits(t,1):bits(t,end),rch);
+    end
     plot(all_pt,vals,'color',[0.5 0.5 0.5])    
     hold on
 end
@@ -97,7 +106,11 @@ xlabel('Time (s)')
 ylabel('\muV')
 xlim([tw(1) tw(2)])
 all_pt = linspace(tw(1),tw(2),bits(st,end)-bits(st,1)+1);
-vals = bipolar_montage(values(bits(st,1):bits(st,end),:),rch,chLabels);
+if do_bipolar
+    vals = bipolar_montage(values(bits(st,1):bits(st,end),:),rch,chLabels);
+else
+    vals = values(bits(st,1):bits(st,end),rch);
+end
 hst = plot(all_pt,vals,'color','k','linewidth',2);
 htext= text(all_pt(end),median(vals),sprintf('Trial %d',st),'fontsize',20);
 gdata.hst = hst;
@@ -108,6 +121,7 @@ gdata.st = st;
 gdata.bits = bits;
 gdata.rch = rch;
 gdata.tw = tw;
+gdata.do_bipolar = do_bipolar;
 gdata.chLabels = chLabels;
 guidata(f,gdata);
 set(f,'keypressfcn',@(h,evt) arrow_through(h,evt));
@@ -137,6 +151,7 @@ rch = gdata.rch;
 tw = gdata.tw;
 ax = gdata.ax;
 chLabels = gdata.chLabels;
+do_bipolar = gdata.do_bipolar;
 
 if strcmp(str,'downarrow')
     st = max(1,st-1);
@@ -154,7 +169,11 @@ delete(htext)
 % plot new
 axes(ax);
 all_pt = linspace(tw(1),tw(2),bits(st,end)-bits(st,1)+1);
-vals = bipolar_montage(values(bits(st,1):bits(st,end),:),rch,chLabels);
+if do_bipolar
+    vals = bipolar_montage(values(bits(st,1):bits(st,end),:),rch,chLabels);
+else
+    vals = values(bits(st,1):bits(st,end),rch);
+end
 hst = plot(all_pt,vals,'color','k','linewidth',2);
 htext= text(all_pt(end),median(vals),sprintf('Trial %d',st),'fontsize',20);
 gdata.hst = hst;

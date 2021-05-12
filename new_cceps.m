@@ -1,18 +1,8 @@
-
-
-%{
-Remaining to-do's
-- [] fix timing in get waveforms
-- [] play around with waveform detector
-- [] consider additional processing (like a notch filter)
-
-%}
-
 %% Parameters
 % data name to run (look for variable in workspace, otherwise use this
 % default)
 if ~exist('dataName','var')
-    dataName = 'HUP211_CCEP';
+    dataName = 'HUP216_CCEP';
 end
 
 % which waveform to plot
@@ -50,6 +40,7 @@ end
 
 for in = 1:nloops
 tic
+
 %% Get EEG data
 if isempty(times_in)
     times = [clinical.start_time,clinical.end_time];
@@ -59,78 +50,38 @@ end
 %times = [clinical.start_time,clinical.end_time];
 
 % Load output file if it already exists
-if exist([results_folder,sprintf('out_%s.mat',dataName)],'file') ~= 0
-    load([results_folder,sprintf('out_%s.mat',dataName)]); % loads a structure called 'out'
+if exist([results_folder,sprintf('results_%s.mat',dataName)],'file') ~= 0
+    load([results_folder,sprintf('results_%s.mat',dataName)]); % loads a structure called 'out'
 else
     out = [];
 end
 
 data = download_eeg(dataName,loginname, pwfile,times);
-chLabels = data.chLabels;
+chLabels = data.chLabels(:,1);
 % Remove leading zeros
 chLabels = remove_leading_zeros(chLabels);
-
 values = data.values;
 stim.fs = data.fs;
 t = toc;
 fprintf('\nGot data in %1.1f minutes\n',t/60);
 
-%% Do bipolar montage
-[bipolar_values,bipolar_labels,bipolar_ch_pair] = bipolar_montage(values,[],chLabels);
+%% Get stim periods
+periods = identify_stim_periods(data.layer.ann.event,chLabels,stim.fs,clinical.start_time);
 
-
-%% Get anatomic locations
-ana = anatomic_location(chLabels,clinical,1);
-
-%% Identify stimulation artifacts
-% Loop over EEG
-nchs = size(values,2);
-artifacts = cell(nchs,1);
-for ich = 1:nchs
-    artifacts{ich} = find_stim_artifacts(stim,values(:,ich));
-    %artifacts{ich} = find_stim_artifacts(stim,bipolar_values(:,ich),values(:,ich));
-end
-old_artifacts = artifacts;
-
-%% Remove those that are not on beat
-for ich = 1:nchs
-    if isempty(old_artifacts{ich})
-        continue;
-    else
-        on_beat = find_offbeat(old_artifacts{ich}(:,1),stim);
-    end
-    if ~isempty(on_beat)
-        artifacts{ich} = [old_artifacts{ich}(on_beat(:,1),:),on_beat(:,2)]; 
-    else
-        artifacts{ich} = [];
-    end
-end
-
-
-%% Narrow down the list of stimulation artifacts to just one channel each
-elecs = define_ch(artifacts,stim,chLabels);
-
+%% Get artifacts within periods
+elecs = identify_artifacts_within_periods(periods,values,stim,chLabels);
 
 %% Say which electrodes have stim
 %stim_chs = true_stim(dataName);
 stim_chs = clinical.stim_electrodes;
 [extra,missing,elecs] = find_missing_chs(elecs,stim_chs,chLabels);
 
+%% Do bipolar montage
+[bipolar_values,bipolar_labels,bipolar_ch_pair] = bipolar_montage(values,[],chLabels);
+
 
 %% Perform signal averaging
 elecs = signal_average(bipolar_values,elecs,stim,chLabels,0);
-
-%% Plot a long view of the stim and the relevant electrodes
-%show_stim(elecs,bipolar_values,bipolar_labels,[])
-%show_stim(elecs,values,chLabels,[])
-
-%% Plot the average for an example
-%{
-figure
-set(gcf,'position',[215 385 1226 413])
-tight_subplot(1,1,[0.01 0.01],[0.15 0.10],[.02 .02]);
-show_avg(elecs,stim,data.chLabels,'LB02','LA01')
-%}
 
 %% Identify CCEP waveforms
 elecs = get_waveforms(elecs,stim,chLabels);
@@ -154,7 +105,8 @@ out.missing = missing;
 out.clinical = clinical;
 %}
 
-save([results_folder,sprintf('out_%s',dataName)],'out');
+save([results_folder,sprintf('results_%s',dataName)],'out');
+
 end
 
 %% Build a network
@@ -162,14 +114,4 @@ end
 %[A,ch_info] = build_network(elecs,stim,wav,nchs,chLabels,ana,how_to_normalize,0);
 out.A = A;
 out.ch_info = ch_info;
-save([results_folder,sprintf('out_%s',dataName)],'out');
-
-%% Pretty plot
-%pretty_plot(out,'LF1','LF6') HUP211
-%pretty_plot(out,'LJ1','LD7') HUP 212
-%pretty_plot(out,'LH6','LE9') %LH6 LE9 HUP213
-%pretty_plot(out,'LA8','LN10')
-% pretty_plot(out,'LE9','LF5') % chop
-
-%show_avg(elecs,stim,chLabels,'LM3','LE7',wav,1)
-
+save([results_folder,sprintf('results_%s',dataName)],'out');

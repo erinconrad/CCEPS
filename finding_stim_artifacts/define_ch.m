@@ -84,7 +84,9 @@ for i = 1:length(group)
     % Loop through members of group and add times and amps to array
     for j = 1:length(member)
         curr_times = member{j}(:,1);
+
         curr_amps = member{j}(:,2);
+
         curr_ch = member{j}(1,5);
         % Fix for non-30 times
         if length(curr_times) < 30
@@ -115,41 +117,45 @@ for i = 1:length(group)
     
     two_highest = chs(I(1:2));
     
+    curr_label = chLabels{two_highest(1)};
+    test_label = chLabels{two_highest(2)};
+
+
+    curr_elec_num = regexp(curr_label,'\d');
+    test_elec_num = regexp(test_label,'\d');
+
+
+        
     % If similar in amplitude, suspect these are the two channels
     % stimulated in a bipolar fashion. Pick the lowest numbered one.
    % if amps(2)/amps(1) > discrepancy_bipolar % if they're close in amplitude
-        % In this case, assign it to the lowest numbered
-        % one
-        curr_label = chLabels{two_highest(1)};
-        test_label = chLabels{two_highest(2)};
+        % In this case, assign it to the lowest numbered one
 
-        % derive the number
-        curr_elec_num = regexp(curr_label,'\d');
-        test_elec_num = regexp(test_label,'\d');
         
-        if isempty(curr_elec_num) % if highest is non-standard, assign to second highest
-            elecs(chs(I(2))).arts = mode_times;
-            continue;
-        elseif isempty(test_elec_num)
-            elecs(chs(I(1))).arts = mode_times;
-            continue;
-        end
-        
-        curr_elec_label = curr_label(1:curr_elec_num-1);
-        curr_elec_num = str2num(curr_label(curr_elec_num(1):end));
+    if isempty(curr_elec_num) % if highest is non-standard, assign to second highest
+        elecs(chs(I(2))).arts = mode_times;
+        continue;
+    elseif isempty(test_elec_num)
+        elecs(chs(I(1))).arts = mode_times;
+        continue;
+    end
+
+    curr_elec_label = curr_label(1:curr_elec_num-1);
+    curr_elec_num = str2num(curr_label(curr_elec_num(1):end));
 
 
-        test_elec_label = test_label(1:test_elec_num-1);
-        test_elec_num = str2num(test_label(test_elec_num(1):end));
-        
-        if test_elec_num == curr_elec_num - 1 && strcmp(curr_elec_label,test_elec_label) % jch lower, keep that one
-            elecs(chs(I(2))).arts = mode_times;
-        elseif curr_elec_num == test_elec_num - 1 && strcmp(curr_elec_label,test_elec_label) % ich lower, keep that one
-            elecs(chs(I(1))).arts = mode_times;
-        else % keep higher amplitude one
-            elecs(chs(I(1))).arts = mode_times;
-            
-        end
+    test_elec_label = test_label(1:test_elec_num-1);
+    test_elec_num = str2num(test_label(test_elec_num(1):end));
+
+    if test_elec_num == curr_elec_num - 1 && strcmp(curr_elec_label,test_elec_label) % jch lower, keep that one
+        elecs(chs(I(2))).arts = mode_times;
+    elseif curr_elec_num == test_elec_num - 1 && strcmp(curr_elec_label,test_elec_label) % ich lower, keep that one
+        elecs(chs(I(1))).arts = mode_times;
+    else % keep higher amplitude one
+        elecs(chs(I(1))).arts = mode_times;
+
+    end
+    
                         
    % else
    %     elecs(chs(I(1))).arts = mode_times;
