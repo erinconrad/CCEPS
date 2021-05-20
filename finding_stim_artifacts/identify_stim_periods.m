@@ -66,7 +66,7 @@ for i = 1:length(event)
         end
         if isnan(end_time)
             fprintf(['\nWarning: Never found subsequent open or closed relay after %s\n'...
-                'will use last time as the end stim stime\n'],event(i).type);
+                'will use last time as the end stim time\n'],event(i).type);
             end_time = times(2)-0.5; % subtract half second to deal with rounding errors
         end
         
