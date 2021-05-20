@@ -66,6 +66,7 @@ for t = 1:nt
     if length(vals) > size(all_traces,1)
         vals(end-(length(vals)-size(all_traces,1))+1:end) = [];
     end
+    vals = vals-mean(vals);
     all_traces(:,t) = vals;
 end
 
@@ -75,7 +76,7 @@ if 0
 end
 
 tw = surround_times;
-pt = linspace(tw(1),tw(2),size(avg,1));
+pt = linspace(tw(1),tw(2),size(alt_avg,1));
 st = 1;
 
 f=figure;
@@ -83,7 +84,7 @@ set(f,'position',[187 439 1250 359])
 
 
 subplot(1,2,2)
-plot(pt,avg,'linewidth',2)
+plot(pt,alt_avg,'linewidth',2)
 set(gca,'fontsize',20)
 xlabel('Time (s)')
 ylabel('\muV')
@@ -98,6 +99,7 @@ for t = 1:nt
     else
         vals = values(bits(t,1):bits(t,end),rch);
     end
+    vals = vals - mean(vals);
     plot(all_pt,vals,'color',[0.5 0.5 0.5])    
     hold on
 end
@@ -111,6 +113,7 @@ if do_bipolar
 else
     vals = values(bits(st,1):bits(st,end),rch);
 end
+vals = vals - mean(vals);
 hst = plot(all_pt,vals,'color','k','linewidth',2);
 htext= text(all_pt(end),median(vals),sprintf('Trial %d',st),'fontsize',20);
 gdata.hst = hst;
@@ -174,6 +177,7 @@ if do_bipolar
 else
     vals = values(bits(st,1):bits(st,end),rch);
 end
+vals = vals - mean(vals);
 hst = plot(all_pt,vals,'color','k','linewidth',2);
 htext= text(all_pt(end),median(vals),sprintf('Trial %d',st),'fontsize',20);
 gdata.hst = hst;

@@ -2,7 +2,7 @@
 % data name to run (look for variable in workspace, otherwise use this
 % default)
 if ~exist('dataName','var')
-    dataName = 'HUP216_CCEP';
+    dataName = 'CHOP_CCEPs';
 end
 
 % which waveform to plot
@@ -79,6 +79,9 @@ elecs = identify_artifacts_within_periods(periods,values,stim,chLabels);
 stim_chs = clinical.stim_electrodes;
 [extra,missing,elecs] = find_missing_chs(elecs,stim_chs,chLabels);
 
+%% Reject bad channels
+[bad,details] = reject_bad_chs(values,chLabels,stim.fs,elecs);
+
 %% Do bipolar montage
 [bipolar_values,bipolar_labels,bipolar_ch_pair] = bipolar_montage(values,[],chLabels);
 
@@ -106,6 +109,8 @@ out.ana = ana;
 out.extra = extra;
 out.missing = missing;
 out.clinical = clinical;
+out.bad = bad;
+out.bad_details = details;
 %}
 
 save([results_folder,sprintf('results_%s',dataName)],'out');

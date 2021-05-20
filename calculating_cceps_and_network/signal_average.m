@@ -28,10 +28,12 @@ for ich = 1:length(elecs)
         eeg_bits = zeros(length(arts),idx(1,2)-idx(1,1)+1);
         for j = 1:size(idx,1)
             if do_bipolar
-                eeg_bits(j,:) = bipolar_montage(values(idx(j,1):idx(j,2),:),jch,chLabels);
+                bit = bipolar_montage(values(idx(j,1):idx(j,2),:),jch,chLabels);
             else
-                eeg_bits(j,:) = values(idx(j,1):idx(j,2),jch);
+                bit = values(idx(j,1):idx(j,2),jch);
             end
+            
+            eeg_bits(j,:) = bit - mean(bit);
         end
 
         % Average the eeg

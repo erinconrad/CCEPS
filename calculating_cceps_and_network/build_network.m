@@ -20,6 +20,7 @@ end
 elecs = out.elecs;
 stim = out.stim;
 which = out.waveform;
+bad = out.bad;
 chLabels = out.chLabels;
 ana = out.ana;
 normalize = out.how_to_normalize;
@@ -28,6 +29,9 @@ nchs = length(chLabels);
 thresh_amp = 4;
 
 keep_chs = get_chs_to_ignore(chLabels);
+
+% remove bad chs
+keep_chs(ismember(keep_chs,bad)) = [];
 
 chs = 1:nchs;
 response_chs = chs;

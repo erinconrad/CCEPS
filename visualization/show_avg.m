@@ -69,7 +69,7 @@ end
 xticklabels(temp_xticklabels);
 plot([0 0],ylim,'k--','linewidth',2);
 
-%{
+%
 title(sprintf('%s Stim: %s, Response: %s',...
     name_first ,chLabels{ich},chLabels{jch}))
 %}
