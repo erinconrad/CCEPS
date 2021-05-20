@@ -39,6 +39,10 @@ for ich = 1:length(periods)
         jch = all_elecs(j);
     
         eeg = values(periods(ich).start_index:periods(ich).end_index,jch);
+        
+        %% Switch nans to baseline value
+        eeg(isnan(eeg)) = nanmedian(eeg);
+        
         %hp = eeg;
         hp = eegfilt(eeg,10,'hp',fs);
 
