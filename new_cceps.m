@@ -52,7 +52,7 @@ else
     out = [];
 end
 %}
-
+tic
 data = download_eeg(dataName,loginname, pwfile,times);
 chLabels = data.chLabels(:,1);
 % Remove leading zeros
