@@ -19,7 +19,7 @@ end
 
 
 for ai = 1:n_layers
-    a=session.data.annLayer(ai).getEvents(0);
+    a=session.data.annLayer(ai).getEvents(times(1),1000);
     n_ann = length(a);
     for i = 1:n_ann
         event(i).start = a(i).start/(1e6);
