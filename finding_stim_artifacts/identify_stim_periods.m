@@ -59,27 +59,15 @@ for i = 1:length(event)
         end_time = nan;
         for j = i+1:length(event)
             type = event(j).type;
-            if strcmp(type,'Opened relay')
+            if strcmp(type,'Opened relay') || contains(type,'Closed relay to')
                 end_time = event(j).start;
                 break
             end
         end
         if isnan(end_time)
-            fprintf(['\nWarning, never found open relay after %s,\n'...
-                'will use end time as next closed relay'],type);
-            
-            % find next closed relay
-            for j = i+1:length(event)
-                type = event(j).type;
-                if contains(type,'Closed relay to')
-                    end_time = event(j).start;
-                    break
-                end
-            end
-            
-            if isnan(end_time)
-                error('Never found open or closed relay');
-            end
+            fprintf(['\nWarning: Never found subsequent open or closed relay after %s\n'...
+                'will use time of last annotation in the file as the end stim stime\n'],event(i).type);
+            end_time = event(end).start;
         end
         
         % Find electrode to assign the stim to
