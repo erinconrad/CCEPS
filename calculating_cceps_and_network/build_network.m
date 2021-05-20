@@ -20,7 +20,11 @@ end
 elecs = out.elecs;
 stim = out.stim;
 which = out.waveform;
-bad = out.bad;
+if ~isfield(out,'bad')
+    bad = [];
+else
+    bad = out.bad;
+end
 chLabels = out.chLabels;
 ana = out.ana;
 normalize = out.how_to_normalize;

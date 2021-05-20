@@ -38,23 +38,20 @@ else
 end
 
 
-for in = 1:nloops
-tic
-
 %% Get EEG data
-if isempty(times_in)
-    times = [clinical.start_time,clinical.end_time];
-else
-    times = [times_in(in) times_in(in+1)];
-end
+
+times = [clinical.start_time,clinical.end_time];
+
 %times = [clinical.start_time,clinical.end_time];
 
 % Load output file if it already exists
+%{
 if exist([results_folder,sprintf('results_%s.mat',dataName)],'file') ~= 0
     load([results_folder,sprintf('results_%s.mat',dataName)]); % loads a structure called 'out'
 else
     out = [];
 end
+%}
 
 data = download_eeg(dataName,loginname, pwfile,times);
 chLabels = data.chLabels(:,1);
@@ -93,7 +90,7 @@ elecs = signal_average(bipolar_values,elecs,stim,chLabels,0);
 elecs = get_waveforms(elecs,stim,chLabels);
 
 %% Merge old and new elecs
-elecs = merge_elecs(out,elecs,chLabels);
+%elecs = merge_elecs(out,elecs,chLabels);
 
 %% Save info
 %
@@ -115,7 +112,6 @@ out.bad_details = details;
 
 save([results_folder,sprintf('results_%s',dataName)],'out');
 
-end
 
 %% Build a network
 [A,ch_info] = build_network(out,0);
