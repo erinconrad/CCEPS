@@ -60,7 +60,12 @@ for i = 1:length(event)
         for j = i+1:length(event)
             type = event(j).type;
             if strcmp(type,'Opened relay') || contains(type,'Closed relay to')
-                end_time = event(j).start;
+                
+                if event(j).start > times(2)
+                    end_time = times(2) - 0.5;
+                    fprintf('\nWarning, setting end stim time to be time break\n');
+                else                
+                    end_time = event(j).start;
                 break
             end
         end
