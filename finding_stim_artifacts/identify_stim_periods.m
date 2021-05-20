@@ -1,4 +1,4 @@
-function stim =  identify_stim_periods(event,chLabels,fs,research_start)
+function stim =  identify_stim_periods(event,chLabels,fs,times)
 
 stim(length(chLabels)) = struct();
 
@@ -66,8 +66,8 @@ for i = 1:length(event)
         end
         if isnan(end_time)
             fprintf(['\nWarning: Never found subsequent open or closed relay after %s\n'...
-                'will use time of last annotation in the file as the end stim stime\n'],event(i).type);
-            end_time = event(end).start;
+                'will use last time as the end stim stime\n'],event(i).type);
+            end_time = times(2)-0.5; % subtract half second to deal with rounding errors
         end
         
         % Find electrode to assign the stim to
@@ -77,8 +77,8 @@ for i = 1:length(event)
         end
         stim(stim_ch).start_time = start_time;
         stim(stim_ch).end_time = end_time;
-        stim(stim_ch).start_index = round((start_time-research_start)*fs);
-        stim(stim_ch).end_index = round((end_time-research_start)*fs);
+        stim(stim_ch).start_index = round((start_time-times(1))*fs);
+        stim(stim_ch).end_index = round((end_time-times(1))*fs);
         stim(stim_ch).name = elec1;
         
             

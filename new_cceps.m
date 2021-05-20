@@ -69,7 +69,7 @@ fprintf('\nGot data in %1.1f minutes\n',t/60);
 ana = anatomic_location(chLabels,clinical,1);
 
 %% Get stim periods
-periods = identify_stim_periods(data.layer.ann.event,chLabels,stim.fs,clinical.start_time);
+periods = identify_stim_periods(data.layer.ann.event,chLabels,stim.fs,times);
 
 %% Get artifacts within periods
 elecs = identify_artifacts_within_periods(periods,values,stim,chLabels);
