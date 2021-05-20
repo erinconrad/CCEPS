@@ -50,9 +50,9 @@ nchs = size(channelLabels,1);
 values = zeros(end_index-start_index+1,nchs);
 nchunks = 50;
 for i = 1:nchunks
-    values(:,floor(nchs/nchunks)*(i-1)+1:min(floor(nchs/nchunks)*i,nchs)) =...
+    values(:,floor(nchs/nchunks*(i-1))+1:min(floor(nchs/nchunks*i),nchs)) =...
         session.data.getvalues([start_index:end_index],...
-        floor(nchs/nchunks)*(i-1)+1:min(floor(nchs/nchunks)*i,nchs));
+        floor(nchs/nchunks*(i-1))+1:min(floor(nchs/nchunks*i),nchs));
 end
 %}
 
