@@ -8,6 +8,10 @@ for i = 1:length(event)
     % See if it's a close relay
     if contains(type,'Closed relay to')
         
+        if event(i).start < times(1) || event(i).start > times(2)
+            continue
+        end
+        
         % find the electrodes
         C = strsplit(type);
         
@@ -66,6 +70,8 @@ for i = 1:length(event)
                     fprintf('\nWarning, setting end stim time to be time break\n');
                 else                
                     end_time = event(j).start;
+                end
+                
                 break
             end
         end
