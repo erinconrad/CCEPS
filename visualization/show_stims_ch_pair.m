@@ -1,7 +1,7 @@
 function show_stims_ch_pair(out,sch,rch)
 
 %% Parameters
-do_bipolar = 0;
+do_bipolar = 1;
 
 %% Get various path locations
 locations = cceps_files; % Need to make a file pointing to you own path

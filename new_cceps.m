@@ -77,10 +77,12 @@ stim_chs = clinical.stim_electrodes;
 [extra,missing,elecs] = find_missing_chs(elecs,stim_chs,chLabels);
 
 %% Reject bad channels
-[bad,details] = reject_bad_chs(values,chLabels,stim.fs,elecs);
+%[bad,details] = reject_bad_chs(values,chLabels,stim.fs,elecs);
+bad = [];
+details = [];
 
 %% Do bipolar montage
-%[bipolar_values,bipolar_labels,bipolar_ch_pair] = bipolar_montage(values,[],chLabels);
+[bipolar_values,bipolar_labels,bipolar_ch_pair] = bipolar_montage(values,[],chLabels);
 
 
 %% Perform signal averaging

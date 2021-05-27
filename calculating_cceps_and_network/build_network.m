@@ -199,7 +199,11 @@ newdir = mydir(1:idcs(end)-1);
 %print(gcf,[newdir,'/cceps_results/CCEP_network'],'-dpng');
 
 while 1
-    [x,y] = ginput;
+    try
+        [x,y] = ginput;
+    catch
+        break
+    end
     if length(x) > 1, x = x(end); end
     if length(y) > 1, y = y(end); end
     figure

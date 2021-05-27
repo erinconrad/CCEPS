@@ -43,8 +43,8 @@ for ich = 1:length(periods)
         %% Switch nans to baseline value
         eeg(isnan(eeg)) = nanmedian(eeg);
         
-        hp = eeg;
-        %hp = eegfilt(eeg,10,'hp',fs);
+        %hp = eeg;
+        hp = eegfilt(eeg,10,'hp',fs);
 
         %% Get absolute value of deviation from baseline
         bl = nanmedian(hp);
