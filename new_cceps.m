@@ -80,11 +80,11 @@ stim_chs = clinical.stim_electrodes;
 [bad,details] = reject_bad_chs(values,chLabels,stim.fs,elecs);
 
 %% Do bipolar montage
-[bipolar_values,bipolar_labels,bipolar_ch_pair] = bipolar_montage(values,[],chLabels);
+%[bipolar_values,bipolar_labels,bipolar_ch_pair] = bipolar_montage(values,[],chLabels);
 
 
 %% Perform signal averaging
-elecs = signal_average(bipolar_values,elecs,stim,chLabels,0);
+elecs = signal_average(values,elecs,stim,chLabels,0);
 
 %% Identify CCEP waveforms
 elecs = get_waveforms(elecs,stim,chLabels);
@@ -98,8 +98,8 @@ out.name = dataName;
 out.elecs = elecs;
 out.stim = stim;
 out.chLabels = chLabels;
-out.bipolar_labels = bipolar_labels;
-out.bipolar_ch_pair = bipolar_ch_pair;
+out.bipolar_labels = [];%bipolar_labels;
+out.bipolar_ch_pair = [];%bipolar_ch_pair;
 out.waveform = wav;
 out.how_to_normalize = how_to_normalize;
 out.ana = ana;

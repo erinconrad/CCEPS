@@ -53,6 +53,7 @@ nt = size(bits,1);
 % Get alt avg
 all_traces = nan(bits(1,end)-bits(1,1)+1,nt);
 
+
 for t = 1:nt
     if do_bipolar
         vals = bipolar_montage(values(bits(t,1):bits(t,end),:),rch,chLabels);
