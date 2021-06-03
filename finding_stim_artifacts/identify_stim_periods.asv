@@ -25,11 +25,7 @@ for i = 1:length(event)
             % split up L/R and rest of electrode name
             elec1 = {[C{4},C{5}]};
             elec2 = {[C{7},C{8}]};
-        elseif length(C) == 10 && strcmp(C{7},'and') && ...
-                (strcmp(C{4},'L') || strcmp(C{4},'R'))
-            % split up L/R and rest of electrode name
-            elec1 = {[C{4},C{5},C{6}]};
-            elec2 = {[C{8},C{9},C{10}]};
+        elseif length(C) == 10 && strcmp(C{7},'and') strcmp(C{4},'L') 
         else
             error('Surprising closed relay text');
             
