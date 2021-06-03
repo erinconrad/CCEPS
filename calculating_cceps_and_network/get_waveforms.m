@@ -1,4 +1,4 @@
-function elecs = get_waveforms(elecs,stim,chLabels)
+function elecs = get_waveforms(elecs,stim)
 
 
 %% Parameters
@@ -6,7 +6,7 @@ idx_before_stim = 20;
 n1_time = [15e-3 30e-3];
 n2_time = [50e-3 300e-3];
 stim_time = [-5e-3 15e-3];
-stim_val_thresh = 5e4;
+stim_val_thresh = 1e3;
 rel_thresh = 3;
 
 n1_idx = floor(n1_time*stim.fs);
@@ -63,6 +63,12 @@ for ich = 1:length(elecs)
         [n2_peak,n2_peak_idx] = max(n2_z_score);
         old_n1_peak = n1_peak_idx;
         
+        if 0
+            plot(eeg)
+            hold on
+            plot([temp_stim_idx(1) temp_stim_idx(1)],ylim)
+            plot([temp_stim_idx(2) temp_stim_idx(2)],ylim)
+        end
         
         
         if 0
