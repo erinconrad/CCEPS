@@ -110,6 +110,7 @@ out.missing = missing;
 out.clinical = clinical;
 out.bad = bad;
 out.bad_details = details;
+out.periods = periods;
 %}
 
 save([results_folder,sprintf('results_%s',dataName)],'out');

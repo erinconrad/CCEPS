@@ -1,8 +1,9 @@
 function elecs = identify_artifacts_within_periods(periods,values,stim,chLabels)
 
 %% Parameters
-n_stds = 5;
-
+n_stds = 2;
+iqr_mult = 3;
+prc = [5 95];
 
 fs = stim.fs;
 train_duration = stim.train_duration;
@@ -41,9 +42,39 @@ for ich = 1:length(periods)
         
         %% Switch nans to baseline value
         eeg(isnan(eeg)) = nanmedian(eeg);
-        C = abs(eeg-nanmedian(eeg));
+        
+        %hp = eeg;
+        hp = eegfilt(eeg,10,'hp',fs);
+
+        %% Get absolute value of deviation from baseline
+        bl = nanmedian(hp);
+        dev = hp-bl;
+
+        %% Find the points that cross above the threshold
+        a = prctile(hp,prc);
+        lower = a(1);
+        upper = a(2);
+        lower_thresh = bl - (bl-lower)*iqr_mult;
+        upper_thresh = bl + (upper-bl)*iqr_mult;
+
+        above_thresh = find(hp > upper_thresh | hp < lower_thresh);
+        if 0
         thresh_C = n_stds*nanstd(eeg);
-        above_thresh = find(C > thresh_C);
+        above_thresh = find(abs_dev > thresh_C);
+        end
+
+        if 0
+            figure
+            %plot(eeg)
+            plot(hp)
+            hold on
+
+            plot(xlim,[lower_thresh lower_thresh])
+            plot(xlim,[upper_thresh upper_thresh])
+            plot((above_thresh),hp(above_thresh),'o')
+            pause
+            close(gcf)
+        end
 
         candidate_arts = above_thresh;
 
