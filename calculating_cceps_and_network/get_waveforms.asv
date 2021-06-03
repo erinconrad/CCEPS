@@ -15,7 +15,7 @@ stim_indices = floor(stim_time*stim.fs);
 
 
 % Loop over elecs
-for ich = 1:length(elecs)
+for ich = 45%1:length(elecs)
  
     if isempty(elecs(ich).arts), continue; end
     
@@ -31,7 +31,7 @@ for ich = 1:length(elecs)
     
     
     % Loop over channels within this elec
-    for jch = 1:size(elecs(ich).avg,2)
+    for jch = 52%1:size(elecs(ich).avg,2)
     
         % Get the eeg
         eeg = elecs(ich).avg(:,jch);
@@ -122,15 +122,7 @@ for ich = 1:length(elecs)
         %}
         
         % If anything too big in whole period, throw it out
-        if 0
-            figure
-            plot(eeg)
-            hold on
-            plot([temp_stim_idx(1) temp_stim_idx(1)],ylim)
-            plot([temp_n2_idx(end) temp_n2_idx(end)],ylim)
-            
-        end
-        if max(abs(eeg(temp_stim_idx(1):temp_n2_idx(end))-nanmedian(eeg))) > 1e3
+        if max(eeg(
             n1(jch,:) = [nan nan];
             n2(jch,:) = [nan nan];
         end

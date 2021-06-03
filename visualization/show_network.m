@@ -12,7 +12,7 @@ stim_edges = ch_info.stim_edges;
 response_edges = ch_info.response_edges;
 normalize = ch_info.normalize;
 
-im = imagesc(A);
+im = imagesc(log(A));
 hold on
 for i = 1:length(stim_edges)
     plot([stim_edges(i) stim_edges(i)],get(gca,'ylim'),'k');

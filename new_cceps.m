@@ -1,3 +1,7 @@
+%{
+More artifact rejection - if big dc change???
+%}
+
 %% Parameters
 % data name to run (look for variable in workspace, otherwise use this
 % default)
@@ -8,7 +12,7 @@ end
 
 % which waveform to plot
 wav = 'N1';
-how_to_normalize = 2;
+how_to_normalize = 0;
 
 % Stimulation parameters
 stim.pulse_width = 300e-6; % pulse width in seconds
