@@ -69,7 +69,7 @@ for ich = 1:length(periods)
     
     %% Now, take the mode across the artifacts on the different contacts to get final timing
     n_non_empty = sum(cell2mat(cellfun(@(x) ~isempty(x), elec_arts,'uniformoutput',false)));
-    if n_non_empty
+    if n_non_empty == 0
         elecs(ich).arts = [];
         continue
     end
