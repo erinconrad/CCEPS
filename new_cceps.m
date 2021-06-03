@@ -1,6 +1,7 @@
 %% Parameters
 % data name to run (look for variable in workspace, otherwise use this
 % default)
+clearvars -except dataName
 if ~exist('dataName','var')
     dataName = 'HUP212_CCEP';
 end
