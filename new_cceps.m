@@ -90,7 +90,7 @@ details = [];
 elecs = signal_average(bipolar_values,elecs,stim,chLabels,0);
 
 %% Identify CCEP waveforms
-elecs = get_waveforms(elecs,stim,chLabels);
+elecs = get_waveforms(elecs,stim);
 
 %% Merge old and new elecs
 %elecs = merge_elecs(out,elecs,chLabels);
