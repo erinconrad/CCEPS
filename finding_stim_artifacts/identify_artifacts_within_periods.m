@@ -68,7 +68,11 @@ for ich = 1:length(periods)
     end
     
     %% Now, take the mode across the artifacts on the different contacts to get final timing
-    %n_non_empty = sum(cell2mat(cellfun(@(x) ~isempty(x), elec_arts,'uniformoutput',false)));
+    n_non_empty = sum(cell2mat(cellfun(@(x) ~isempty(x), elec_arts,'uniformoutput',false)));
+    if n_non_empty
+        elecs(ich).arts = [];
+        continue
+    end
     consensus_arts = final_timing(elec_arts,min_agree,max_off,min_off);
     
     
