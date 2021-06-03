@@ -89,7 +89,7 @@ end
 A(A0<thresh_amp) = nan;
 
 %% Convert electrode labels to anatomic locations
-if isempty(ana)
+if 1%isempty(ana)
     response_labels = chLabels(response_chs);
     stim_labels = chLabels(stim_chs);
     mean_positions_response = 1:length(response_labels);

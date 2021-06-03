@@ -3,7 +3,7 @@ function elecs = get_waveforms(elecs,stim)
 
 %% Parameters
 idx_before_stim = 20;
-n1_time = [15e-3 30e-3];
+n1_time = [15e-3 50e-3];
 n2_time = [50e-3 300e-3];
 stim_time = [-5e-3 15e-3];
 stim_val_thresh = 1e3;
