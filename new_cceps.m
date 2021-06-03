@@ -86,7 +86,7 @@ details = [];
 
 
 %% Perform signal averaging
-elecs = signal_average(values,elecs,stim,chLabels,0);
+elecs = signal_average(bipolar_values,elecs,stim,chLabels,0);
 
 %% Identify CCEP waveforms
 elecs = get_waveforms(elecs,stim,chLabels);
