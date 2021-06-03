@@ -1,7 +1,7 @@
 function elecs = identify_artifacts_within_periods(periods,values,stim,chLabels)
 
 %% Parameters
-n_stds = 5;
+n_stds = 3;
 
 
 fs = stim.fs;

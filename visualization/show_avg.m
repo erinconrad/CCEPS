@@ -50,7 +50,9 @@ n2_time = convert_indices_to_times(n2_idx,stim.fs,elecs(ich).times(1));
 eeg_times = convert_indices_to_times(1:length(eeg),stim.fs,elecs(ich).times(1));
 plot(eeg_times,eeg,'k','linewidth',2);
 hold on
-plot(n1_time,eeg(n1_idx),'bX','markersize',20,'linewidth',4);
+if ~isnan(n1_idx)
+    plot(n1_time,eeg(n1_idx),'bX','markersize',20,'linewidth',4);
+end
 %plot(n2_time,eeg(n2_idx),'go','markersize',20,'linewidth',4);
 
 
