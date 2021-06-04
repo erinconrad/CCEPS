@@ -33,11 +33,18 @@ for ich = 1:length(elecs)
                 bit = values(idx(j,1):idx(j,2),jch);
             end
             
-            eeg_bits(j,:) = bit - mean(bit);
+            bit = bit-mean(bit);
+            
+            % if there are any really high values, throw it out
+            if max(abs(bit)) > 1e3
+                bit = nan(size(bit));
+            end
+            
+            eeg_bits(j,:) = bit;
         end
 
         % Average the eeg
-        eeg_avg = mean(eeg_bits,1);
+        eeg_avg = nanmean(eeg_bits,1);
 
         % add to structure
         elecs(ich).avg(:,jch) = eeg_avg;

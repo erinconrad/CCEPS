@@ -68,6 +68,11 @@ for t = 1:nt
         vals(end-(length(vals)-size(all_traces,1))+1:end) = [];
     end
     vals = vals-mean(vals);
+    
+    if max(abs(vals)) > 1e3
+        vals = nan(size(vals));
+    end
+    
     all_traces(:,t) = vals;
 end
 
