@@ -1,4 +1,4 @@
-function [bad,details] = reject_bad_chs(values,chLabels,fs,elecs)
+function [bad,details] = reject_bad_chs_2(values,chLabels,fs,elecs)
 
 %% Parameters to reject super high variance
 tile = 98;
@@ -23,13 +23,15 @@ noisy_ch = [];
 all_std = nan(length(which_chs),1);
 
 %% Get all stim times
-all_stims = [];
-for i = 1:length(elecs)
-    all_stims = [all_stims;elecs(i).arts];
-end
+if ~isempty(elecs)
+    all_stims = [];
+    for i = 1:length(elecs)
+        all_stims = [all_stims;elecs(i).arts];
+    end
 
-%% Close to stim parameter
-close_stim = 0.5*fs;
+    %% Close to stim parameter
+    close_stim = 0.5*fs;
+end
 
 
 for i = 1:length(which_chs)
@@ -91,16 +93,22 @@ for i = 1:length(which_chs)
     thresh = [bl - mult*(bl-pct(1)), bl + mult*(pct(2)-bl)];
     idx_outside = find(eeg > thresh(2) | eeg < thresh(1));
     
-    % how many outside the threshold are NOT close to a known stim artifact
-    num_out_not_stim = 0;
-    for o = 1:length(idx_outside)
-        if ~any(abs(idx_outside(o)-all_stims) < close_stim)
-            num_out_not_stim = num_out_not_stim + 1;
+    if ~isempty(elecs)
+        % how many outside the threshold are NOT close to a known stim artifact
+        num_out_not_stim = 0;
+        for o = 1:length(idx_outside)
+            if ~any(abs(idx_outside(o)-all_stims) < close_stim)
+                num_out_not_stim = num_out_not_stim + 1;
+            end
         end
-    end
-    
-    if num_out_not_stim/length(eeg) >= perc_above
-        bad_ch = 1;
+
+        if num_out_not_stim/length(eeg) >= perc_above
+            bad_ch = 1;
+        end
+    else
+        if length(idx_outside)/length(eeg) >= perc_above
+            bad_ch = 1;
+        end
     end
     
     if 0
