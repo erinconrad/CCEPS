@@ -8,10 +8,11 @@ n2_time = [50e-3 300e-3];
 stim_time = [-5e-3 15e-3];
 stim_val_thresh = 1e3;
 rel_thresh = 3;
+fs = stim.fs;
 
-n1_idx = floor(n1_time*stim.fs);
-n2_idx = floor(n2_time*stim.fs);
-stim_indices = floor(stim_time*stim.fs);
+n1_idx = floor(n1_time*fs);
+n2_idx = floor(n2_time*fs);
+stim_indices = floor(stim_time*fs);
 
 
 % Loop over elecs
@@ -58,9 +59,28 @@ for ich = 1:length(elecs)
         n1_z_score = n1_eeg_abs/baseline_sd;
         n2_z_score = n2_eeg_abs/baseline_sd;
         
-        % find the identity of the peaks
+        %% find the identity of the peaks
+        [pks,locs] = findpeaks(n1_z_score,'MinPeakDistance',5e-3*fs);
+        [n1_peak,I] = max(pks); % find the biggest
+        n1_peak_idx = round(locs(I));
+        if isempty(n1_peak)
+            n1_peak = nan;
+            n1_peak_idx = nan;
+        end
+        
+        [pks,locs] = findpeaks(n2_z_score,'MinPeakDistance',5e-3*fs);
+        [n2_peak,I] = max(pks); % find the biggest
+        n2_peak_idx = round(locs(I));
+        if isempty(n2_peak)
+            n2_peak = nan;
+            n2_peak_idx = nan;
+        end
+        
+        
+        %{
         [n1_peak,n1_peak_idx] = max(n1_z_score);
         [n2_peak,n2_peak_idx] = max(n2_z_score);
+        %}
         old_n1_peak = n1_peak_idx;
         
         if 0
