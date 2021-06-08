@@ -7,6 +7,7 @@ if ~exist('dataName','var')
     dataName = 'HUP213_CCEP';
 end
 
+rm_vis = 0;
 time_to_measure = 30;
 tw = 2; % 2 second calculations
 
@@ -92,7 +93,10 @@ excess_auto = sum(~ismember(bad,bad_visual));
 excess_visual = sum(~ismember(bad_visual,bad));
 fprintf('\nFound %d unique bad visually and %d unique bad automatically\n',...
     excess_visual,excess_auto);
-bad = unique([bad;bad_visual]);
+
+if rm_vis
+    bad = unique([bad;bad_visual]);
+end
 
 %% Reduce data
 keep_chs = 1:length(chLabels);
