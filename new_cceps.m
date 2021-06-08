@@ -118,7 +118,11 @@ out.bad_details = details;
 out.periods = periods;
 %}
 
-save([results_folder,sprintf('results_%s',dataName)],'out');
+outdir = [results_folder,'out_files/'];
+if ~exist(outdir,'dir')
+    mkdir(outdir)
+end
+save([outdir,sprintf('results_%s',dataName)],'out');
 
 
 %% Build a network
@@ -126,4 +130,4 @@ save([results_folder,sprintf('results_%s',dataName)],'out');
 %[A,ch_info] = build_network(elecs,stim,wav,nchs,chLabels,ana,how_to_normalize,0);
 out.A = A;
 out.ch_info = ch_info;
-save([results_folder,sprintf('results_%s',dataName)],'out');
+save([outdir,sprintf('results_%s',dataName)],'out');
