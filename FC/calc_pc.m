@@ -39,7 +39,7 @@ for i = 1:nw
     end
     
     %% unwrap the pc matrix into a one dimensional vector for storage
-    all_pc(:,i) = wrap_or_unwrap_adjacency(pc);
+    all_pc(:,i) = wrap_or_unwrap_adjacency_2(pc);
     
     
 end
