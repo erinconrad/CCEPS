@@ -30,7 +30,7 @@ ana = out.ana;
 normalize = out.how_to_normalize;
 nchs = length(chLabels);
 
-thresh_amp = 4;
+thresh_amp = 6;
 
 keep_chs = get_chs_to_ignore(chLabels);
 

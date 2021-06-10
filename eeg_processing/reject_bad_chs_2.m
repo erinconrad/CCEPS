@@ -7,7 +7,7 @@ perc_above = 0.005;
 abs_thresh = 1e4;
 
 %% Parameter to reject high 60 Hz
-percent_60_hz = 0.5;
+percent_60_hz = 0.05;
 
 %% Parameter to reject electrodes with much higher std than most electrodes
 mult_std = 10;
@@ -151,7 +151,7 @@ for i = 1:length(which_chs)
     P = P(1:ceil(length(P)/2));
     freqs = freqs(1:ceil(length(freqs)/2));
     
-    P_60Hz = sum(P(freqs > 58 & freqs < 62))/sum(P);
+    P_60Hz = sum(P(freqs > 59 & freqs < 61))/sum(P);
     if P_60Hz > percent_60_hz
         bad_ch = 1;
     end

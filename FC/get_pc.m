@@ -4,7 +4,7 @@
 % default)
 clearvars -except dataName
 if ~exist('dataName','var')
-    dataName = 'HUP213_CCEP';
+    dataName = 'HUP216_CCEP';
 end
 
 rm_vis = 0;
@@ -35,7 +35,7 @@ else
 end
 
 %% Pull output mat
-out = load([results_folder,'results_',dataName,'.mat']);
+out = load([results_folder,'out_files/results_',dataName,'.mat']);
 out = out.out;
 
 

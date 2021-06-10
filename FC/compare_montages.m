@@ -1,5 +1,14 @@
 function compare_montages(pout)
 
+%% Get various path locations
+locations = cceps_files; % Need to make a file pointing to you own path
+script_folder = locations.script_folder;
+results_folder = locations.results_folder;
+
+% add paths
+addpath(genpath(script_folder));
+
+
 bipolar = pout.bipolar_pc;
 machine = pout.machine_pc;
 car = pout.car_pc;
