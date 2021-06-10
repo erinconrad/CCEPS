@@ -125,7 +125,8 @@ for ich = 1:length(elecs)
         if sum(stim_eeg) > rel_thresh * sum(n1_eeg_abs)
             n1(jch,:) = [nan nan];
         end
-        %
+        %{
+        % ERIN JUST REMOVED THIS
         if max(stim_eeg) > rel_thresh*max(n1_eeg_abs)
             n1(jch,:) = [nan nan];
         end
@@ -133,8 +134,9 @@ for ich = 1:length(elecs)
         
         % If the sum of the absolute value in the stim period is above a
         % certain threshold, throw out n1 because I am likely to catch stim
-        % rather than n1
-        
+        % rather than n1  
+        % ERIN JUST REMOVED THIS
+        %{
         if sum((stim_eeg)) > stim_val_thresh
             n1(jch,:) = [nan nan];
             n2(jch,:) = [nan nan];
