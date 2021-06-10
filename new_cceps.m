@@ -7,7 +7,7 @@ More artifact rejection - if big dc change???
 % default)
 clearvars -except dataName
 if ~exist('dataName','var')
-    dataName = 'HUP212_CCEP';
+    dataName = 'CHOP_CCEPs';
 end
 
 % which waveform to plot

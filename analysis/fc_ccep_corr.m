@@ -1,4 +1,6 @@
 
+clearvars -except pout out
+
 do_binary = 0;
 show_labels = 0;
 

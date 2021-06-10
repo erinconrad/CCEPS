@@ -8,7 +8,6 @@ results_folder = locations.results_folder;
 % add paths
 addpath(genpath(script_folder));
 
-
 bipolar = pout.bipolar_pc;
 machine = pout.machine_pc;
 car = pout.car_pc;

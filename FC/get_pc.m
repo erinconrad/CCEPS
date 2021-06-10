@@ -4,7 +4,7 @@
 % default)
 clearvars -except dataName
 if ~exist('dataName','var')
-    dataName = 'HUP216_CCEP';
+    dataName = 'CHOP_CCEPs';
 end
 
 rm_vis = 0;
@@ -62,6 +62,7 @@ else
     end
 
     pc_time = [min_period - time_to_measure min_period-1];
+    %pc_time = [9346.09 9346.09+2];
 end
     
 %{
@@ -87,16 +88,20 @@ discard_chs = find(~keep);
 % Automated
 [bad,details] = reject_bad_chs_2(values,chLabels,fs,[]);
 
-bad_visual = find(ismember(chLabels,clinical.visually_bad_chs));
+if iscell(clinical.visually_bad_chs)
+    bad_visual = find(ismember(chLabels,clinical.visually_bad_chs));
 
-excess_auto = sum(~ismember(bad,bad_visual));
-excess_visual = sum(~ismember(bad_visual,bad));
-fprintf('\nFound %d unique bad visually and %d unique bad automatically\n',...
-    excess_visual,excess_auto);
-
-if rm_vis
-    bad = unique([bad;bad_visual]);
+    excess_auto = sum(~ismember(bad,bad_visual));
+    excess_visual = sum(~ismember(bad_visual,bad));
+    fprintf('\nFound %d unique bad visually and %d unique bad automatically\n',...
+        excess_visual,excess_auto);
+    
+    if rm_vis
+        bad = unique([bad;bad_visual]);
+    end
 end
+
+
 
 %% Reduce data
 keep_chs = 1:length(chLabels);
