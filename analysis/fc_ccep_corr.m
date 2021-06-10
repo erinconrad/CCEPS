@@ -24,7 +24,8 @@ is_pc = ismember(restricted_labels,pc_labels);
 %% Build final CCEP network
 final_labels = restricted_labels(is_pc);
 ccep = B(is_pc,is_pc);
-
+% make nans zero
+ccep(isnan(ccep)) = 0;
 
 
 %% Get pc network
@@ -39,8 +40,7 @@ end
 
 if do_binary == 1
     
-    % make nans zero
-    ccep(isnan(ccep)) = 0;
+    
     
     %% Turn matrices into binary versions
     all_cors = (pc(:));

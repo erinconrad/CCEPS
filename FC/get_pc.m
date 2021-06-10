@@ -145,4 +145,4 @@ outdir = [results_folder,'out_files/'];
 if ~exist(outdir,'dir')
     mkdir(outdir)
 end
-save([results_folder,sprintf('pc_%s',dataName)],'pout');
+save([outdir,sprintf('pc_%s',dataName)],'pout');
