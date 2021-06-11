@@ -48,7 +48,6 @@ end
 %% Pull clinical info
 if ~missing_clinical
     clinical = pull_clinical_info(dataName);
-    stim.current = clinical.current;
 else
     clinical = [];
 end
@@ -61,7 +60,15 @@ if do_edf
     chLabels = data.chLabels;
 else
     tic
-    times = [clinical.start_time,clinical.end_time];
+    if strcmp(clinical.end_time,'end')
+        % Get file duration
+        session = IEEGSession(dataName,loginname, pwfile);
+        duration = session.data.rawChannels(1).get_tsdetails.getDuration/(1e6); %convert from microseconds
+        session.delete;
+        times = [clinical.start_time,duration];
+    else
+        times = [clinical.start_time,clinical.end_time];
+    end
     data = download_eeg(dataName,loginname, pwfile,times);
     t = toc;
     fprintf('\nGot data in %1.1f minutes\n',t/60);
@@ -124,7 +131,8 @@ end
 %% Say which electrodes have stim
 if ~missing_clinical
     stim_chs = clinical.stim_electrodes;
-    [extra,missing,elecs] = find_missing_chs(elecs,stim_chs,chLabels);
+    stim_current = clinical.current;
+    [extra,missing,elecs] = find_missing_chs(elecs,stim_chs,stim_current,chLabels);
 else
     extra = nan;
     missing = nan;

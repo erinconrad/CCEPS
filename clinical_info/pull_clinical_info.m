@@ -41,15 +41,26 @@ clinical.current_test_elecs = {};
 
 %% Add easy stuff
 clinical.name = name;
-clinical.current = T.Current(1);
 clinical.start_time = T.MainStimStartTime(1);
-clinical.end_time = T.MainStimEndTime(1);
+if iscell(T.MainStimEndTime)
+    clinical.end_time = T.MainStimEndTime{1};
+else
+    clinical.end_time = T.MainStimEndTime(1);
+end
 clinical.other = T.Other(1);
 clinical.clinical_effects = T.ClinicalEffects(1);
 clinical.time_breaks = T.TimeBreaks(~isnan(T.TimeBreaks));
 clinical.main_ieeg_file = T.IeegName{2};
 clinical.stim_time_main_file = T.MainStimStartTime(2);
 clinical.visually_bad_chs = T.visuallyBadChannels;
+
+%% Add current
+all_current = {};
+for i = 1:length(T.Current)
+    all_current = [all_current;T.Current{i}];
+end
+clinical.current = all_current;
+
 
 %% Add stim electrodes
 if iscell(T.Electrodes)
