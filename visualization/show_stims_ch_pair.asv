@@ -74,12 +74,11 @@ for t = 1:nt
     
     %
     all_idx = 1:length(vals);
-    stim_idx = out.elecs(sch).stim_idx;
-    stim_indices = stim_indices + stim_idx - 1;
+    stim_idx = elecs(sch).stim_idx;
     non_stim_idx = all_idx;
     non_stim_idx(ismember(non_stim_idx,stim_indices)) = [];
     
-    if 0
+    if 1
         plot(vals)
         hold on
         plot([stim_indices(1) stim_indices(1)],ylim)

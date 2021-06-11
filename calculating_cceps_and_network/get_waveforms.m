@@ -43,7 +43,6 @@ for ich = 1:length(elecs)
         % Get the eeg in the stim time
         stim_eeg = abs(eeg(temp_stim_idx(1):temp_stim_idx(2))-baseline);
         
-
         % Get the eeg in the n1 and n2 time
         n1_eeg = eeg(temp_n1_idx(1):temp_n1_idx(2));
         n2_eeg = eeg(temp_n2_idx(1):temp_n2_idx(2));
@@ -77,54 +76,30 @@ for ich = 1:length(elecs)
         end
         
         
-        %{
-        [n1_peak,n1_peak_idx] = max(n1_z_score);
-        [n2_peak,n2_peak_idx] = max(n2_z_score);
-        %}
-        old_n1_peak = n1_peak_idx;
-        
-        if 0
-            plot(eeg)
-            hold on
-            plot([temp_stim_idx(1) temp_stim_idx(1)],ylim)
-            plot([temp_stim_idx(2) temp_stim_idx(2)],ylim)
-        end
-        
-        
-        if 0
-            plot(linspace(elecs(ich).times(1),elecs(ich).times(2),length(eeg)),eeg)
-            hold on
-            plot([elecs(ich).times(1) (stim_idx-idx_before_stim)/stim.fs+elecs(ich).times(1)],[baseline baseline])
-            plot((n1_peak_idx+ temp_n1_idx(1))/stim.fs+elecs(ich).times(1),...
-                eeg(n1_peak_idx+ temp_n1_idx(1)),'o')
-            title(sprintf('Stim: %s, CCEP: %s\nN1 at %1.1f ms',...
-                chLabels{ich},chLabels{jch},((n1_peak_idx + temp_n1_idx(1) -2)/stim.fs+elecs(ich).times(1))*1e3))
-            pause
-            hold off
-        end
-        %}
-        %
-        
-        %}
-        
-        
-        
         % redefine idx relative to time after stim
         n1_peak_idx = n1_peak_idx + temp_n1_idx(1) - 1 - stim_idx - 1;
         n2_peak_idx = n2_peak_idx + temp_n2_idx(1) - 1 - stim_idx - 1;
-        
-        
-        
+
         % store   
         n1(jch,:) = [n1_peak,n1_peak_idx];
         n2(jch,:) = [n2_peak,n2_peak_idx];
         
         
+        %% Do various things to reject likely artifact
+        % 1:
         % If sum of abs value in stim period is above a certain threshold
         % relative to sum of abs value in n1 period, throw out n1
         if sum(stim_eeg) > rel_thresh * sum(n1_eeg_abs)
             n1(jch,:) = [nan nan];
         end
+        
+        % 2:
+        % If anything too big in whole period, throw it out
+        if max(abs(eeg(temp_stim_idx(1):temp_n2_idx(end))-nanmedian(eeg))) > 1e3
+            n1(jch,:) = [nan nan];
+            n2(jch,:) = [nan nan];
+        end
+        
         %{
         % ERIN JUST REMOVED THIS
         if max(stim_eeg) > rel_thresh*max(n1_eeg_abs)
@@ -143,7 +118,7 @@ for ich = 1:length(elecs)
         end
         %}
         
-        % If anything too big in whole period, throw it out
+        
         if 0
             figure
             plot(eeg)
@@ -152,10 +127,7 @@ for ich = 1:length(elecs)
             plot([temp_n2_idx(end) temp_n2_idx(end)],ylim)
             
         end
-        if max(abs(eeg(temp_stim_idx(1):temp_n2_idx(end))-nanmedian(eeg))) > 1e3
-            n1(jch,:) = [nan nan];
-            n2(jch,:) = [nan nan];
-        end
+        
         
         if 0
            figure

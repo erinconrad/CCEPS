@@ -52,6 +52,8 @@ plot(eeg_times,eeg,'k','linewidth',2);
 hold on
 if ~isnan(n1_idx)
     plot(n1_time,eeg(n1_idx),'bX','markersize',20,'linewidth',4);
+    text(n1_time+0.01,eeg(n1_idx),sprintf('N1 z-score: %1.1f',n1_arr(jch,1)),...
+        'fontsize',20)
 end
 %plot(n2_time,eeg(n2_idx),'go','markersize',20,'linewidth',4);
 

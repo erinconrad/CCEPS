@@ -1,6 +1,15 @@
 
 clearvars -except pout out
 
+%% Get various path locations
+locations = cceps_files; % Need to make a file pointing to you own path
+script_folder = locations.script_folder;
+results_folder = locations.results_folder;
+
+% add paths
+addpath(genpath(script_folder));
+
+
 do_binary = 0;
 show_labels = 0;
 

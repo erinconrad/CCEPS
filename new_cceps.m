@@ -1,5 +1,9 @@
 %{
 More artifact rejection - if big dc change???
+
+Adjust waveform detector somewhat?
+Add Caren's stuff
+Adjust gui to show you the N1s when you click on it
 %}
 
 %% Parameters
@@ -7,7 +11,7 @@ More artifact rejection - if big dc change???
 % default)
 clearvars -except dataName
 if ~exist('dataName','var')
-    dataName = 'CHOP_CCEPs';
+    dataName = 'HUP212_CCEP';
 end
 
 % which waveform to plot

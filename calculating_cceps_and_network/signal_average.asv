@@ -22,11 +22,8 @@ for ich = 1:length(elecs)
     % Initialize avg
     elecs(ich).avg = zeros(idx(1,2)-idx(1,1)+1,size(values,2));
     
-    elecs(ich).stim_idx = -idx_to_take(1);
-    elecs(ich).times = time_to_take;
-    
     % Get stim idx
-    stim_idx = elecs(ich).stim_idx;
+    stim_idx = out.elecs(sch).stim_idx;
     stim_indices = stim_indices + stim_idx - 1;
     
     % Loop over all other channels
@@ -44,26 +41,10 @@ for ich = 1:length(elecs)
             
             bit = bit-mean(bit);
             
-            all_idx = 1:length(bit);
-            non_stim_idx = all_idx;
-            non_stim_idx(ismember(non_stim_idx,stim_indices)) = [];
-            
-            if 0
-                plot(bit)
-                hold on
-                plot([stim_indices(1) stim_indices(1)],ylim)
-                plot([stim_indices(end) stim_indices(end)],ylim)
-            end
-            
             % if there are any really high values outside of stim, throw it out
-            if max(abs(bit(non_stim_idx))) > 1e3
-                bit = nan(size(bit));
-            end
-            %{
             if max(abs(bit)) > 1e3
                 bit = nan(size(bit));
             end
-            %}
             
             eeg_bits(j,:) = bit;
         end
@@ -77,7 +58,8 @@ for ich = 1:length(elecs)
     
     end
     
-    
+    elecs(ich).stim_idx = -idx_to_take(1);
+    elecs(ich).times = time_to_take;
 end
 
 end
