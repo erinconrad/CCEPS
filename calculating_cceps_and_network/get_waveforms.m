@@ -102,7 +102,7 @@ for ich = 1:length(elecs)
         
         % 3:
         % If big DC shift, throw it out
-        median_n2_diff = abs(median(n2_eeg) - baseline);
+        median_n2_diff = abs(median(eeg(700:end)-nanmedian(eeg)) - baseline);
         if median_n2_diff/baseline_sd > 6
             n1(jch,:) = [nan nan];
             n2(jch,:) = [nan nan];
