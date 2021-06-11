@@ -26,6 +26,11 @@ for i = 1:length(elecs)
             missing = [missing;i];
         end
     else
+        
+        if length(stim_current) == 1
+            elecs(i).current = stim_current;
+        end
+        
         % Did I mistakenly find it?
         if ~isempty(elecs(i).arts)
             extra = [extra;i];

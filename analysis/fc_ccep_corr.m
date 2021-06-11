@@ -1,5 +1,9 @@
 
-clearvars -except pout out
+%% Parameters
+do_binary = 0;
+do_pretty = 1;
+do_log = 1;
+do_gui = 1;
 
 %% Get various path locations
 locations = cceps_files; % Need to make a file pointing to you own path
@@ -9,9 +13,9 @@ results_folder = locations.results_folder;
 % add paths
 addpath(genpath(script_folder));
 
-
-do_binary = 0;
-show_labels = 0;
+if do_pretty
+    show_labels = 0;
+end
 
 %% Get stim labels
 chLabels = out.chLabels;
@@ -86,22 +90,52 @@ flow = outdegree-indegree;
 %% Make plots
 figure
 set(gcf,'position',[100 100 800 800])
-tiledlayout(3,2,'TileSpacing','compact','padding','compact')
+main_axis = tiledlayout(3,2,'TileSpacing','compact','padding','compact');
 nexttile
-turn_nans_white_ccep(ccep)
-title('CCEP')
-xticks(1:length(final_labels))
-xticklabels(final_labels)
-yticks(1:length(final_labels))
-yticklabels(final_labels)
+if do_log
+    plot_thing = log(ccep);
+    %plot_thing(plot_thing = -inf) = 0;
+else
+    plot_thing = ccep;
+end
+imagesc(plot_thing)
+%title('CCEP')
+if show_labels
+    xticks(1:length(final_labels))
+    xticklabels(final_labels)
+    yticks(1:length(final_labels))
+    yticklabels(final_labels)
+else
+    xticklabels([])
+    yticklabels([])
+end
+xlabel('Stim electrode')
+ylabel('Response electrode')
+c = colorbar;
+if do_log
+    ylabel(c,'CCEP Z-score (log scale)','fontsize',15)
+else
+    ylabel(c,'CCEP Z-score','fontsize',15)
+end
+set(gca,'fontsize',15)
 
 nexttile
-turn_nans_white_ccep(pc)
-title('Resting PC')
-xticks(1:length(final_labels))
-xticklabels(final_labels)
-yticks(1:length(final_labels))
-yticklabels(final_labels)
+imagesc(pc)
+%title('Resting PC')
+if show_labels
+    xticks(1:length(final_labels))
+    xticklabels(final_labels)
+    yticks(1:length(final_labels))
+    yticklabels(final_labels)
+else
+    xticklabels([])
+    yticklabels([])
+end
+xlabel('Electrode')
+ylabel('Electrode')
+d = colorbar;
+ylabel(d,'Pearson correlation coefficient','fontsize',15);
+set(gca,'fontsize',15)
 
 if show_labels
     col = [1 1 1];
@@ -111,52 +145,85 @@ end
     
 
 nexttile
-plot(ns,outdegree,'o','color',col)
+colororder({'k','k'})
+yyaxis left
+yticklabels([])
+yyaxis right
+plot(ns,outdegree,'o','color',col,'linewidth',2)
 if show_labels
     text(ns,outdegree,final_labels,'horizontalalignment','center')
 end
 xlabel('PC node strength')
 ylabel('CCEP outdegree')
+set(gca,'fontsize',15)
 yl = ylim;xl = xlim;
-text(xl(1)+0.02*(xl(2)-xl(1)),yl(1)+0.9*(yl(2)-yl(1)),...
-    sprintf('r = %1.2f\np = %1.3f',rout,pou))
+text(xl(1),yl(2),sprintf('r = %1.2f\np = %1.3f',rout,pou),...
+    'VerticalAlignment','top','fontsize',15)
 
 
 nexttile
-plot(ns,indegree,'o','color',col)
+colororder({'k','k'})
+yyaxis left
+yticklabels([])
+yyaxis right
+plot(ns,indegree,'o','color',col,'linewidth',2)
 if show_labels
     text(ns,indegree,final_labels,'horizontalalignment','center')
 end
 xlabel('PC node strength')
 ylabel('CCEP indegree')
+set(gca,'fontsize',15)
 xl = xlim; yl = ylim;
-text(xl(1)+0.02*(xl(2)-xl(1)),yl(1)+0.9*(yl(2)-yl(1)),...
-    sprintf('r = %1.2f\np = %1.3f',rin,pin))
+text(xl(1),yl(2),sprintf('r = %1.2f\np = %1.3f',rin,pin),...
+    'VerticalAlignment','top','fontsize',15)
+
 
 nexttile
-plot(ns,degree_centrality,'o','color',col)
+colororder({'k','k'})
+yyaxis left
+yticklabels([])
+yyaxis right
+plot(ns,degree_centrality,'o','color',col,'linewidth',2)
 if show_labels
     text(ns,degree_centrality,final_labels,'horizontalalignment','center')
 end
 xlabel('PC node strength')
 ylabel('CCEP degree centrality')
+set(gca,'fontsize',15)
 yl = ylim;xl = xlim;
-text(xl(1)+0.02*(xl(2)-xl(1)),yl(1)+0.9*(yl(2)-yl(1)),...
-    sprintf('r = %1.2f\np = %1.3f',rcen,pcen))
+text(xl(1),yl(2),sprintf('r = %1.2f\np = %1.3f',rcen,pcen),...
+    'VerticalAlignment','top','fontsize',15)
+
 
 nexttile
-plot(ns,flow,'o','color',col)
+colororder({'k','k'})
+yyaxis left
+yticklabels([])
+yyaxis right
+plot(ns,flow,'o','color',col,'linewidth',2)
 if show_labels
     text(ns,flow,final_labels,'horizontalalignment','center')
 end
 
 xlabel('PC node strength')
 ylabel('CCEP flow')
+set(gca,'fontsize',15)
 yl = ylim;xl = xlim;
-text(xl(1)+0.02*(xl(2)-xl(1)),yl(1)+0.9*(yl(2)-yl(1)),...
-    sprintf('r = %1.2f\np = %1.3f',rflow,pflow))
+text(xl(1),yl(2),sprintf('r = %1.2f\np = %1.3f',rflow,pflow),...
+    'VerticalAlignment','top','fontsize',15)
 
-if 1
+%% Title
+C = strsplit(out.name,'_');
+title(main_axis,C{1},'fontsize',20)
+if do_pretty
+    out_dir = [results_folder,'fc_corr/'];
+    if ~exist(out_dir,'dir')
+        mkdir(out_dir);
+    end
+    print(gcf,[out_dir,C{1}],'-dpng');
+end
+
+if do_gui
 while 1
     try
         [x,y] = ginput;
@@ -179,4 +246,5 @@ while 1
     close(gcf)
 end
 end
-    
+
+ 

@@ -6,6 +6,7 @@ wav = out.waveform;
 dataName = out.name;
 how_to_normalize = out.how_to_normalize;
 nchs = size(chLabels,1);
+clinical = out.clinical;
 
 if isfield(out,'A')
     A = out.A;

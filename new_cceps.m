@@ -1,7 +1,9 @@
 %{
-More artifact rejection - if big dc change???
-
-Add Caren's stuff
+To dos
+1) More artifact rejection - if big dc change???
+2) Add code to remove bad channels in this step (currently only doing in
+the FC code)
+3) Ways to allow for repeated stims?
 %}
 
 %% Parameters
@@ -13,7 +15,7 @@ end
 
 % Get from edf?
 do_edf = 0;
-edf_path = '../../data/CHOP011shortclip.EDF';
+edf_path = '../../data/CHOP011shortclip.EDF'; % modify to be your path
 
 % Use annotations?
 use_annotations = 0;
@@ -56,9 +58,11 @@ end
 
 %% Get EEG data
 if do_edf
+    % Get data from edf
     data = get_edf(edf_path,[]);
     chLabels = data.chLabels;
 else
+    % Get data from IEEG (the main way)
     tic
     if strcmp(clinical.end_time,'end')
         % Get file duration
@@ -148,7 +152,7 @@ elecs = signal_average(bipolar_values,elecs,stim,chLabels,0);
 elecs = get_waveforms(elecs,stim);
 
 %% Save info
-%
+
 out.name = dataName;
 out.elecs = elecs;
 out.stim = stim;
@@ -164,7 +168,7 @@ out.clinical = clinical;
 out.bad = [];
 out.bad_details = [];
 out.periods = periods;
-%}
+
 
 outdir = [results_folder,'out_files/'];
 if ~exist(outdir,'dir')
