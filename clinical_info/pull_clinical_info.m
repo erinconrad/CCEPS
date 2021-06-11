@@ -57,7 +57,7 @@ clinical.visually_bad_chs = T.visuallyBadChannels;
 %% Add current
 all_current = {};
 for i = 1:length(T.Current)
-    if isdouble(T.Current)
+    if strcmp(class(T.Current),'double')
         all_current = [all_current;T.Current(i)];
     else
         all_current = [all_current;T.Current{i}];
