@@ -100,6 +100,15 @@ for ich = 1:length(elecs)
             n2(jch,:) = [nan nan];
         end
         
+        % 3:
+        % If big DC shift, throw it out
+        median_n2_diff = abs(median(n2_eeg) - baseline);
+        if median_n2_diff/baseline_sd > 6
+            n1(jch,:) = [nan nan];
+            n2(jch,:) = [nan nan];
+        end
+        
+        
         %{
         % ERIN JUST REMOVED THIS
         if max(stim_eeg) > rel_thresh*max(n1_eeg_abs)

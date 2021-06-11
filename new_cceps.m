@@ -1,16 +1,15 @@
 %{
 To dos
-1) More artifact rejection - if big dc change???
-2) Add code to remove bad channels in this step (currently only doing in
+1) Add code to remove bad channels in this step (currently only doing in
 the FC code)
-3) Ways to allow for repeated stims?
+2) Ways to allow for repeated stims?
 %}
 
 %% Parameters
 % data name to run (look for variable in workspace, otherwise use this
 % default)
 if ~exist('dataName','var')
-    dataName = 'CHOP_CCEPs';
+    dataName = 'HUP216_CCEPs';
 end
 
 % Get from edf?
@@ -152,7 +151,6 @@ elecs = signal_average(bipolar_values,elecs,stim,chLabels,0);
 elecs = get_waveforms(elecs,stim);
 
 %% Save info
-
 out.name = dataName;
 out.elecs = elecs;
 out.stim = stim;
