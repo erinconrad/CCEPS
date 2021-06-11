@@ -1,7 +1,7 @@
 
 %% Parameters
 do_binary = 0;
-do_pretty = 1;
+do_pretty = 0;
 do_log = 1;
 do_gui = 1;
 
@@ -15,6 +15,8 @@ addpath(genpath(script_folder));
 
 if do_pretty
     show_labels = 0;
+else
+    show_labels = 1;
 end
 
 %% Get stim labels

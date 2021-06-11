@@ -77,6 +77,7 @@ for ich = 1:length(elecs)
         
         
         % redefine idx relative to time after stim
+        eeg_rel_peak_idx = n1_peak_idx + temp_n1_idx(1) - 1;
         n1_peak_idx = n1_peak_idx + temp_n1_idx(1) - 1 - stim_idx - 1;
         n2_peak_idx = n2_peak_idx + temp_n2_idx(1) - 1 - stim_idx - 1;
 
@@ -102,11 +103,42 @@ for ich = 1:length(elecs)
         
         % 3:
         % If big DC shift, throw it out
-        median_n2_diff = abs(median(eeg(700:end)-nanmedian(eeg)) - baseline);
+        %{
+        median_n2_diff = abs(nanmedian(eeg(length(eeg)-200:end)) - baseline);
         if median_n2_diff/baseline_sd > 6
             n1(jch,:) = [nan nan];
             n2(jch,:) = [nan nan];
         end
+        %}
+        
+        % 4:
+        % If no return to "baseline" between stim and N1, throw it out
+        %
+        [max_stim,stim_max_idx] = max(stim_eeg);
+        stim_max_idx = stim_max_idx + temp_stim_idx(1) - 1;
+        if ~isnan(n1_peak_idx)
+            
+            
+            % If there's no part in between close to baseline
+            close_to_baseline = 0.1*abs(eeg(stim_max_idx)-baseline);
+            
+            if 0
+                plot(eeg)
+                hold on
+                plot(stim_max_idx,eeg(stim_max_idx),'o')
+                plot(eeg_rel_peak_idx,eeg(eeg_rel_peak_idx),'o')
+                plot(xlim,[baseline+close_to_baseline baseline+close_to_baseline])
+                plot(xlim,[baseline-close_to_baseline baseline-close_to_baseline])
+                pause
+                close(gcf)
+            end
+            
+            if ~any(abs(eeg(stim_max_idx:eeg_rel_peak_idx) - baseline) < close_to_baseline)
+                n1(jch,:) = [nan nan];
+                n2(jch,:) = [nan nan];
+            end
+        end
+       
         
         
         %{
