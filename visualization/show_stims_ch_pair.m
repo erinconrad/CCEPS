@@ -86,10 +86,12 @@ for t = 1:nt
         plot([stim_indices(end) stim_indices(end)],ylim)
     end
     
+    %{
     if max(abs(vals(non_stim_idx))) > 1e3
         vals = nan(size(vals));
     end
-    %{
+    %}
+    %
     if max(abs(vals)) > 1e3
         vals = nan(size(vals));
     end

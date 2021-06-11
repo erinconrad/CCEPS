@@ -56,10 +56,12 @@ for ich = 1:length(elecs)
             end
             
             % if there are any really high values outside of stim, throw it out
+            %{
             if max(abs(bit(non_stim_idx))) > 1e3
                 bit = nan(size(bit));
             end
-            %{
+            %}
+            % If ANY really high values, throw it out
             if max(abs(bit)) > 1e3
                 bit = nan(size(bit));
             end
