@@ -9,7 +9,7 @@ the FC code)
 % data name to run (look for variable in workspace, otherwise use this
 % default)
 if ~exist('dataName','var')
-    dataName = 'HUP216_CCEPs';
+    dataName = 'CHOP_CCEPs';
 end
 
 % Get from edf?
@@ -17,7 +17,7 @@ do_edf = 0;
 edf_path = '../../data/CHOP011shortclip.EDF'; % modify to be your path
 
 % Use annotations?
-use_annotations = 1;
+use_annotations = 0;
 
 % Missing clinical?
 missing_clinical = 0;
