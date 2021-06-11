@@ -6,6 +6,7 @@ idx_before_stim = 20;
 n1_time = [15e-3 50e-3];
 n2_time = [50e-3 300e-3];
 stim_time = [-5e-3 15e-3];
+tight_stim_time = [-5e-3 5e-3];
 stim_val_thresh = 1e3;
 rel_thresh = 3;
 fs = stim.fs;
@@ -13,6 +14,7 @@ fs = stim.fs;
 n1_idx = floor(n1_time*fs);
 n2_idx = floor(n2_time*fs);
 stim_indices = floor(stim_time*fs);
+tight_stim_indices = floor(tight_stim_time*fs);
 
 
 % Loop over elecs
@@ -29,6 +31,7 @@ for ich = 1:length(elecs)
     temp_n1_idx = n1_idx + stim_idx - 1;
     temp_n2_idx = n2_idx + stim_idx - 1;
     temp_stim_idx = stim_indices + stim_idx - 1;
+    temp_tight_stim = tight_stim_indices + stim_idx-1;
     
     
     % Loop over channels within this elec
@@ -42,6 +45,7 @@ for ich = 1:length(elecs)
       
         % Get the eeg in the stim time
         stim_eeg = abs(eeg(temp_stim_idx(1):temp_stim_idx(2))-baseline);
+        tight_stim_eeg = abs(eeg(temp_tight_stim(1):temp_tight_stim(2))-baseline);
         
         % Get the eeg in the n1 and n2 time
         n1_eeg = eeg(temp_n1_idx(1):temp_n1_idx(2));
@@ -114,8 +118,8 @@ for ich = 1:length(elecs)
         % 4:
         % If no return to "baseline" between stim and N1, throw it out
         %
-        [max_stim,stim_max_idx] = max(stim_eeg);
-        stim_max_idx = stim_max_idx + temp_stim_idx(1) - 1;
+        [max_stim,stim_max_idx] = max(tight_stim_eeg);
+        stim_max_idx = stim_max_idx + temp_tight_stim(1) - 1;
         if ~isnan(n1_peak_idx)
             
             
@@ -133,7 +137,11 @@ for ich = 1:length(elecs)
                 close(gcf)
             end
             
-            if ~any(abs(eeg(stim_max_idx:eeg_rel_peak_idx) - baseline) < close_to_baseline)
+            if ~any(abs(eeg(stim_max_idx:eeg_rel_peak_idx) - baseline) < close_to_baseline) && ...
+                ~any(sign(eeg(stim_max_idx:eeg_rel_peak_idx) - baseline) ~=...
+                sign(eeg(stim_max_idx)-baseline))
+                %nothing passes to other side
+                
                 n1(jch,:) = [nan nan];
                 n2(jch,:) = [nan nan];
             end

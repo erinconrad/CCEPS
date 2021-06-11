@@ -41,7 +41,7 @@ in_arr(isnan(in_arr)) = -inf;
 top_10_in = sort_in_arr(1:10); % top 10
 
 figure
-set(gcf,'position',[100 400 1200 500])
+set(gcf,'position',[10 400 1400 350])
 tiledlayout(2,10,'TileSpacing','compact','padding','compact');
 
 %% Top row show top 10 response electrodes
