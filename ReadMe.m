@@ -61,6 +61,7 @@ stimulation-response electrodes to see the CCEPs waveform for that pair.
 Contributors:
 Erin Conrad
 Brittany Scheid
+Caren Armstrong
 University of PA, 2020
 
 %}
