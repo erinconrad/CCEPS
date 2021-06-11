@@ -1,25 +1,27 @@
 %{
 More artifact rejection - if big dc change???
 
+Adjust waveform detector somewhat?
 Add Caren's stuff
+Adjust gui to show you the N1s when you click on it
 %}
 
 %% Parameters
 % data name to run (look for variable in workspace, otherwise use this
 % default)
 if ~exist('dataName','var')
-    dataName = 'CHOP_CCEPs';
+    dataName = 'edf_example';
 end
 
 % Get from edf?
-do_edf = 0;
+do_edf = 1;
 edf_path = '../../data/CHOP011shortclip.EDF';
 
 % Use annotations?
 use_annotations = 0;
 
 % Missing clinical?
-missing_clinical = 0;
+missing_clinical = 1;
 
 % which waveform to plot
 wav = 'N1';
@@ -46,18 +48,15 @@ if isempty(locations.ieeg_folder) == 0
 end
 
 %% Pull clinical info
-if ~missing_clinical
-    clinical = pull_clinical_info(dataName);
-    stim.current = clinical.current;
-else
-    clinical = [];
-end
+if missing_clinical
+clinical = pull_clinical_info(dataName);
+stim.current = clinical.current;
 
 
 
 %% Get EEG data
 if do_edf
-    data = get_edf(edf_path,[]);
+    data = get_edf(edf_path);
     chLabels = data.chLabels;
 else
     tic
@@ -74,11 +73,7 @@ values = data.values;
 stim.fs = data.fs;
 
 %% Get anatomic locations
-if ~missing_clinical
-    ana = anatomic_location(chLabels,clinical,1);
-else
-    ana = [];
-end
+ana = anatomic_location(chLabels,clinical,1);
 
 if use_annotations
     %% Get stim periods
@@ -89,7 +84,6 @@ if use_annotations
 else
     
     % Do old way to get artifacts
-    periods = nan;
     
     %% Identify stimulation artifacts
     % Loop over EEG
@@ -122,22 +116,27 @@ else
 end
 
 %% Say which electrodes have stim
-if ~missing_clinical
-    stim_chs = clinical.stim_electrodes;
-    [extra,missing,elecs] = find_missing_chs(elecs,stim_chs,chLabels);
-else
-    extra = nan;
-    missing = nan;
-end
+%stim_chs = true_stim(dataName);
+stim_chs = clinical.stim_electrodes;
+[extra,missing,elecs] = find_missing_chs(elecs,stim_chs,chLabels);
+
+%% Reject bad channels
+%[bad,details] = reject_bad_chs(values,chLabels,stim.fs,elecs);
+bad = [];
+details = [];
 
 %% Do bipolar montage
 [bipolar_values,bipolar_labels,bipolar_ch_pair] = bipolar_montage(values,[],chLabels);
+
 
 %% Perform signal averaging
 elecs = signal_average(bipolar_values,elecs,stim,chLabels,0);
 
 %% Identify CCEP waveforms
 elecs = get_waveforms(elecs,stim);
+
+%% Merge old and new elecs
+%elecs = merge_elecs(out,elecs,chLabels);
 
 %% Save info
 %
@@ -153,8 +152,8 @@ out.ana = ana;
 out.extra = extra;
 out.missing = missing;
 out.clinical = clinical;
-out.bad = [];
-out.bad_details = [];
+out.bad = bad;
+out.bad_details = details;
 out.periods = periods;
 %}
 

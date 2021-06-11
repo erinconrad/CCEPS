@@ -24,6 +24,7 @@ stim.pulse_width = 300e-6; % pulse width in seconds
 stim.train_duration = 30; % train duration (# stims) in seconds
 stim.stim_freq = 1; % frequency (in Hz) of stimulation
 
+
 %% Get various path locations
 locations = cceps_files; % Need to make a file pointing to you own path
 pwfile = locations.pwfile;
