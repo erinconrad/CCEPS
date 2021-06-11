@@ -12,19 +12,20 @@ if ~exist('dataName','var')
     dataName = 'CHOP_CCEPs';
 end
 
-% Get from edf?
+% Get from edf? (No most of the time, usually getting from ieeg.org)
 do_edf = 0;
-edf_path = '../../data/CHOP011shortclip.EDF'; % modify to be your path
+edf_path = '../data/CHOP011shortclip.EDF'; % modify to be your path
 
-% Use annotations?
-use_annotations = 0;
+% Use annotations? (Yes, unless the machine annotations are not available)
+use_annotations = 1;
 
-% Missing clinical?
+% Missing clinical? (No unless the clinical info is not in the excel
+% spreadsheet)
 missing_clinical = 0;
 
-% which waveform to plot
+% which waveform to plot (N1 is standard)
 wav = 'N1';
-how_to_normalize = 0;
+how_to_normalize = 0; % should probably keep 0
 
 
 %% Probably always the same

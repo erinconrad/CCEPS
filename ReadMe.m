@@ -24,11 +24,11 @@ dataset including the stimulation time period, the electrodes
 stimulated, and anatomical locations of different electrodes.
 
 Next, open up the script cceps.m and modify the dataName of the IEEG.org
-CCEPS file you want to analyze. Also, modify the stimulation parameters if
+CCEPS file you want to analyze. Also, modify the additional parameters if
 needed.
 
 Then, navigate to the main folder containing cceps.m and run
->> cceps
+>> new_cceps
 
 The code works according to the following pipeline
 1) Downloads ieeg data for the stim session
@@ -62,9 +62,5 @@ Contributors:
 Erin Conrad
 Brittany Scheid
 University of PA, 2020
-
-The visualization scripts call the function tight_subplot created by:
-% Pekka Kumpulainen 21.5.2012   @tut.fi
-% Tampere University of Technology / Automation Science and Engineering
 
 %}

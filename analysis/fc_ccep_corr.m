@@ -1,9 +1,9 @@
 
 %% Parameters
 do_binary = 0;
-do_pretty = 0;
+do_pretty = 1;
 do_log = 1;
-do_gui = 1;
+do_gui = 0;
 
 %% Get various path locations
 locations = cceps_files; % Need to make a file pointing to you own path

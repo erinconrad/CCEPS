@@ -1,7 +1,7 @@
 
 %% Get which patient
 if ~exist('dataName','var')
-    dataName = 'HUP211_CCEP';
+    dataName = 'HUP212_CCEP';
 end
 
 
@@ -12,7 +12,7 @@ results_folder = locations.results_folder;
 addpath(genpath(script_folder));
 
 %% Load the output file
-outfile = [results_folder,'out_',dataName,'.mat'];
+outfile = [results_folder,'out_files/results_',dataName,'.mat'];
 
 if ~exist(outfile)
     error('Cannot find output file');
@@ -34,4 +34,4 @@ A = out.A;
 ch_info = out.ch_info;
 
 
-build_network(elecs,stim,wav,nchs,chLabels,ana,how_to_normalize,1);
+build_network(out,1);

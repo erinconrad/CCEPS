@@ -191,7 +191,6 @@ if do_plot == 1
 %% PLot
 figure
 set(gcf,'position',[1 11 1400 900])
-tight_subplot(1,1,[0.01 0.01],[0.10 0.02],[.12 .02]);
 show_network(A,ch_info);
 mydir  = pwd;
 idcs   = strfind(mydir,'/');
