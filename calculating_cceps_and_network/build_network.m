@@ -192,10 +192,7 @@ if do_plot == 1
 figure
 set(gcf,'position',[1 11 1400 900])
 show_network(A,ch_info);
-mydir  = pwd;
-idcs   = strfind(mydir,'/');
-newdir = mydir(1:idcs(end)-1);
-%print(gcf,[newdir,'/cceps_results/CCEP_network'],'-dpng');
+
 
 while 1
     try
