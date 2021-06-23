@@ -204,7 +204,7 @@ while 1
     if length(y) > 1, y = y(end); end
     figure
     set(gcf,'position',[215 385 1226 413])
-    tight_subplot(1,1,[0.01 0.01],[0.15 0.10],[.02 .02]);
+    %tight_subplot(1,1,[0.01 0.01],[0.15 0.10],[.02 .02]);
     show_avg(out,stim_chs(round(x)),response_chs(round(y)),0)
     
     pause

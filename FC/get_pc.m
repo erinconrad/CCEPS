@@ -4,7 +4,7 @@
 % default)
 clearvars -except dataName
 if ~exist('dataName','var')
-    dataName = 'CHOP_CCEPs';
+    dataName = 'HUP218_CCEP';
 end
 
 
