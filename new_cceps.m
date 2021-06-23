@@ -17,7 +17,7 @@ do_edf = 0;
 edf_path = '../data/CHOP011shortclip.EDF'; % modify to be your path
 
 % Use annotations? (Yes, unless the machine annotations are not available)
-use_annotations = 1;
+use_annotations = 0;
 
 % Missing clinical? (No unless the clinical info is not in the excel
 % spreadsheet)
