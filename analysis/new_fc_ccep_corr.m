@@ -4,7 +4,7 @@ do_binary = 0;
 do_pretty = 1;
 do_log = 0;
 do_gui = 0;
-do_symmetric = 0;
+do_symmetric = 1;
 
 %% Get various path locations
 locations = cceps_files; % Need to make a file pointing to you own path
@@ -39,7 +39,7 @@ final_stim_labels = stim_labels(is_stim_pc); % Remove stim labels that aren't pc
 final_response_labels = response_labels(is_response_pc);
 ccep = ccep(is_response_pc,is_stim_pc); % not symmetric.
 % make nans zero
-ccep(isnan(ccep)) = 0;
+%ccep(isnan(ccep)) = 0;
 
 %% Get pc network
 pc = pout.car_pc;
@@ -130,7 +130,7 @@ if do_log
 else
     plot_thing = ccep;
 end
-imagesc(plot_thing)
+turn_nans_white_ccep(plot_thing)
 %title('CCEP')
 if show_labels
     if do_symmetric
@@ -159,7 +159,7 @@ end
 set(gca,'fontsize',15)
 
 nexttile
-imagesc(pc)
+turn_nans_white_ccep(pc)
 %title('Resting PC')
 if show_labels
     if do_symmetric

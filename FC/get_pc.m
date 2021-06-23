@@ -7,9 +7,16 @@ if ~exist('dataName','var')
     dataName = 'CHOP_CCEPs';
 end
 
+if strcmp(dataName,'CHOP_CCEPs')
+    pc_time = [9346.09 9346.09+2];
+else
+    pc_time = [];
+end
+
 rm_vis = 0;
 time_to_measure = 30;
 tw = 2; % 2 second calculations
+
 
 %% Get various path locations
 locations = cceps_files; % Need to make a file pointing to you own path
@@ -47,22 +54,24 @@ else
     ieeg_name = dataName;
     research_start_time = clinical.start_time;
     
-    %% Find first closed relay time
-    periods = out.periods;
-    min_period = inf;
-    for i = 1:length(periods)
-        if periods(i).start_time < min_period
-            min_period = periods(i).start_time;
+    if isempty(pc_time)
+        %% Find first closed relay time
+        periods = out.periods;
+        min_period = inf;
+        for i = 1:length(periods)
+            if periods(i).start_time < min_period
+                min_period = periods(i).start_time;
+            end
         end
-    end
 
-    %% Plan to look 1 minute before
-    if min_period - time_to_measure < research_start_time
-        error('Not enough time between start and first stim');
-    end
+        %% Plan to look 1 minute before
+        if min_period - time_to_measure < research_start_time
+            error('Not enough time between start and first stim');
+        end
 
-    pc_time = [min_period - time_to_measure min_period-1];
-    %pc_time = [9346.09 9346.09+2];
+        pc_time = [min_period - time_to_measure min_period-1];
+    end
+    
 end
     
 %{
