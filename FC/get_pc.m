@@ -80,7 +80,10 @@ end
 %}
 
 %% Get EEG data
+tic
 data = download_eeg(ieeg_name,loginname, pwfile,pc_time);
+t = toc;
+fprintf('\nGot data in %1.1f s\n',t);
 chLabels = data.chLabels(:,1);
 % Remove leading zeros
 chLabels = remove_leading_zeros(chLabels);
@@ -129,10 +132,17 @@ car_values = values - repmat(nanmean(values,2),1,size(values,2));
 % Machine ref (do nothing)
 machine_values = values;
 
+fprintf('\nFinished getting different references, starting filters\n');
+tic;
+
 %% Notch and bandpass filter
 machine_values = do_filters(machine_values,fs);
 car_values = do_filters(car_values,fs);
 bipolar_values = do_filters(bipolar_values,fs);
+
+t = toc;
+fprintf('\nDid filters in %1.1f s. Starting PC calculation.\n',t);
+tic
 
 %% Get pc
 machine_pc = calc_pc(machine_values,fs,tw);
@@ -143,6 +153,9 @@ bipolar_pc = wrap_or_unwrap_adjacency_2(bipolar_pc);
 
 car_pc = calc_pc(car_values,fs,tw);
 car_pc = wrap_or_unwrap_adjacency_2(car_pc);
+
+t = toc;
+fprintf('\nDid PC calculation in %1.1f s\n',t);
 
 pout.details = details;
 pout.chLabels = chLabels;
