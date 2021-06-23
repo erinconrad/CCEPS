@@ -9,7 +9,7 @@ the FC code)
 % data name to run (look for variable in workspace, otherwise use this
 % default)
 if ~exist('dataName','var')
-    dataName = 'CHOP_CCEPs';
+    dataName = 'HUP218_CCEP';
 end
 
 % Get from edf? (No most of the time, usually getting from ieeg.org)
@@ -17,7 +17,7 @@ do_edf = 0;
 edf_path = '../data/CHOP011shortclip.EDF'; % modify to be your path
 
 % Use annotations? (Yes, unless the machine annotations are not available)
-use_annotations = 0;
+use_annotations = 1;
 
 % Missing clinical? (No unless the clinical info is not in the excel
 % spreadsheet)
@@ -64,7 +64,7 @@ if do_edf
 else
     % Get data from IEEG (the main way)
     tic
-    if strcmp(clinical.end_time,'end')
+    if strcmp(clinical.end_time,'end') || isnan(clinical.end_time)
         % Get file duration
         session = IEEGSession(dataName,loginname, pwfile);
         duration = session.data.rawChannels(1).get_tsdetails.getDuration/(1e6); %convert from microseconds

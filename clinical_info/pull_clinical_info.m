@@ -53,6 +53,7 @@ clinical.time_breaks = T.TimeBreaks(~isnan(T.TimeBreaks));
 clinical.main_ieeg_file = T.IeegName{2};
 clinical.stim_time_main_file = T.MainStimStartTime(2);
 clinical.visually_bad_chs = T.visuallyBadChannels;
+clinical.pc_time = [T.MainStimStartTime(2) T.MainStimEndTime(2)];
 
 %% Add current
 all_current = {};

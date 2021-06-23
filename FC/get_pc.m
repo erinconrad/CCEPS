@@ -7,11 +7,6 @@ if ~exist('dataName','var')
     dataName = 'CHOP_CCEPs';
 end
 
-if strcmp(dataName,'CHOP_CCEPs')
-    pc_time = [9346.09 9346.09+2];
-else
-    pc_time = [];
-end
 
 rm_vis = 0;
 time_to_measure = 30;
@@ -46,14 +41,20 @@ out = load([results_folder,'out_files/results_',dataName,'.mat']);
 out = out.out;
 
 
+
 if ~isempty(clinical.main_ieeg_file)
     ieeg_name = clinical.main_ieeg_file;
     research_start_time = clinical.stim_time_main_file;
-    pc_time = [research_start_time - 60*5,research_start_time-1]; % five minutes back
+    
+    if isempty(clinical.pc_time)
+        pc_time = [research_start_time - 60*5,research_start_time-1];
+    else
+        pc_time = clinical.pc_time;
+    end
 else
     ieeg_name = dataName;
     research_start_time = clinical.start_time;
-    
+    pc_time = clinical.pc_time;
     if isempty(pc_time)
         %% Find first closed relay time
         periods = out.periods;
