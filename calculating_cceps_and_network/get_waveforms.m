@@ -61,6 +61,7 @@ for ich = 1:length(elecs)
         % convert n1_eeg_abs to z score
         n1_z_score = n1_eeg_abs/baseline_sd;
         n2_z_score = n2_eeg_abs/baseline_sd;
+        %}
         
         %% find the identity of the peaks
         [pks,locs] = findpeaks(n1_z_score,'MinPeakDistance',5e-3*fs);

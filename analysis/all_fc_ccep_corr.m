@@ -2,7 +2,7 @@ function all_fc_ccep_corr
 
 %% Parameters
 do_fisher =1;
-do_all_plots = 0;
+do_all_plots = 1;
 do_symmetric = 1;
 
 %% Get various path locations
@@ -75,8 +75,8 @@ else
 end
 
 figure
-set(gcf,'position',[344 369 1019 292])
-main_axis = tiledlayout(1,2,'TileSpacing','compact','padding','compact');
+set(gcf,'position',[344 369 1019 330])
+main_axis = tiledlayout(1,2,'TileSpacing','compact','Padding','Loose');
 
 %% Outdegree
 nexttile
@@ -86,11 +86,15 @@ hold on
 plot(xlim,[0 0],'k--','linewidth',2)
 xticks(1:npts)
 xticklabels(names)
+xtickangle(45)
+
 ylim([-1 1])
 xl = xlim;
 yl = ylim;
-text(xl(2),yl(2),sprintf('p = %1.2f',pout),'fontsize',20,...
+
+text(xl(2),yl(2),sprintf('p = %1.3f',pout),'fontsize',20,...
     'HorizontalAlignment','right','VerticalAlignment','Top')
+
 ylabel('Outdegree-PC correlation')
 set(gca,'fontsize',20)
 
@@ -102,6 +106,7 @@ hold on
 plot(xlim,[0 0],'k--','linewidth',2)
 xticks(1:npts)
 xticklabels(names)
+xtickangle(45)
 ylim([-1 1])
 text(xl(2),yl(2),sprintf('p = %1.2f',pin),'fontsize',20,...
     'HorizontalAlignment','right','VerticalAlignment','Top')
@@ -113,6 +118,11 @@ out_dir = [results_folder,'fc_corr/'];
 if ~exist(out_dir,'dir')
     mkdir(out_dir);
 end
-print(gcf,[out_dir,'combined'],'-dpng');
+
+if do_symmetric
+    print(gcf,[out_dir,'combined_symm'],'-dpng');
+else
+    print(gcf,[out_dir,'combined_asymm'],'-dpng');
+end
 
 end

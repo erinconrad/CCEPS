@@ -30,7 +30,7 @@ ana = out.ana;
 normalize = out.how_to_normalize;
 nchs = length(chLabels);
 
-thresh_amp = 6;
+thresh_amp = 3;
 
 keep_chs = get_chs_to_ignore(chLabels);
 
@@ -57,10 +57,18 @@ end
 
 
 %% Remove ignore chs
+%
 stim_chs = chs(nansum(A,2)>0);
 A = A(stim_chs,keep_chs)';
 response_chs = response_chs(keep_chs);
 A0 = A;
+%}
+%{
+stim_chs = 1:nchs;
+response_chs = 1:nchs;
+A(:,~keep_chs) = nan;
+A0 = A;
+%}
 
 %% Normalize
 if normalize == 0 

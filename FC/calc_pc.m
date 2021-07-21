@@ -1,5 +1,9 @@
 function avg_pc = calc_pc(values,fs,tw)
 
+%{
+This calculates Pearson connectivity measurements
+%}
+
 nchs = size(values,2);
 
 %% Define time windows
@@ -15,13 +19,15 @@ nw = length(window_start);
 
 %% Calculate pc for each window
 all_pc = zeros(nchs*(nchs-1)/2,nw);
+
+% I am trying to parallelize this part
 for i = 1:nw
     clip = values(window_start:window_start+iw,:);
     pc = zeros(nchs,nchs);
     
     
     for ich = 1:nchs
-        for jch = 1:ich-1 % check that this is the right num to loop through
+        for jch = 1:ich-1 
             
             % pearson correlation
             r = corr(clip(:,ich),clip(:,jch));

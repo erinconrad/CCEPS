@@ -17,7 +17,7 @@ for s = 1:length(sn)
     % Read ieeg name
     curr_name = T.IeegName{1};
     
-    if strcmp(name,curr_name)
+    if contains(curr_name,name)
         found_it = 1;
         break
     end
@@ -50,8 +50,16 @@ end
 clinical.other = T.Other(1);
 clinical.clinical_effects = T.ClinicalEffects(1);
 clinical.time_breaks = T.TimeBreaks(~isnan(T.TimeBreaks));
-clinical.main_ieeg_file = T.IeegName{2};
-clinical.stim_time_main_file = T.MainStimStartTime(2);
+
+clinical.all_files = T.IeegName;
+% Remove empty
+emp_cells = cellfun(@(x) isempty(x),clinical.all_files);
+clinical.all_files(emp_cells) = [];
+clinical.main_ieeg_file = clinical.all_files(2:end);
+clinical.all_start_times = T.MainStimStartTime;
+clinical.all_start_times = clinical.all_start_times(1:length(clinical.all_files));
+
+
 clinical.visually_bad_chs = T.visuallyBadChannels;
 clinical.pc_time = [T.MainStimStartTime(2) T.MainStimEndTime(2)];
 

@@ -2,10 +2,15 @@
 function stats = new_fc_ccep_corr(out,pout,do_plots,do_symmetric)
 
 %% Parameters
-do_binary = 0;
+do_binary = 1;
 do_pretty = 1;
+which_ref = 'car';
 do_log = 0;
 do_gui = 0;
+type = 'Spearman';
+
+%% Ref name
+ref_name = [which_ref,'_pc'];
 
 %% Get various path locations
 locations = cceps_files; % Need to make a file pointing to you own path
@@ -43,7 +48,7 @@ ccep = ccep(is_response_pc,is_stim_pc); % not symmetric.
 %ccep(isnan(ccep)) = 0;
 
 %% Get pc network
-pc = pout.car_pc;
+pc = pout.(ref_name);
 pc_labels = pout.keep_labels;
 is_ccep_stim_label = ismember(pc_labels,final_stim_labels);
 is_ccep_response_label = ismember(pc_labels,final_response_labels);
@@ -74,18 +79,25 @@ if do_binary == 1
     
     
     %% Turn matrices into binary versions
+    % Only take non-nan cceps
+    ccep(isnan(ccep)) = 0;
+    ccep(ccep~=0) = 1;
+    num_zero = sum(sum(ccep==0));
+    perc_zero = num_zero/(size(ccep,1)*size(ccep,2));
+    
+    % Make same percentage of pc non nans
     all_cors = (pc(:));
-    top_5 = prctile(all_cors,95);
-    pc((pc)<top_5) = nan;
+    top_prc = prctile(all_cors,perc_zero*100);
+    pc((pc)<top_prc) = 0;
+    pc(pc~=0) = 1;
 
-    % same for ccep
-    ccep(ccep==0) = nan;
+   
     
     % Degrees
-    ns_response_chs = sum(~isnan(pc),2);
-    ns_stim_chs = sum(~isnan(pc),1);
-    outdegree = sum(~isnan(ccep),1);
-    indegree = sum(~isnan(ccep),2)';
+    ns_response_chs = sum(pc,2);
+    ns_stim_chs = sum(pc,1);
+    outdegree = sum(ccep,1);
+    indegree = sum(ccep,2)';
     
     
 else
@@ -99,8 +111,8 @@ else
 
 end
 
-[rout,pou] = corr(ns_stim_chs',outdegree');
-[rin,pin] = corr(ns_response_chs,indegree');
+[rout,pou] = corr(ns_stim_chs',outdegree','Type',type);
+[rin,pin] = corr(ns_response_chs,indegree','Type',type);
 
 stats.out.r = rout;
 stats.out.p = pou;
@@ -139,7 +151,11 @@ if do_plots
     else
         plot_thing = ccep;
     end
-    turn_nans_white_ccep(plot_thing)
+    if ~do_binary
+        turn_nans_white_ccep(plot_thing)
+    else
+        imagesc(plot_thing)
+    end
     %title('CCEP')
     if show_labels
         if do_symmetric
@@ -168,7 +184,11 @@ if do_plots
     set(gca,'fontsize',15)
 
     nexttile
-    turn_nans_white_ccep(pc)
+    if ~do_binary
+        turn_nans_white_ccep(pc)
+    else
+        imagesc(pc)
+    end
     %title('Resting PC')
     if show_labels
         if do_symmetric
@@ -190,6 +210,7 @@ if do_plots
     ylabel('Electrode')
     d = colorbar;
     ylabel(d,'Pearson correlation coefficient','fontsize',15);
+
     set(gca,'fontsize',15)
 
     if show_labels

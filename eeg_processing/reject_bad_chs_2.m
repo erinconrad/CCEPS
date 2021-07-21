@@ -22,17 +22,7 @@ high_var_ch = [];
 noisy_ch = [];
 all_std = nan(length(which_chs),1);
 
-%% Get all stim times
-if ~isempty(elecs)
-    all_stims = [];
-    for i = 1:length(elecs)
-        all_stims = [all_stims;elecs(i).arts];
-    end
-
-    %% Close to stim parameter
-    close_stim = 0.5*fs;
-end
-
+%% Find first close relay annotation
 
 for i = 1:length(which_chs)
     
@@ -40,6 +30,8 @@ for i = 1:length(which_chs)
     
     ich = which_chs(i);
     eeg = values(:,ich);
+    
+    %% Define baseline
     bl = nanmedian(eeg);
     
     %% Get channel standard deviation
