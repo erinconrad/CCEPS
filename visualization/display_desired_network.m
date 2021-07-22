@@ -34,4 +34,4 @@ A = out.A;
 ch_info = out.ch_info;
 
 
-build_network(out,1);
+new_build_network(out,1);
