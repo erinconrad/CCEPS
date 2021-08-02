@@ -51,7 +51,7 @@ for ich = 1:length(elecs)
             end
             
             % Low pass filter
-            bit = lowpass(bit,lpf,fs);
+            %bit = lowpass(bit,lpf,fs);
             
             % Remove mean (so that DC differences don't affect calculation)
             bit = bit-mean(bit);
