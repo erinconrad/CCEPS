@@ -9,7 +9,7 @@ the FC code)
 % data name to run (look for variable in workspace, otherwise use this
 % default)
 if ~exist('dataName','var')
-    dataName = 'HUP211_CCEP';
+    dataName = 'HUP212_CCEP';
 end
 
 % Get from edf? (No most of the time, usually getting from ieeg.org)
@@ -146,7 +146,7 @@ end
 [bipolar_values,bipolar_labels,bipolar_ch_pair] = bipolar_montage(values,[],chLabels);
 
 %% Perform signal averaging
-elecs = signal_average(bipolar_values,elecs,stim,chLabels,0);
+elecs = signal_average(bipolar_values,elecs,stim,chLabels,1);
 
 %% Identify CCEP waveforms
 elecs = get_waveforms(elecs,stim);

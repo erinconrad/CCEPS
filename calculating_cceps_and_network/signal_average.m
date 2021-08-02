@@ -44,6 +44,12 @@ for ich = 1:length(elecs)
                 bit = values(idx(j,1):idx(j,2),jch);
             end
             
+            % skip if all nans
+            if sum(~isnan(bit)) == 0
+                eeg_bits(j,:) = bit;
+                continue
+            end
+            
             % Low pass filter
             bit = lowpass(bit,lpf,fs);
             
