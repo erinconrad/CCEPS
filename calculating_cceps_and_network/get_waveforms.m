@@ -44,6 +44,8 @@ for ich = 1:length(elecs)
         baseline = mean(eeg(1:stim_idx-idx_before_stim));
       
         % Get the eeg in the stim time
+        %stim_eeg = abs(eeg(temp_stim_idx(1):temp_stim_idx(2))-baseline);
+        %tight_stim_eeg = abs(eeg(temp_tight_stim(1):temp_tight_stim(2))-baseline);
         stim_eeg = abs(eeg(temp_stim_idx(1):temp_stim_idx(2))-baseline);
         tight_stim_eeg = abs(eeg(temp_tight_stim(1):temp_tight_stim(2))-baseline);
         

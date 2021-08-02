@@ -1,10 +1,12 @@
 function elecs = signal_average(values,elecs,stim,chLabels,do_bipolar)
 
 %% Parameters 
-time_to_take = [-100e-3 800e-3];
-idx_to_take = round(stim.fs * time_to_take);
+time_to_take = [-500e-3 800e-3];
+fs = stim.fs;
+lpf = 30; % cut-off frequency for low pass filter
+idx_to_take = round(fs * time_to_take);
 stim_time = [-5e-3 15e-3];
-stim_indices = round(stim_time(1)*stim.fs):round(stim_time(2)*stim.fs);
+stim_indices = round(stim_time(1)*fs):round(stim_time(2)*fs);
 
 for ich = 1:length(elecs)
     
@@ -42,6 +44,10 @@ for ich = 1:length(elecs)
                 bit = values(idx(j,1):idx(j,2),jch);
             end
             
+            % Low pass filter
+            bit = lowpass(bit,lpf,fs);
+            
+            % Remove mean (so that DC differences don't affect calculation)
             bit = bit-mean(bit);
             
             all_idx = 1:length(bit);
