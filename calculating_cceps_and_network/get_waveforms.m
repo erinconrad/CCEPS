@@ -10,6 +10,7 @@ tight_stim_time = [-5e-3 5e-3];
 stim_val_thresh = 1e3;
 rel_thresh = 3;
 fs = stim.fs;
+lpf = 30;
 
 n1_idx = floor(n1_time*fs);
 n2_idx = floor(n2_time*fs);
@@ -39,7 +40,17 @@ for ich = 1:length(elecs)
     
         % Get the eeg
         eeg = elecs(ich).avg(:,jch);
-
+        
+      
+        
+        % LPF
+        %{
+        if sum(~isnan(eeg)) ~= 0
+            eeg = lowpass(eeg,lpf,fs);
+        end
+        %}
+        
+      
         % Get the baseline
         baseline = mean(eeg(1:stim_idx-idx_before_stim));
       
@@ -140,15 +151,20 @@ for ich = 1:length(elecs)
                 close(gcf)
             end
             
-            if ~any(abs(eeg(stim_max_idx:eeg_rel_peak_idx) - baseline) < close_to_baseline) && ...
+            if  max(n1_eeg_abs) < max(stim_eeg )... % the stim artifact is larger than the n1
+                && ...%nothing passes to other side
+                (~any(abs(eeg(stim_max_idx:eeg_rel_peak_idx) - baseline) < close_to_baseline) && ...
                 ~any(sign(eeg(stim_max_idx:eeg_rel_peak_idx) - baseline) ~=...
-                sign(eeg(stim_max_idx)-baseline))
-                %nothing passes to other side
+                sign(eeg(stim_max_idx)-baseline)))
+                
                 
                 n1(jch,:) = [nan nan];
                 n2(jch,:) = [nan nan];
             end
+        
+        
         end
+        %}
        
         
         

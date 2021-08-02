@@ -21,7 +21,11 @@ n1_keep = cellfun(@(x) find(~isnan(x(:,1)) & x(:,1) > thresh_amp),n1_stim,'Unifo
 % for z < 6
 n1_threshout = cellfun(@(x) find(~isnan(x(:,1)) & x(:,1) <= thresh_amp),n1_stim,'UniformOutput',false);
 
+% find those that were rejected as artifact 
+n1_nan = cellfun(@(x) find(isnan(x(:,1))),n1_stim,'UniformOutput',false);
+
 % make plots for each category of N1, store in struct
+it.Artifact = n1_nan;
 it.Retained = n1_keep;
 it.Discard = n1_threshout;
 
@@ -37,6 +41,10 @@ for cat = fields(it)' % iterate through struct fields, corresponding to the Reta
         s_e = stim_electrodes(s); % convert iterable index to index of stimulation electrode in montage
         % X = out.elecs(s_e).avg(:,it.(cat){s}); % get time series of responses for electrodes with significant (or non-sig) responses
         n_rec = length(it.(cat){s}); % get list of recording electrodes with significant N1s (or non-significant in the case of 'Discard');
+        
+        if n_rec == 0
+            continue
+        end
         
         f=figure;
         [sp1,sp2] = subplot_ind2(ceil(sqrt(n_rec))^2); % make plot square

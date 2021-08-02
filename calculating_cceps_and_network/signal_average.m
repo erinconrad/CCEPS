@@ -1,4 +1,4 @@
-function elecs = signal_average(values,elecs,stim,chLabels,do_bipolar)
+function elecs = signal_average(values,elecs,stim)
 
 %% Parameters 
 time_to_take = [-500e-3 800e-3];
@@ -37,12 +37,11 @@ for ich = 1:length(elecs)
         
         % get those bits of eeg
         eeg_bits = zeros(length(arts),idx(1,2)-idx(1,1)+1);
+               
         for j = 1:size(idx,1)
-            if do_bipolar
-                bit = bipolar_montage(values(idx(j,1):idx(j,2),:),jch,chLabels);
-            else
-                bit = values(idx(j,1):idx(j,2),jch);
-            end
+            
+            bit = values(idx(j,1):idx(j,2),jch);
+            
             
             % skip if all nans
             if sum(~isnan(bit)) == 0
@@ -81,11 +80,31 @@ for ich = 1:length(elecs)
             
             eeg_bits(j,:) = bit;
         end
+        
+        
+        %% LPF the output prior to averaging
+        % Take the transpose
+        signal = eeg_bits';
+        
+        % make nan columns zero (so it won't break the filter)
+        nan_cols = sum(~isnan(signal),1) == 0;
+        signal(:,nan_cols) = 0;
+        
+        % LPF
+        signal = lowpass(signal,lpf,fs);
+        
+        % Make the nan columns nan again
+        signal(:,nan_cols) = nan;
+        
+        % retranspose
+        eeg_bits = signal';
 
-        % Average the eeg
+        %% Average the eeg
         eeg_avg = nanmean(eeg_bits,1);
+        
+        
 
-        % add to structure
+        %% add to structure
         elecs(ich).avg(:,jch) = eeg_avg;
         
     

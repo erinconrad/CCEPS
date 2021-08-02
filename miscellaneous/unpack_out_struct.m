@@ -7,6 +7,8 @@ dataName = out.name;
 how_to_normalize = out.how_to_normalize;
 nchs = size(chLabels,1);
 clinical = out.clinical;
+bipolar_labels = out.bipolar_labels;
+bipolar_ch_pair = out.bipolar_ch_pair;
 
 if isfield(out,'A')
     A = out.A;
