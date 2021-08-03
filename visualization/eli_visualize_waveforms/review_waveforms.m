@@ -25,7 +25,6 @@ n1_threshout = cellfun(@(x) find(~isnan(x(:,1)) & x(:,1) <= thresh_amp),n1_stim,
 n1_nan = cellfun(@(x) find(isnan(x(:,1))),n1_stim,'UniformOutput',false);
 
 % make plots for each category of N1, store in struct
-it.Artifact = n1_nan;
 it.Retained = n1_keep;
 it.Discard = n1_threshout;
 
