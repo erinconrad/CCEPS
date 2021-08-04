@@ -177,8 +177,9 @@ save([outdir,sprintf('results_%s',dataName)],'out');
 
 
 %% Build a network
-[A,ch_info] = new_build_network(out,0);
+[A,ch_info,details] = new_build_network(out,0);
 %[A,ch_info] = build_network(elecs,stim,wav,nchs,chLabels,ana,how_to_normalize,0);
 out.A = A;
 out.ch_info = ch_info;
+out.details = details;
 save([outdir,sprintf('results_%s',dataName)],'out');

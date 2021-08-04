@@ -30,7 +30,7 @@ it.Discard = n1_threshout;
 
 width = 4; height = 2; %in cm, for each subplot
 n_stim = length(stim_electrodes);
-FIGURE_DISPLAY('off');
+%FIGURE_DISPLAY('off');
 for cat = fields(it)' % iterate through struct fields, corresponding to the Retained indices and Discard indices
     cat = char(cat);
     for s = 1:n_stim
@@ -60,6 +60,6 @@ for cat = fields(it)' % iterate through struct fields, corresponding to the Reta
         close(f);
     end
 end
-FIGURE_DISPLAY('on');
+%FIGURE_DISPLAY('on');
 
 end

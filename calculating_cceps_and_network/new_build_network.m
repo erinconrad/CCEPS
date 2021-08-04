@@ -1,4 +1,4 @@
-function [A,ch_info]= new_build_network(out,do_plot)
+function [A,ch_info,details]= new_build_network(out,do_plot)
 
 %{ 
 [A,ch_info]= build_network(elecs,stim,which,nchs,chLabels,...
@@ -30,13 +30,21 @@ ana = out.ana;
 normalize = out.how_to_normalize;
 nchs = length(chLabels);
 
-thresh_amp = 6;
+thresh_amp = 4;
 
 keep_chs = get_chs_to_ignore(chLabels);
 
 chs = 1:nchs;
 
 A = nan(nchs,nchs);
+
+%% initialize rejection details
+details.thresh = thresh_amp;
+details.which = which;
+details.reject.sig_avg = nan(length(elecs),length(elecs));
+details.reject.pre_thresh = nan(length(elecs),length(elecs));
+details.reject.at_thresh = nan(length(elecs),length(elecs));
+details.reject.keep = nan(length(elecs),length(elecs));
 
 for ich = 1:length(elecs)
  
@@ -47,6 +55,11 @@ for ich = 1:length(elecs)
     % Add peak amplitudes to the array
     A(ich,:) = arr(:,1);
     
+    all_nans = (sum(~isnan(elecs(ich).avg),1) == 0)';
+    details.reject.sig_avg(ich,:) = all_nans;
+    details.reject.pre_thresh(ich,:) = isnan(elecs(ich).(which)(:,1)) & ~all_nans;
+    details.reject.at_thresh(ich,:) = elecs(ich).(which)(:,1) < thresh_amp;
+    details.reject.keep(ich,:) = elecs(ich).(which)(:,1) >= thresh_amp;
 end
 
 

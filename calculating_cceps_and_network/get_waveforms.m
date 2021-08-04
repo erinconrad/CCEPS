@@ -10,13 +10,11 @@ tight_stim_time = [-5e-3 5e-3];
 stim_val_thresh = 1e3;
 rel_thresh = 3;
 fs = stim.fs;
-lpf = 30;
 
 n1_idx = floor(n1_time*fs);
 n2_idx = floor(n2_time*fs);
 stim_indices = floor(stim_time*fs);
 tight_stim_indices = floor(tight_stim_time*fs);
-
 
 % Loop over elecs
 for ich = 1:length(elecs)

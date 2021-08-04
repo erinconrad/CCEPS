@@ -3,7 +3,6 @@ function elecs = signal_average(values,elecs,stim)
 %% Parameters 
 time_to_take = [-500e-3 800e-3];
 fs = stim.fs;
-lpf = 30; % cut-off frequency for low pass filter
 idx_to_take = round(fs * time_to_take);
 stim_time = [-5e-3 15e-3];
 stim_indices = round(stim_time(1)*fs):round(stim_time(2)*fs);
@@ -30,6 +29,10 @@ for ich = 1:length(elecs)
     % Get stim idx
     stim_idx = elecs(ich).stim_idx;
     stim_indices = stim_indices + stim_idx - 1;
+    
+    % Initialize array listing number of bad trials
+    elecs(ich).n_bad_trials = zeros(size(values,2),1);
+    
     
     % Loop over all other channels
     for jch = 1:size(values,2)
@@ -75,6 +78,7 @@ for ich = 1:length(elecs)
             % If ANY really high values, throw it out
             if max(abs(bit)) > 1e3
                 bit = nan(size(bit));
+                elecs(ich).n_bad_trials(j) = elecs(ich).n_bad_trials(j) + 1;
             end
             %}
             
@@ -82,22 +86,6 @@ for ich = 1:length(elecs)
         end
         
         
-        %% LPF the output prior to averaging
-        % Take the transpose
-        signal = eeg_bits';
-        
-        % make nan columns zero (so it won't break the filter)
-        nan_cols = sum(~isnan(signal),1) == 0;
-        signal(:,nan_cols) = 0;
-        
-        % LPF
-        signal = lowpass(signal,lpf,fs);
-        
-        % Make the nan columns nan again
-        signal(:,nan_cols) = nan;
-        
-        % retranspose
-        eeg_bits = signal';
 
         %% Average the eeg
         eeg_avg = nanmean(eeg_bits,1);
