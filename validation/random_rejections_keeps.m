@@ -51,7 +51,7 @@ for cat = fields(reject)'
     meet_criteria = find(reject.(cat)==1);
     
     % Pick a random N
-    to_plot = randsample(meet_criteria,n_to_plot);
+    to_plot = randsample(meet_criteria,min(n_to_plot,length(meet_criteria)));
     
     % Loop through these
     for i = 1:length(to_plot)

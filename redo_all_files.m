@@ -29,5 +29,6 @@ end
 for i = 1:length(all_names)
     clearvars -except all_names i
     dataName = all_names{i};
+    fprintf('\nDoing %s\n',dataName);
     new_cceps
 end
