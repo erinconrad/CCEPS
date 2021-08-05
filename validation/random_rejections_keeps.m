@@ -97,7 +97,7 @@ for cat = fields(reject)'
     title(t,sprintf('%s %s z-score threshold %1.1f',cat,which,thresh));
     
     % Save the figure
-    fname = sprintf('%s_%sthresh_%1.1f',cat,which,thresh);
+    fname = sprintf('%s_%sthresh_%d',cat,which,thresh);
     print(gcf,[out_folder,fname],'-dpng');
     
 end
