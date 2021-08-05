@@ -3,9 +3,7 @@ function out = count_crossings(eeg)
 out = 0;
 
 % Pick a few points to define signal end
-points = [1 length(eeg);...
-    round(0.1*length(eeg)) round(0.9*length(eeg));...
-    round(0.25*length(eeg)) round(0.75*length(eeg))];
+points = [1 length(eeg)];
 
 for ip = 1:length(points)
     signal = eeg(points(ip,1):points(ip,2));

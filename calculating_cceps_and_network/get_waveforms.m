@@ -131,12 +131,14 @@ for ich = 1:length(elecs)
         % new 3:
         % If the EEG signal in the N1 period crosses a line connecting its
         % first and last point more than twice, throw it out
+        %
         n_crossings = count_crossings(n1_eeg);
       
         if n_crossings > max_crossings
             n1(jch,:) = [nan nan];
             n2(jch,:) = [nan nan];
         end
+        %}
         
         % 4:
         % If no return to "baseline" between stim and N1, throw it out
