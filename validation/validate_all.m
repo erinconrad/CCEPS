@@ -22,6 +22,7 @@ for s = 1:length(sn)
     out = out.out;
     fprintf('\nDoing %s\n',subj);
     random_rejections_keeps(out)
+    close all % close figures generated in function
     clear out
     clear subj
     
