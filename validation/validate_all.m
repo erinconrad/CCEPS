@@ -20,6 +20,7 @@ for s = 1:length(sn)
     subj = (sn{s});
     out = load([[locations.results_folder,'out_files/results_'],subj,'_CCEP.mat']);
     out = out.out;
+    fprintf('\nDoing %s\n',subj);
     random_rejections_keeps(out)
     clear out
     clear subj
