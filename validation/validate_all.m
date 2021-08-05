@@ -15,10 +15,14 @@ else
     sn = sheetnames(file_name);
 end
 
-all_names = {};
 for s = 1:length(sn)
     subj = (sn{s});
-    out = load([[locations.results_folder,'out_files/results_'],subj,'_CCEP.mat']);
+    
+    % get ieeg name
+    T = readtable(file_name,'sheet',sn{s});
+    ieeg_name = T.IeegName{1};
+    
+    out = load([[locations.results_folder,'out_files/results_'],ieeg_name,'.mat']);
     out = out.out;
     fprintf('\nDoing %s\n',subj);
     random_rejections_keeps(out)
