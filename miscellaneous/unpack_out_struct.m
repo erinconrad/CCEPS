@@ -9,6 +9,7 @@ nchs = size(chLabels,1);
 clinical = out.clinical;
 bipolar_labels = out.bipolar_labels;
 bipolar_ch_pair = out.bipolar_ch_pair;
+dataName = out.name;
 
 if isfield(out,'A')
     A = out.A;

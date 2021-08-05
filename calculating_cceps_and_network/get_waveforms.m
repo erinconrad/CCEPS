@@ -10,6 +10,7 @@ tight_stim_time = [-5e-3 5e-3];
 stim_val_thresh = 1e3;
 rel_thresh = 3;
 fs = stim.fs;
+max_crossings = 2;
 
 n1_idx = floor(n1_time*fs);
 n2_idx = floor(n2_time*fs);
@@ -117,7 +118,7 @@ for ich = 1:length(elecs)
             n2(jch,:) = [nan nan];
         end
         
-        % 3:
+        % old 3:
         % If big DC shift, throw it out
         %{
         median_n2_diff = abs(nanmedian(eeg(length(eeg)-200:end)) - baseline);
@@ -127,6 +128,16 @@ for ich = 1:length(elecs)
         end
         %}
         
+        % new 3:
+        % If the EEG signal in the N1 period crosses a line connecting its
+        % first and last point more than twice, throw it out
+        n_crossings = count_crossings(n1_eeg);
+      
+        if n_crossings > max_crossings
+            n1(jch,:) = [nan nan];
+            n2(jch,:) = [nan nan];
+        end
+        
         % 4:
         % If no return to "baseline" between stim and N1, throw it out
         %
@@ -134,6 +145,7 @@ for ich = 1:length(elecs)
         stim_max_idx = stim_max_idx + temp_tight_stim(1) - 1;
         if ~isnan(n1_peak_idx)
             
+        
             
             % If there's no part in between close to baseline
             close_to_baseline = 0.1*abs(eeg(stim_max_idx)-baseline);
