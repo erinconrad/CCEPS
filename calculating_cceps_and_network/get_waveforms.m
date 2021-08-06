@@ -10,7 +10,7 @@ tight_stim_time = [-5e-3 5e-3];
 stim_val_thresh = 1e3;
 rel_thresh = 3;
 fs = stim.fs;
-max_crossings = 2;
+max_crossings = 3;
 
 n1_idx = floor(n1_time*fs);
 n2_idx = floor(n2_time*fs);
