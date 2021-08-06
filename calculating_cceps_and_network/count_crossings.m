@@ -1,4 +1,4 @@
-function out = count_crossings(eeg)
+function out = count_crossings(eeg,baseline)
 
 out = 0;
 
@@ -6,9 +6,11 @@ out = 0;
 signal = eeg;
 
 
+%{
 % build new baseline (line connecting first and last point)
 baseline = linspace(nanmean(signal(1:round(0.1*length(eeg)))),...
     nanmean(signal(round(0.9*length(eeg)):length(eeg))),length(signal))';
+%}
 
 % calculate signal minus baseline
 sig_bl = signal-baseline; 
