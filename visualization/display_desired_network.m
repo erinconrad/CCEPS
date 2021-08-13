@@ -1,7 +1,7 @@
 
 %% Get which patient
 if ~exist('dataName','var')
-    dataName = 'HUP212_CCEP';
+    dataName = 'CHOP_CCEPs';
 end
 
 
@@ -32,6 +32,7 @@ how_to_normalize = out.how_to_normalize;
 nchs = size(chLabels,1);
 A = out.A;
 ch_info = out.ch_info;
+clear dataName
 
 
 new_build_network(out,1);
