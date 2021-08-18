@@ -9,7 +9,7 @@ the FC code)
 % data name to run (look for variable in workspace, otherwise use this
 % default)
 if ~exist('dataName','var')
-    dataName = 'HUP211_CCEP';
+    dataName = 'HUP220_CCEP';
 end
 
 % Get from edf? (No most of the time, usually getting from ieeg.org)
