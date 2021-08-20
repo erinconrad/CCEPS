@@ -61,7 +61,11 @@ clinical.all_start_times = clinical.all_start_times(1:length(clinical.all_files)
 
 
 clinical.visually_bad_chs = T.visuallyBadChannels;
-clinical.pc_time = [T.MainStimStartTime(2) T.MainStimEndTime(2)];
+if length(T.MainStimStartTime) > 1
+    clinical.pc_time = [T.MainStimStartTime(2) T.MainStimEndTime(2)];
+else
+    clinical.pc_time = [nan nan];
+end
 
 %% Add current
 all_current = {};
