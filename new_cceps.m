@@ -151,6 +151,9 @@ elecs = signal_average(bipolar_values,elecs,stim);
 %% Identify CCEP waveforms
 elecs = get_waveforms(elecs,stim);
 
+%% Get soz
+A = is_soz(chLabels,clinical);
+
 %% Save info
 out.name = dataName;
 out.elecs = elecs;
@@ -167,6 +170,7 @@ out.clinical = clinical;
 out.bad = [];
 out.bad_details = [];
 out.periods = periods;
+out.is_soz = A;
 
 
 outdir = [results_folder,'out_files/'];
