@@ -9,7 +9,7 @@ locations = cceps_files; % Need to make a file pointing to you own path
 script_folder = locations.script_folder;
 results_folder = locations.results_folder;
 out_folder = [results_folder,'out_files/'];
-data_folder = [locations.main_folder,'data/'];
+data_folder = locations.data_folder;
 
 if ~exist(out_folder,'dir')
     mkdir(out_folder)
