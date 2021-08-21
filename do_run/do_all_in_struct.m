@@ -33,6 +33,11 @@ for p = 1:length(pt)
         end
     end
     
+    if isempty(pt(p).ccep.file.ann)
+        fprintf('\nNo annotations for %s, skipping\n',fname);
+        continue
+    end
+    
     fprintf('\nDoing %s\n',fname);
     cceps_struct(pt,p);
     
