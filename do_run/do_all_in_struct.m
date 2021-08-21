@@ -33,7 +33,7 @@ for p = 1:length(pt)
         end
     end
     
-    if isempty(pt(p).ccep.file.ann)
+    if strcmp(pt(p).ccep.file.ann,'empty')
         fprintf('\nNo annotations for %s, skipping\n',fname);
         continue
     end
