@@ -26,7 +26,11 @@ else
     bad = out.bad;
 end
 chLabels = out.chLabels;
-ana = out.ana;
+if isfield(out,'ana')
+    ana = out.ana;
+else
+    ana = [];
+end
 normalize = out.how_to_normalize;
 nchs = length(chLabels);
 

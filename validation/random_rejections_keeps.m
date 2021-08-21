@@ -18,8 +18,6 @@ if isempty(locations.ieeg_folder) == 0
     addpath(genpath(locations.ieeg_folder));
 end
 name = out.name;
-name = strsplit(out.name,'_');
-name = name{1};
 out_folder = [results_folder,'validation/',name,'/'];
 if ~exist(out_folder,'dir')
     mkdir(out_folder)
