@@ -39,7 +39,7 @@ for p = 1:length(pt)
     end
     
     fprintf('\nDoing %s\n',fname);
-    cceps_struct(pt,p);
+    out = cceps_struct(pt,p);
     
     if also_validate
         fprintf('\nValidating...\n');
