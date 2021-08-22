@@ -48,7 +48,7 @@ end_index = round(times(2)*fs);
 nchs = size(channelLabels,1);
 %error('look');
 values = zeros(end_index-start_index+1,nchs);
-nchunks = 50;
+nchunks = 100;
 for i = 1:nchunks
     values(:,floor(nchs/nchunks*(i-1))+1:min(floor(nchs/nchunks*i),nchs)) =...
         session.data.getvalues([start_index:end_index],...
