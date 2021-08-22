@@ -62,7 +62,7 @@ for i = 1:length(event)
         
         if ~strcmp(elec1_name,elec2_name)
             fprintf('Expecting contacts to be from same electrodes!, skipping\n');
-            continue
+            contin
         end
         
         % Find the next open relay
