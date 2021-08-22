@@ -56,10 +56,45 @@ stim.fs = data.fs;
 
 %% Get stim periods
 periods = identify_stim_periods(data.layer.ann.event,chLabels,stim.fs,times);
+if isempty(fieldnames(periods))
+    fprintf('\nNo machine annotations, using older method (not as good)\n');
+    % Do old way to get artifacts
+    periods = nan;
+    
+    %% Identify stimulation artifacts
+    % Loop over EEG
+    nchs = size(values,2);
+    artifacts = cell(nchs,1);
+    for ich = 1:nchs
+        artifacts{ich} = find_stim_artifacts(stim,values(:,ich));
+        %artifacts{ich} = find_stim_artifacts(stim,bipolar_values(:,ich),values(:,ich));
+    end
+    old_artifacts = artifacts;
+
+    %% Remove those that are not on beat
+    for ich = 1:nchs
+        if isempty(old_artifacts{ich})
+            continue;
+        else
+            on_beat = find_offbeat(old_artifacts{ich}(:,1),stim);
+        end
+        if ~isempty(on_beat)
+            artifacts{ich} = [old_artifacts{ich}(on_beat(:,1),:),on_beat(:,2)]; 
+        else
+            artifacts{ich} = [];
+        end
+    end
 
 
-%% Get artifacts within periods
-elecs = identify_artifacts_within_periods(periods,values,stim,chLabels);
+    %% Narrow down the list of stimulation artifacts to just one channel each
+    elecs = define_ch(artifacts,stim,chLabels);
+else
+    %% Get artifacts within periods
+    elecs = identify_artifacts_within_periods(periods,values,stim,chLabels);
+    
+end
+
+
 
 %% Say which electrodes have stim
 extra = nan;

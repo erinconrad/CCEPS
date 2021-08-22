@@ -105,6 +105,7 @@ for h = 1:2
             pt(p).ccep.file.duration = session.data.rawChannels(1).get_tsdetails.getDuration/(1e6); % convert from microseconds
 
             % Add annotations
+            clear event
             n_layers = length(session.data.annLayer);
 
             if n_layers == 0
@@ -178,6 +179,7 @@ for h = 1:2
                     pt(p).ieeg.file(dcount).duration = session.data.rawChannels(1).get_tsdetails.getDuration/(1e6); % convert from microseconds
 
                     % Add annotations
+                    clear event
                     n_layers = length(session.data.annLayer);
 
                     if n_layers == 0
