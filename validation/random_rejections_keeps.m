@@ -4,6 +4,7 @@ function random_rejections_keeps(out)
 n_per_line = 5;
 n_lines = 5;
 n_to_plot = 25;
+n1_time = [15e-3 50e-3];
 
 %% Get various path locations
 locations = cceps_files; % Need to make a file pointing to you own path
@@ -67,7 +68,8 @@ for cat = fields(reject)'
         stim_idx = out.elecs(row).stim_idx;
         wav_idx = wav(2)+stim_idx+1;
         wav_time = convert_indices_to_times(wav_idx,out.stim.fs,times(1));
-        
+        n1_idx = floor(n1_time*out.stim.fs);
+        temp_n1_idx = n1_idx + stim_idx - 1;
         
         % Plot
         nexttile
@@ -80,6 +82,13 @@ for cat = fields(reject)'
                 which,wav(1)), 'fontsize',15)
         end
         xlim([eeg_times(1) eeg_times(end)])
+        
+        % Zoom in (in the y-dimension) around the maximal point in the N1
+        % time period
+        height = max(abs(avg(temp_n1_idx(1):temp_n1_idx(2))-median(avg)));
+        ylim([median(avg)-2*height,median(avg)+2*height]);
+        
+        
         labels = out.bipolar_labels;
         stim_label = labels{row};
         resp_label = labels{col};

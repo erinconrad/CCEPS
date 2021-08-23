@@ -1,10 +1,27 @@
 %% Get various path locations
 locations = cceps_files; % Need to make a file pointing to you own path
 script_folder = locations.script_folder;
+out_file_folder = [locations.results_folder,'out_files/'];
 
 % add paths
 addpath(genpath(script_folder));
 
+% Get outfiles
+listing = dir([out_file_folder,'*.mat']);
+for l = 1:length(listing)
+    
+    % Open
+    out = load([out_file_folder,listing(l).name]);
+    out = out.out;
+    
+    fprintf('\nDoing %s\n',out.name);
+    random_rejections_keeps(out)
+    close all % close figures generated in function
+    clear out
+    
+end
+
+%{
 % Load stim table
 file_name = 'Stim info.xlsx';
 
@@ -14,6 +31,7 @@ if exist('sheetnames') == 0
 else
     sn = sheetnames(file_name);
 end
+
 
 for s = 1:length(sn)
     subj = (sn{s});
@@ -31,3 +49,4 @@ for s = 1:length(sn)
     clear subj
     
 end
+    %}
