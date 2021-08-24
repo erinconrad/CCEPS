@@ -59,11 +59,19 @@ for ich = 1:length(elecs)
     % Add peak amplitudes to the array
     A(ich,:) = arr(:,1);
     
+    
+    all_bad = logical(elecs(ich).all_bad);
+    details.reject.sig_avg(ich,:) = all_bad;
+    details.reject.pre_thresh(ich,:) = isnan(elecs(ich).(which)(:,1)) & ~all_bad;
+    details.reject.at_thresh(ich,:) = elecs(ich).(which)(:,1) < thresh_amp;
+    details.reject.keep(ich,:) = elecs(ich).(which)(:,1) >= thresh_amp;
+    %{
     all_nans = (sum(~isnan(elecs(ich).avg),1) == 0)';
     details.reject.sig_avg(ich,:) = all_nans;
     details.reject.pre_thresh(ich,:) = isnan(elecs(ich).(which)(:,1)) & ~all_nans;
     details.reject.at_thresh(ich,:) = elecs(ich).(which)(:,1) < thresh_amp;
     details.reject.keep(ich,:) = elecs(ich).(which)(:,1) >= thresh_amp;
+    %}
 end
 
 

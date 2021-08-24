@@ -33,6 +33,7 @@ stim_idx = elecs(ich).stim_idx;
 
 % Get the eeg
 eeg = elecs(ich).avg(:,jch);
+all_bad = elecs(ich).all_bad(jch);
 
 n1_arr = elecs(ich).N1;
 n2_arr = elecs(ich).N2;
@@ -48,7 +49,11 @@ n1_time = convert_indices_to_times(n1_idx,stim.fs,elecs(ich).times(1));
 n2_time = convert_indices_to_times(n2_idx,stim.fs,elecs(ich).times(1));
 
 eeg_times = convert_indices_to_times(1:length(eeg),stim.fs,elecs(ich).times(1));
-plot(eeg_times,eeg,'k','linewidth',2);
+if all_bad
+    plot(eeg_times,eeg,'r','linewidth',2);
+else
+    plot(eeg_times,eeg,'k','linewidth',2);
+end
 hold on
 if ~isnan(n1_idx)
     plot(n1_time,eeg(n1_idx),'bX','markersize',20,'linewidth',4);

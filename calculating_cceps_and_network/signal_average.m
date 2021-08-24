@@ -22,9 +22,9 @@ for ich = 1:length(elecs)
     
     % Initialize avg
     elecs(ich).avg = zeros(idx(1,2)-idx(1,1)+1,size(values,2));
-    
     elecs(ich).stim_idx = -idx_to_take(1);
     elecs(ich).times = time_to_take;
+    elecs(ich).all_bad = zeros(size(values,2),1);
     
     % Get stim idx
     stim_idx = elecs(ich).stim_idx;
@@ -40,6 +40,7 @@ for ich = 1:length(elecs)
         
         % get those bits of eeg
         eeg_bits = zeros(length(arts),idx(1,2)-idx(1,1)+1);
+        keep = ones(length(arts),1);
                
         for j = 1:size(idx,1)
             
@@ -49,12 +50,11 @@ for ich = 1:length(elecs)
             % skip if all nans
             if sum(~isnan(bit)) == 0
                 eeg_bits(j,:) = bit;
+                keep(j) = 0;
                 continue
             end
             
-            % Low pass filter
-            %bit = lowpass(bit,lpf,fs);
-            
+
             % Remove mean (so that DC differences don't affect calculation)
             bit = bit-mean(bit);
             
@@ -69,15 +69,10 @@ for ich = 1:length(elecs)
                 plot([stim_indices(end) stim_indices(end)],ylim)
             end
             
-            % if there are any really high values outside of stim, throw it out
-            %{
-            if max(abs(bit(non_stim_idx))) > 1e3
-                bit = nan(size(bit));
-            end
-            %}
+
             % If ANY really high values, throw it out
             if max(abs(bit)) > 1e3
-                bit = nan(size(bit));
+                keep(j) = 0;
                 elecs(ich).n_bad_trials(j) = elecs(ich).n_bad_trials(j) + 1;
             end
             %}
@@ -86,15 +81,19 @@ for ich = 1:length(elecs)
         end
         
         
-
         %% Average the eeg
-        eeg_avg = nanmean(eeg_bits,1);
-        
-        
+        if sum(keep) == 0 % all bad!
+            eeg_avg = nanmean(eeg_bits,1);
+            all_bad = 1;
+        else
+            eeg_avg = nanmean(eeg_bits(keep == 1,:),1);
+            all_bad = 0;
+        end
+   
 
         %% add to structure
         elecs(ich).avg(:,jch) = eeg_avg;
-        
+        elecs(ich).all_bad(jch) = all_bad;
     
     end
     

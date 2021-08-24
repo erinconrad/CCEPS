@@ -5,6 +5,7 @@ n_per_line = 5;
 n_lines = 5;
 n_to_plot = 25;
 n1_time = [15e-3 50e-3];
+zoom_times = [-100e-3 200e-3];
 
 %% Get various path locations
 locations = cceps_files; % Need to make a file pointing to you own path
@@ -34,11 +35,13 @@ which = out.details.which;
 for cat = fields(reject)'
     cat = char(cat);
     
+    %{
     if strcmp(cat,'sig_avg') == 1
         perc_rej = 100*sum(reject.(cat)(:) == 1)/(size(reject.(cat),1)*size(reject.(cat),2));
         fprintf('\n%1.1f%% rejected at signal averaging step, cannot analyze here\n',perc_rej);
         continue;
     end
+    %}
     
     % Initialize figure
     figure
@@ -71,6 +74,7 @@ for cat = fields(reject)'
         n1_idx = floor(n1_time*out.stim.fs);
         temp_n1_idx = n1_idx + stim_idx - 1;
         
+        
         % Plot
         nexttile
         plot(eeg_times,avg,'k','linewidth',2);
@@ -81,12 +85,15 @@ for cat = fields(reject)'
             text(wav_time+0.01,avg(wav_idx),sprintf('%s z-score: %1.1f',...
                 which,wav(1)), 'fontsize',15)
         end
-        xlim([eeg_times(1) eeg_times(end)])
+        %xlim([eeg_times(1) eeg_times(end)])
+        xlim([zoom_times(1) zoom_times(2)]);
         
         % Zoom in (in the y-dimension) around the maximal point in the N1
         % time period
         height = max(abs(avg(temp_n1_idx(1):temp_n1_idx(2))-median(avg)));
-        ylim([median(avg)-2*height,median(avg)+2*height]);
+        if ~any(isnan(avg))
+            ylim([median(avg)-2*height,median(avg)+2*height]);
+        end
         
         
         labels = out.bipolar_labels;

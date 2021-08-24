@@ -119,7 +119,9 @@ for i = 1:length(group)
     
     curr_label = chLabels{two_highest(1)};
     test_label = chLabels{two_highest(2)};
-
+    if contains(curr_label,'ekg','IgnoreCase',true) || contains(curr_label,'ecg','IgnoreCase',true)
+        continue;
+    end
 
     curr_elec_num = regexp(curr_label,'\d');
     test_elec_num = regexp(test_label,'\d');

@@ -40,24 +40,18 @@ for ich = 1:length(elecs)
         % Get the eeg
         eeg = elecs(ich).avg(:,jch);
         
-      
-        
-        % LPF
-        %{
-        if sum(~isnan(eeg)) ~= 0
-            eeg = lowpass(eeg,lpf,fs);
+        % skip if all trials are bad
+        if elecs(ich).all_bad(jch) == 1
+            n1(jch,:) = [nan nan];
+            n2(jch,:) = [nan nan];
+            continue
         end
-        %}
-        
-      
+   
         % Get the baseline
         baseline = mean(eeg(1:stim_idx-idx_before_stim));
       
         % Get the eeg in the stim time
-        %stim_eeg = abs(eeg(temp_stim_idx(1):temp_stim_idx(2))-baseline);
-        %tight_stim_eeg = abs(eeg(temp_tight_stim(1):temp_tight_stim(2))-baseline);
         stim_eeg = abs(eeg(temp_stim_idx(1):temp_stim_idx(2))-baseline);
-        tight_stim_eeg = abs(eeg(temp_tight_stim(1):temp_tight_stim(2))-baseline);
         
         % Get the eeg in the n1 and n2 time
         n1_eeg = eeg(temp_n1_idx(1):temp_n1_idx(2));
@@ -102,6 +96,14 @@ for ich = 1:length(elecs)
         n1(jch,:) = [n1_peak,n1_peak_idx];
         n2(jch,:) = [n2_peak,n2_peak_idx];
         
+        if 0
+            figure
+            plot(eeg)
+            hold on
+            plot([temp_n1_idx(1) temp_n1_idx(1)],ylim)
+            plot([temp_n1_idx(2) temp_n1_idx(2)],ylim)
+            plot(xlim,[baseline baseline])
+        end
         
         %% Do various things to reject likely artifact
         % 1:
@@ -117,21 +119,11 @@ for ich = 1:length(elecs)
             n1(jch,:) = [nan nan];
             n2(jch,:) = [nan nan];
         end
+
         
-        % old 3:
-        % If big DC shift, throw it out
-        %{
-        median_n2_diff = abs(nanmedian(eeg(length(eeg)-200:end)) - baseline);
-        if median_n2_diff/baseline_sd > 6
-            n1(jch,:) = [nan nan];
-            n2(jch,:) = [nan nan];
-        end
-        %}
-        
-        % new 3:
+        % 3:
         % If the EEG signal in the N1 period crosses a line connecting its
         % first and last point more than twice, throw it out
-        %
         n_crossings = count_crossings(n1_eeg,baseline);
       
         if n_crossings > max_crossings
@@ -143,89 +135,120 @@ for ich = 1:length(elecs)
         % 4:
         % If no return to "baseline" between stim and N1, throw it out
         %
-        [max_stim,stim_max_idx] = max(tight_stim_eeg);
-        stim_max_idx = stim_max_idx + temp_tight_stim(1) - 1;
+        return_to_baseline_before = 0;
+        signed_tight_stim_eeg = eeg(temp_tight_stim(1):temp_tight_stim(2))-baseline;
+        
         if ~isnan(n1_peak_idx)
-            
-        
-            
-            % If there's no part in between close to baseline
-            close_to_baseline = 0.1*abs(eeg(stim_max_idx)-baseline);
-            
-            if 0
-                plot(eeg)
-                hold on
-                plot(stim_max_idx,eeg(stim_max_idx),'o')
-                plot(eeg_rel_peak_idx,eeg(eeg_rel_peak_idx),'o')
-                plot(xlim,[baseline+close_to_baseline baseline+close_to_baseline])
-                plot(xlim,[baseline-close_to_baseline baseline-close_to_baseline])
-                pause
-                close(gcf)
+                       
+            % if N1 above baseline
+            if eeg(eeg_rel_peak_idx) - baseline > 0
+                % Then look at max stim
+                [max_stim,stim_max_idx] = max(signed_tight_stim_eeg);
+                stim_height = max_stim - baseline;
+                n1_height = eeg(eeg_rel_peak_idx) - baseline;
+            else
+                % Look at min stim
+                [max_stim,stim_max_idx] = min(signed_tight_stim_eeg);
+                stim_height = baseline - max_stim;
+                n1_height =  baseline - eeg(eeg_rel_peak_idx);
             end
+            stim_max_idx = stim_max_idx + temp_tight_stim(1) - 1;
+      
+            % Only invoke this rule if the height of the stim artifact
+            % larger than height of n1
+            if  stim_height > n1_height
+
+                % If there's no part in between close to baseline
+                bl_range = [baseline-1*baseline_sd,baseline+1*baseline_sd];
+
+                if eeg(eeg_rel_peak_idx) - baseline > 0
+                     % check if it gets below the upper baseline range
+                    if any(eeg(stim_max_idx:eeg_rel_peak_idx) < bl_range(2))
+                        return_to_baseline_before = 1;
+                    end
+                else
+                    % check if it gets above the lower baseline range
+                    if any(eeg(stim_max_idx:eeg_rel_peak_idx) > bl_range(1))
+                        return_to_baseline_before = 1;
+                    end
+                end
             
-            if  max(n1_eeg_abs) < max(stim_eeg )... % the stim artifact is larger than the n1
-                && ...%nothing passes to other side
-                (~any(abs(eeg(stim_max_idx:eeg_rel_peak_idx) - baseline) < close_to_baseline) && ...
-                ~any(sign(eeg(stim_max_idx:eeg_rel_peak_idx) - baseline) ~=...
-                sign(eeg(stim_max_idx)-baseline)))
-                
-                
-                n1(jch,:) = [nan nan];
-                n2(jch,:) = [nan nan];
+            
+                if 0
+                    figure
+                    plot(eeg)
+                    hold on
+                    plot(stim_max_idx,eeg(stim_max_idx),'o')
+                    plot(eeg_rel_peak_idx,eeg(eeg_rel_peak_idx),'o')
+                    plot(xlim,[bl_range(1) bl_range(1)])
+                    plot(xlim,[bl_range(2) bl_range(2)])
+                    if return_to_baseline_before
+                        title('Ok')
+                    else
+                        title('Not ok')
+                    end
+                end
+
+                if ~return_to_baseline_before
+                    n1(jch,:) = [nan nan];
+                    n2(jch,:) = [nan nan]; 
+                end
+            
             end
-        
         
         end
         %}
        
-        
-        
-        %{
-        % ERIN JUST REMOVED THIS
-        if max(stim_eeg) > rel_thresh*max(n1_eeg_abs)
-            n1(jch,:) = [nan nan];
-        end
-        %}
-        
-        % If the sum of the absolute value in the stim period is above a
-        % certain threshold, throw out n1 because I am likely to catch stim
-        % rather than n1  
-        % ERIN JUST REMOVED THIS
-        %{
-        if sum((stim_eeg)) > stim_val_thresh
-            n1(jch,:) = [nan nan];
-            n2(jch,:) = [nan nan];
-        end
-        %}
-        
-        
-        if 0
-            figure
-            plot(eeg)
-            hold on
-            plot([temp_stim_idx(1) temp_stim_idx(1)],ylim)
-            plot([temp_n2_idx(end) temp_n2_idx(end)],ylim)
-            
-        end
-        
-        
-        if 0
-           figure
-            set(gcf,'position',[106 388 1335 410])
-            plot(eeg,'linewidth',2)
-            hold on
-            plot([temp_stim_idx(1) temp_stim_idx(1)],get(gca,'ylim'),'k--')
-            plot([temp_stim_idx(2) temp_stim_idx(2)],get(gca,'ylim'),'k--')
+        % 5:
+        % if no return to baseline after N1 peak in a certain amount of
+        % time, throw it out
+        if ~isnan(n1_peak_idx)
+            time_to_return_to_bl = 100e-3; % 50 ms
+            idx_to_return_to_bl = eeg_rel_peak_idx+round(time_to_return_to_bl * fs);
+            bl_range = [baseline-1*baseline_sd,baseline+1*baseline_sd];
+            returns_to_baseline_after = 0;
 
-            plot([temp_n1_idx(1) temp_n1_idx(1)],get(gca,'ylim'),'k')
-            plot([temp_n1_idx(2) temp_n1_idx(2)],get(gca,'ylim'),'k')
+            % if N1 above baseline
+            if eeg(eeg_rel_peak_idx) - baseline > 0
 
-            plot(old_n1_peak+ temp_n1_idx(1)-1,eeg(old_n1_peak+temp_n1_idx(1)-1),'o')
-            xt = get(gca, 'XTick');                                 
-            set(gca, 'XTick', xt, 'XTickLabel', xt/stim.fs+elecs(ich).times(1))
-            pause
-            hold off 
+                % check if it gets below the upper baseline range
+                if any(eeg(eeg_rel_peak_idx:idx_to_return_to_bl) < bl_range(2))
+                    returns_to_baseline_after = 1;
+                end
+
+            else
+
+                % check if it gets above the lower baseline range
+                if any(eeg(eeg_rel_peak_idx:idx_to_return_to_bl) > bl_range(1))
+                    returns_to_baseline_after = 1;
+                end
+
+            end
+
+            if ~returns_to_baseline_after
+                n1(jch,:) = [nan nan];
+                n2(jch,:) = [nan nan];
+            end
+
+            if 0
+                figure
+                plot(eeg)
+                hold on
+                plot([eeg_rel_peak_idx eeg_rel_peak_idx],ylim)
+                plot([idx_to_return_to_bl...
+                    idx_to_return_to_bl],ylim)
+                plot(xlim,[bl_range(1) bl_range(1)])
+                plot(xlim,[bl_range(2) bl_range(2)])
+                if returns_to_baseline_after
+                    title('Ok');
+                else
+                    title('Not ok');
+                end
+            end
         end
+        
+        
+        
         
     end
     

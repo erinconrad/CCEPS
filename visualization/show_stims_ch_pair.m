@@ -27,7 +27,12 @@ if ischar(rch)
 end
 name = out.name;
 fs = out.stim.fs;
-start_time = out.clinical.start_time;
+if ~isfield(out,'clinical')
+    start_time = 1;
+else
+    start_time = out.clinical.start_time;
+end
+
 stim_indices = round(stim_time(1)*fs):round(stim_time(2)*fs);
 
 arts = sort(out.elecs(sch).arts);

@@ -43,6 +43,8 @@ session = IEEGSession(dataName,loginname, pwfile);
 duration = session.data.rawChannels(1).get_tsdetails.getDuration/(1e6); %convert from microseconds
 session.delete;
 times = [start_time,duration];
+clinical.start_time = times(1);
+clinical.end_time = times(2);
 
 data = download_eeg(dataName,loginname, pwfile,times);
 t = toc;
@@ -123,7 +125,7 @@ out.missing = missing;
 out.bad = [];
 out.bad_details = [];
 out.periods = periods;
-
+out.clinical = clinical;
 
 outdir = [results_folder,'out_files/'];
 if ~exist(outdir,'dir')

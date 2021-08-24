@@ -48,6 +48,10 @@ for i = 1:length(event)
         elec1_name = elec1(1:elec1_num_idx-1);
         elec2_name = elec2(1:elec2_num_idx-1);
         
+        if contains(elec1_name,'ekg','IgnoreCase',true) || contains(elec1_name,'ecg','IgnoreCase',true)
+            continue;
+        end
+        
         % Get number of contact
         elec1_contact = str2num(elec1(elec1_num_idx:end));
         elec2_contact = str2num(elec2(elec2_num_idx:end));
