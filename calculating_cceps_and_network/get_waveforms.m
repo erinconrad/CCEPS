@@ -2,11 +2,11 @@ function elecs = get_waveforms(elecs,stim)
 
 
 %% Parameters
-idx_before_stim = 20;
-n1_time = [10e-3 50e-3];
+idx_before_stim = 30;
+n1_time = [15e-3 50e-3];
 loose_n1_time = [15e-3 50e-3];
 n2_time = [50e-3 300e-3];
-stim_time = [-5e-3 10e-3];
+stim_time = [-5e-3 15e-3];
 tight_stim_time = [-5e-3 10e-3];
 stim_val_thresh = 1e3;
 rel_thresh = 3;
