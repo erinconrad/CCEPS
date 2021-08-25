@@ -41,7 +41,7 @@ if 0
 
     plot(signal)
     hold on
-    plot(baseline,'--')
+    plot(xlim,[baseline baseline],'--')
     title(sprintf('%d crossings',n_crossings))
     pause
     close(gcf)

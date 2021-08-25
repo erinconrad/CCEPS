@@ -4,7 +4,7 @@ function random_rejections_keeps(out)
 n_per_line = 5;
 n_lines = 5;
 n_to_plot = 25;
-n1_time = [15e-3 50e-3];
+n1_time = [10e-3 50e-3];
 zoom_times = [-100e-3 200e-3];
 
 %% Get various path locations

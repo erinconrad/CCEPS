@@ -61,21 +61,26 @@ for ich = 1:length(elecs)
             all_idx = 1:length(bit);
             non_stim_idx = all_idx;
             non_stim_idx(ismember(non_stim_idx,stim_indices)) = [];
-            
-            if 0
-                plot(bit)
-                hold on
-                plot([stim_indices(1) stim_indices(1)],ylim)
-                plot([stim_indices(end) stim_indices(end)],ylim)
-            end
-            
 
-            % If ANY really high values, throw it out
-            if max(abs(bit)) > 1e3
+
+            % If ANY really high values outside of stim time, throw it out
+            bit_no_stim = bit;
+            bit_no_stim(stim_indices) = nan;
+            if max(abs(bit_no_stim)) > 1e3
                 keep(j) = 0;
                 elecs(ich).n_bad_trials(j) = elecs(ich).n_bad_trials(j) + 1;
             end
             %}
+            
+            if 0
+                plot(bit)
+                hold on
+                plot(bit_no_stim)
+                plot([stim_indices(1) stim_indices(1)],ylim)
+                plot([stim_indices(end) stim_indices(end)],ylim)
+                plot(xlim,[1e3 1e3])
+                plot(xlim,[-1e3 -1e3])
+            end
             
             eeg_bits(j,:) = bit;
         end

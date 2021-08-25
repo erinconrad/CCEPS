@@ -3,9 +3,10 @@ function elecs = get_waveforms(elecs,stim)
 
 %% Parameters
 idx_before_stim = 20;
-n1_time = [15e-3 50e-3];
+n1_time = [10e-3 50e-3];
+loose_n1_time = [15e-3 50e-3];
 n2_time = [50e-3 300e-3];
-stim_time = [-5e-3 15e-3];
+stim_time = [-5e-3 10e-3];
 tight_stim_time = [-5e-3 10e-3];
 stim_val_thresh = 1e3;
 rel_thresh = 3;
@@ -13,6 +14,7 @@ fs = stim.fs;
 max_crossings = 3;
 
 n1_idx = floor(n1_time*fs);
+loose_n1_idx = floor(loose_n1_time*fs);
 n2_idx = floor(n2_time*fs);
 stim_indices = floor(stim_time*fs);
 tight_stim_indices = floor(tight_stim_time*fs);
@@ -29,6 +31,7 @@ for ich = 1:length(elecs)
     
     % redefine n1 and n2 relative to beginning of eeg
     temp_n1_idx = n1_idx + stim_idx - 1;
+    temp_loose_n1_idx = loose_n1_idx + stim_idx - 1;
     temp_n2_idx = n2_idx + stim_idx - 1;
     temp_stim_idx = stim_indices + stim_idx - 1;
     temp_tight_stim = tight_stim_indices + stim_idx-1;
@@ -56,6 +59,7 @@ for ich = 1:length(elecs)
         % Get the eeg in the n1 and n2 time
         n1_eeg = eeg(temp_n1_idx(1):temp_n1_idx(2));
         n2_eeg = eeg(temp_n2_idx(1):temp_n2_idx(2));
+        loose_n1_eeg = eeg(temp_loose_n1_idx(1):temp_loose_n1_idx(2));
         
         % subtract baseline
         n1_eeg_abs = abs(n1_eeg-baseline);
@@ -124,7 +128,7 @@ for ich = 1:length(elecs)
         % 3:
         % If the EEG signal in the N1 period crosses a line connecting its
         % first and last point more than twice, throw it out
-        n_crossings = count_crossings(n1_eeg,baseline);
+        n_crossings = count_crossings(loose_n1_eeg,baseline);
       
         if n_crossings > max_crossings
             n1(jch,:) = [nan nan];
