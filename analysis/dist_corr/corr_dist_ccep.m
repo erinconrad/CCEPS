@@ -1,6 +1,6 @@
 function corr_dist_ccep(out,elecs)
 
-do_log=0;
+do_log=1;
 
 %% Get various path locations
 locations = cceps_files; % Need to make a file pointing to you own path

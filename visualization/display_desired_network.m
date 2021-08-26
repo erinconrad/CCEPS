@@ -1,7 +1,7 @@
 
 %% Get which patient
 if ~exist('dataName','var')
-    dataName = 'CHOPCCEP_018';
+    dataName = 'HUP212_CCEP';
 end
 
 
@@ -25,7 +25,7 @@ out = out.out;
 stim = out.stim;
 elecs = out.elecs;
 chLabels = out.chLabels;
-ana = out.ana;
+%ana = out.ana;
 wav = out.waveform;
 dataName = out.name;
 how_to_normalize = out.how_to_normalize;

@@ -5,8 +5,7 @@ n_per_line = 5;
 n_lines = 5;
 n_to_plot = 25;
 n1_time = [10e-3 50e-3];
-zoom_times = [-300e-3 300e-3];
-zoom_factor = 2;
+zoom_times = [-100e-3 200e-3];
 
 %% Get various path locations
 locations = cceps_files; % Need to make a file pointing to you own path
@@ -26,62 +25,33 @@ if ~exist(out_folder,'dir')
     mkdir(out_folder)
 end
 
-%% Pick intracranial chs with bipolar signal
-keep_chs = get_chs_to_ignore(out.bipolar_labels);
 
 %% Get rejection details arrays
+reject = out.details.reject;
 thresh = out.details.thresh;
 which = out.details.which;
 
-sig_avg = out.details.reject.sig_avg;
-pre_thresh = out.details.reject.pre_thresh;
-at_thresh = out.details.reject.at_thresh;
-keep = out.details.reject.keep;
-
-% Remove non keep chs
-%{
-sig_avg = sig_avg(keep_chs,keep_chs);
-pre_thresh = pre_thresh(keep_chs,keep_chs);
-at_thresh = at_thresh(keep_chs,keep_chs);
-keep = keep(keep_chs,keep_chs);
-keep_labels = out.bipolar_labels(keep_chs);
-%}
-
-any_reject = sig_avg == 1| pre_thresh == 1 | at_thresh == 1;
-
-% Calculate total numbers
-nkeep = sum(keep(:) == 1);
-nreject = sum(any_reject(:) == 1);
-nunstim = sum(isnan(keep(:)));
-
-if nunstim+nreject+nkeep ~= size(keep,1)*size(keep,1)
-    error('numbers do not add up');
-end
-
 % Loop through rejection types
-for j = 1:2
-    if j == 1
-        thing = keep;
-        cat = 'New Keep';
-    else
-        thing = any_reject;
-        cat = 'Reject Any';
+for cat = fields(reject)'
+    cat = char(cat);
+    
+    %{
+    if strcmp(cat,'sig_avg') == 1
+        perc_rej = 100*sum(reject.(cat)(:) == 1)/(size(reject.(cat),1)*size(reject.(cat),2));
+        fprintf('\n%1.1f%% rejected at signal averaging step, cannot analyze here\n',perc_rej);
+        continue;
     end
-    
-    meet_criteria = find(thing==1);
-    
-    % Restrict to those on keep chs
-    [row,col] = ind2sub(size(keep),meet_criteria);
-    meet_criteria(keep_chs(row) == false) = [];
-    col(keep_chs(row) == false) = [];
-    meet_criteria(keep_chs(col) == false) = [];
+    %}
     
     % Initialize figure
     figure
     set(gcf,'position',[100 100 1200 1000])
     t = tiledlayout(n_lines,n_per_line,'padding','tight','tilespacing','tight');
     
- 
+    % find 1s (stim-response ch pairs/possible cceps meeting this rejection
+    % criteria)
+    meet_criteria = find(reject.(cat)==1);
+    
     % Pick a random N
     to_plot = randsample(meet_criteria,min(n_to_plot,length(meet_criteria)));
     
@@ -91,28 +61,7 @@ for j = 1:2
         ind = to_plot(i);
         
         % convert this to row and column
-        [row,col] = ind2sub(size(keep),ind);
-        
-        % get why it was rejected
-        why = nan;
-        if j == 2
-            if sig_avg(row,col) == 1
-                why = 'averaging';
-            end
-            if pre_thresh(row,col) == 1
-                if ~isnan(why)
-                    error('what');
-                end
-                why = 'artifact';
-            end
-            if at_thresh(row,col) == 1
-                if ~isnan(why)
-                    error('what');
-                end
-                why = 'threshold';
-            end
-                
-        end
+        [row,col] = ind2sub(size(reject.(cat)),ind);
         
         % Get the waveform
         avg = out.elecs(row).avg(:,col);
@@ -143,7 +92,7 @@ for j = 1:2
         % time period
         height = max(abs(avg(temp_n1_idx(1):temp_n1_idx(2))-median(avg)));
         if ~any(isnan(avg))
-            ylim([median(avg)-zoom_factor*height,median(avg)+zoom_factor*height]);
+            ylim([median(avg)-2*height,median(avg)+2*height]);
         end
         
         
@@ -156,9 +105,7 @@ for j = 1:2
         text(xl(1),yl(2),sprintf('Stim: %s\nResponse: %s',stim_label,resp_label),...
             'horizontalalignment','left',...
             'verticalalignment','top','fontsize',10);
-        if j == 2
-            title(why)
-        end
+              
     end
     
     title(t,sprintf('%s %s z-score threshold %1.1f',cat,which,thresh));
@@ -167,11 +114,7 @@ for j = 1:2
     fname = sprintf('%s_%sthresh_%d',cat,which,thresh);
     print(gcf,[out_folder,fname],'-dpng');
     
-
-    
 end
-
-    
 
 
 end

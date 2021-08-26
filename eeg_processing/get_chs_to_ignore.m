@@ -4,6 +4,12 @@ keep_chs = ones(length(chLabels),1);
 
 for i = 1:length(chLabels)
     curr_label = chLabels{i};
+    
+    if isempty(curr_label)
+        keep_chs(i) = 0;
+        continue
+    end
+    
     if contains(curr_label,'EKG') || contains(curr_label,'ekg') ...
             || contains(curr_label,'ECG') || contains(curr_label,'ecg')
         keep_chs(i) = 0; 

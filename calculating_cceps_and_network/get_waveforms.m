@@ -209,7 +209,7 @@ for ich = 1:length(elecs)
         if ~isnan(n1_peak_idx)
             time_to_return_to_bl = 100e-3; % 50 ms
             idx_to_return_to_bl = eeg_rel_peak_idx+round(time_to_return_to_bl * fs);
-            bl_range = [baseline-1*baseline_sd,baseline+1*baseline_sd];
+            bl_range = [baseline-1.5*baseline_sd,baseline+1.5*baseline_sd];
             returns_to_baseline_after = 0;
 
             % if N1 above baseline

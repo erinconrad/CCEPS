@@ -4,42 +4,29 @@ function dist_corr_all
 locations = cceps_files; % Need to make a file pointing to you own path
 script_folder = locations.script_folder;
 results_folder = locations.results_folder;
+out_file_folder = [results_folder,'out_files/'];
 
 % add paths
 addpath(genpath(script_folder));
-
-% Load stim table
-file_name = 'Stim info.xlsx';
-
-% Get sheetnames
-if exist('sheetnames') == 0
-    [~,sn,~] = xlsfinfo(file_name);
-else
-    sn = sheetnames(file_name);
-end
-
-all_names = {};
-for s = 1:length(sn)
-    T = readtable(file_name,'Sheet',s);
-    
-    % Read ieeg name
-    curr_name = T.IeegName{1};
-    
-    all_names = [all_names;curr_name];
-end
 
 % Load elecs file
 info = load([results_folder,'elecs.mat']);
 info = info.info;
 
-for i = 1:length(all_names)
-    dataName = all_names{i};
+% Get files in the out files folder
+listing = dir([out_file_folder,'*.mat']);
+
+
+for i = 1:length(listing)
+    fname = listing(i).name;
+    C = strsplit(fname,'_');
+    dataName = [C{2},'_',C{3}];
+    
+    out = load([out_file_folder,fname]);
+    out = out.out;
+    
     fprintf('\nDoing %s\n',dataName);
     
-    
-    % Load cceps out file
-    out = load([results_folder,'out_files/results_',dataName,'.mat']);
-    out = out.out;
     
     % Get correct pt in info file
     foundit = 0;
