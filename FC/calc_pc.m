@@ -18,9 +18,8 @@ nw = length(window_start);
 
 
 %% Calculate pc for each window
-all_pc = zeros(nchs,nchs,nw);
+all_pc = nan(nchs,nchs,nw);
 
-% I am trying to parallelize this part
 for i = 1:nw
     clip = values(window_start:window_start+iw,:);
         

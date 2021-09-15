@@ -41,7 +41,8 @@ tic
 session = IEEGSession(dataName,loginname, pwfile);
 duration = session.data.rawChannels(1).get_tsdetails.getDuration/(1e6); %convert from microseconds
 session.delete;
-times = [start_time,duration];
+%times = [start_time,duration];
+times = [start_time 18983.26];
 clinical.start_time = times(1);
 clinical.end_time = times(2);
 
@@ -105,10 +106,14 @@ end
 % Find the baseline time period
 baseline_indices = find_baseline_period(values(1:min(stim_start_times),:),stim.fs);
 
+% filter the data
+baseline = bipolar_values(baseline_indices,:);
+baseline = do_filters(baseline,stim.fs);
+
 % Get the functional connectivity (note that I am using a bipolar montage)
-tw = 2;
+tw = 1;
 if ~isempty(baseline_indices)
-    avg_pc = calc_pc(bipolar_values(baseline_indices,:),stim.fs,tw);
+    avg_pc = calc_pc(baseline,stim.fs,tw);
 else
     avg_pc = [];
 end

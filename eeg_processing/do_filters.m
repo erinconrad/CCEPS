@@ -10,7 +10,7 @@ for i = 1:size(values,2)
    values(:,i) = filtfilt(f,values(:,i));   
 end
 
-%{
+%
 %% High pass filter
 f = designfilt('highpassiir','FilterOrder',4, ...
    'PassbandFrequency',0.5,'PassbandRipple',0.2, ...
