@@ -41,8 +41,8 @@ tic
 session = IEEGSession(dataName,loginname, pwfile);
 duration = session.data.rawChannels(1).get_tsdetails.getDuration/(1e6); %convert from microseconds
 session.delete;
-%times = [start_time,duration];
-times = [start_time 18983.26];
+times = [start_time,duration];
+%times = [start_time 18983.26];
 clinical.start_time = times(1);
 clinical.end_time = times(2);
 
