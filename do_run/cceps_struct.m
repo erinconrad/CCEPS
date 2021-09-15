@@ -36,7 +36,6 @@ dataName = pt(p).ccep.file.name;
 start_time = find_first_closed_relay(pt(p).ccep.file.ann)-10;
 
 %% Get EEG data
-% Get data from IEEG (the main way)
 tic
 % Get file duration
 session = IEEGSession(dataName,loginname, pwfile);
@@ -96,14 +95,23 @@ else
     
 end
 
-
-
-%% Say which electrodes have stim
-extra = nan;
-missing = nan;
+%% Say which electrodes have stim and start times
+[stim_elecs,stim_chs,stim_start_times] = return_stim_elecs_and_start_times(chLabels,elecs);
 
 %% Do bipolar montage
 [bipolar_values,bipolar_labels,bipolar_ch_pair] = bipolar_montage(values,[],chLabels);
+
+%% Get the functional connectivity at baseline
+% Find the baseline time period
+baseline_indices = find_baseline_period(values(1:min(stim_start_times),:),stim.fs);
+
+% Get the functional connectivity (note that I am using a bipolar montage)
+tw = 2;
+if ~isempty(baseline_indices)
+    avg_pc = calc_pc(bipolar_values(baseline_indices,:),stim.fs,tw);
+else
+    avg_pc = [];
+end
 
 %% Perform signal averaging (of bipolar montage values)
 elecs = signal_average(bipolar_values,elecs,stim);
@@ -120,12 +128,12 @@ out.bipolar_labels = bipolar_labels;
 out.bipolar_ch_pair = bipolar_ch_pair;
 out.waveform = wav;
 out.how_to_normalize = how_to_normalize;
-out.extra = extra;
-out.missing = missing;
 out.bad = [];
 out.bad_details = [];
 out.periods = periods;
+out.stim_elecs = stim_elecs;
 out.clinical = clinical;
+out.avg_pc = avg_pc;
 
 outdir = [results_folder,'out_files/'];
 if ~exist(outdir,'dir')

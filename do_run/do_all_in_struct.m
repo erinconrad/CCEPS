@@ -19,7 +19,7 @@ end
 addpath(genpath(script_folder));
 
 %% Load pt file
-pt = load([data_folder,'pt.mat']);
+pt = load([script_folder,'clinical_info/pt.mat']);
 pt = pt.pt;
 
 for p = 1:length(pt)

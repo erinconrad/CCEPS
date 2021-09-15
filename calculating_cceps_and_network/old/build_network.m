@@ -26,7 +26,8 @@ else
     bad = out.bad;
 end
 chLabels = out.chLabels;
-ana = out.ana;
+ana = [];
+%ana = out.ana;
 normalize = out.how_to_normalize;
 nchs = length(chLabels);
 

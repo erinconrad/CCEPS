@@ -18,39 +18,19 @@ nw = length(window_start);
 
 
 %% Calculate pc for each window
-all_pc = zeros(nchs*(nchs-1)/2,nw);
+all_pc = zeros(nchs,nchs,nw);
 
 % I am trying to parallelize this part
 for i = 1:nw
     clip = values(window_start:window_start+iw,:);
-    pc = zeros(nchs,nchs);
+        
+    pc = corrcoef(clip);
+    pc(logical(eye(size(pc)))) = 0;
     
-    
-    for ich = 1:nchs
-        for jch = 1:ich-1 
-            
-            % pearson correlation
-            r = corr(clip(:,ich),clip(:,jch));
-            
-            pc(ich,jch) = r;
-            pc(jch,ich) = r;
-        end
-    end
-    
-    if 0
-        figure
-        imagesc(pc(:,:))
-        pause
-        close(gcf)
-    end
-    
-    %% unwrap the pc matrix into a one dimensional vector for storage
-    all_pc(:,i) = wrap_or_unwrap_adjacency_2(pc);
-    
-    
+    all_pc(:,:,i) = pc;
 end
 
 %% Average the network over all time windows
-avg_pc = nanmean(all_pc,2);
+avg_pc = nanmean(all_pc,3);
 
 end

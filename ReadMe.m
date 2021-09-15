@@ -27,8 +27,8 @@ Next, open up the script cceps.m and modify the dataName of the IEEG.org
 CCEPS file you want to analyze. Also, modify the additional parameters if
 needed.
 
-Then, navigate to the main folder containing cceps.m and run
->> new_cceps
+Then, navigate to the folder do_run
+>> do_all_in_struct
 
 The code works according to the following pipeline
 1) Downloads ieeg data for the stim session

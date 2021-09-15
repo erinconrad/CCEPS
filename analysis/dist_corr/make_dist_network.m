@@ -6,7 +6,7 @@ A = nan(nchs,nchs);
 for i = 1:nchs
     for j = 1:i-1
         dist = vecnorm(locs(i,:)-locs(j,:));
-        metric = 1/dist;
+        metric = 1/dist^2;
         A(i,j) = metric;
         A(j,i) = metric;
     end
