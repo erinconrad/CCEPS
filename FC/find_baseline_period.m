@@ -1,7 +1,7 @@
 function baseline_indices = find_baseline_period(eeg,fs)
 
 buffer = 1e-1; % 100 ms of buffer
-min_time = 10;
+min_time = 30;
 buffer_idx = buffer*fs;
 baseline_dur = min_time*fs;
 
