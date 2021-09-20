@@ -79,7 +79,7 @@ for j = 1:2
     % Initialize figure
     figure
     set(gcf,'position',[100 100 1200 1000])
-    t = tiledlayout(n_lines,n_per_line,'padding','tight','tilespacing','tight');
+    t = tiledlayout(n_lines,n_per_line,'padding','compact','tilespacing','compact');
     
  
     % Pick a random N
