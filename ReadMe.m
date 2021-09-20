@@ -1,5 +1,7 @@
 %% CCEPs code
 
+% this is a test
+
 %{
 This code takes data from cortical stimulation sessions and measures
 cortico-cortical evoked potentials (CCEPs).

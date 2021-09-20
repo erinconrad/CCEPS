@@ -1,9 +1,9 @@
 function random_rejections_keeps(out)
 
 %% Parameters
+n_to_plot = 25; % how many total to show
 n_per_line = 5;
 n_lines = 5;
-n_to_plot = 25;
 n1_time = [10e-3 50e-3];
 zoom_times = [-300e-3 300e-3];
 zoom_factor = 2;
