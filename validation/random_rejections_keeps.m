@@ -38,14 +38,6 @@ pre_thresh = out.details.reject.pre_thresh;
 at_thresh = out.details.reject.at_thresh;
 keep = out.details.reject.keep;
 
-% Remove non keep chs
-%{
-sig_avg = sig_avg(keep_chs,keep_chs);
-pre_thresh = pre_thresh(keep_chs,keep_chs);
-at_thresh = at_thresh(keep_chs,keep_chs);
-keep = keep(keep_chs,keep_chs);
-keep_labels = out.bipolar_labels(keep_chs);
-%}
 
 any_reject = sig_avg == 1| pre_thresh == 1 | at_thresh == 1;
 

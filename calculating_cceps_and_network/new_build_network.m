@@ -1,9 +1,8 @@
-function [A,ch_info,details]= new_build_network(out,do_plot)
+function out = new_build_network(out)
 
-%{ 
-[A,ch_info]= build_network(elecs,stim,which,nchs,chLabels,...
-    ana,normalize,do_plot)
- %}
+%% Parameters
+thresh_amp = 4;
+wavs = {'N1','N2'};
 
 %% Get various path locations
 locations = cceps_files; % Need to make a file pointing to you own path
@@ -16,143 +15,84 @@ if isempty(locations.ieeg_folder) == 0
     addpath(genpath(locations.ieeg_folder));
 end
 
-%% unpack
+%% Basic info
 elecs = out.elecs;
-stim = out.stim;
-which = out.waveform;
-if ~isfield(out,'bad')
-    bad = [];
-else
-    bad = out.bad;
-end
 chLabels = out.chLabels;
-if isfield(out,'ana')
-    ana = out.ana;
-else
-    ana = [];
-end
-normalize = out.how_to_normalize;
 nchs = length(chLabels);
-
-thresh_amp = 4;
-
 keep_chs = get_chs_to_ignore(chLabels);
 
-chs = 1:nchs;
+% Loop over n1 and n2
+for w = 1:length(wavs)
 
-A = nan(nchs,nchs);
+    which = wavs{w};
+    A = nan(nchs,nchs);
 
-%% initialize rejection details
-details.thresh = thresh_amp;
-details.which = which;
-details.reject.sig_avg = nan(length(elecs),length(elecs));
-details.reject.pre_thresh = nan(length(elecs),length(elecs));
-details.reject.at_thresh = nan(length(elecs),length(elecs));
-details.reject.keep = nan(length(elecs),length(elecs));
+    %% initialize rejection details
+    details.thresh = thresh_amp;
+    details.which = which;
+    details.reject.sig_avg = nan(length(elecs),length(elecs));
+    details.reject.pre_thresh = nan(length(elecs),length(elecs));
+    details.reject.at_thresh = nan(length(elecs),length(elecs));
+    details.reject.keep = nan(length(elecs),length(elecs));
 
-for ich = 1:length(elecs)
- 
-    if isempty(elecs(ich).arts), continue; end
+    for ich = 1:length(elecs)
+
+        if isempty(elecs(ich).arts), continue; end
+
+        arr = elecs(ich).(which);
+
+        % Add peak amplitudes to the array
+        A(ich,:) = arr(:,1);
+
+
+        all_bad = logical(elecs(ich).all_bad);
+        details.reject.sig_avg(ich,:) = all_bad;
+        details.reject.pre_thresh(ich,:) = isnan(elecs(ich).(which)(:,1)) & ~all_bad;
+        details.reject.at_thresh(ich,:) = elecs(ich).(which)(:,1) < thresh_amp;
+        details.reject.keep(ich,:) = elecs(ich).(which)(:,1) >= thresh_amp;
+        %{
+        all_nans = (sum(~isnan(elecs(ich).avg),1) == 0)';
+        details.reject.sig_avg(ich,:) = all_nans;
+        details.reject.pre_thresh(ich,:) = isnan(elecs(ich).(which)(:,1)) & ~all_nans;
+        details.reject.at_thresh(ich,:) = elecs(ich).(which)(:,1) < thresh_amp;
+        details.reject.keep(ich,:) = elecs(ich).(which)(:,1) >= thresh_amp;
+        %}
+    end
+
+    % Add details to array
+    out.rejection_details(w) = details;
+
+
+    %% Remove ignore chs
+    stim_chs = nansum(A,2) > 0;
+    response_chs = keep_chs;
+    A(:,~response_chs) = nan;
+    A = A';
+    A0 = A;
+
+    %% Normalize
+    A(A0<thresh_amp) = 0;
     
-    arr = elecs(ich).(which);
+    %% Add this to array
+    if w == 1
+        out.stim_chs = stim_chs;
+        out.response_chs = response_chs;
+    end
     
-    % Add peak amplitudes to the array
-    A(ich,:) = arr(:,1);
-    
-    
-    all_bad = logical(elecs(ich).all_bad);
-    details.reject.sig_avg(ich,:) = all_bad;
-    details.reject.pre_thresh(ich,:) = isnan(elecs(ich).(which)(:,1)) & ~all_bad;
-    details.reject.at_thresh(ich,:) = elecs(ich).(which)(:,1) < thresh_amp;
-    details.reject.keep(ich,:) = elecs(ich).(which)(:,1) >= thresh_amp;
-    %{
-    all_nans = (sum(~isnan(elecs(ich).avg),1) == 0)';
-    details.reject.sig_avg(ich,:) = all_nans;
-    details.reject.pre_thresh(ich,:) = isnan(elecs(ich).(which)(:,1)) & ~all_nans;
-    details.reject.at_thresh(ich,:) = elecs(ich).(which)(:,1) < thresh_amp;
-    details.reject.keep(ich,:) = elecs(ich).(which)(:,1) >= thresh_amp;
-    %}
+    out.network(w).which = which;
+    out.network(w).A = A;
+
 end
-
-
-
-
-%% Remove ignore chs
-%{
-response_chs = chs;
-stim_chs = chs(nansum(A,2)>0);
-A = A(stim_chs,keep_chs)';
-response_chs = response_chs(keep_chs);
-A0 = A;
-%}
-stim_chs = nansum(A,2) > 0;
-response_chs = keep_chs;
-A(:,~response_chs) = nan;
-A = A';
-A0 = A;
-ch_info.dimensions = {'response','stim'};
-
-%% Normalize
-A(A0<thresh_amp) = nan;
-plotA = A(response_chs,stim_chs);
 
 %% Convert electrode labels to anatomic locations
-if 1%isempty(ana)
-    response_labels = chLabels(response_chs);
-    stim_labels = chLabels(stim_chs);
-    mean_positions_response = 1:length(response_labels);
-    mean_positions_stim = 1:length(stim_labels);
-    edge_positions_response = [];
-    edge_positions_stim = []; 
+%{
+response_labels = chLabels(response_chs);
+stim_labels = chLabels(stim_chs);
+mean_positions_response = 1:length(response_labels);
+mean_positions_stim = 1:length(stim_labels);
+edge_positions_response = [];
+edge_positions_stim = []; 
     
-else
-    response_ana = ana(response_chs);
-    stim_ana = ana(stim_chs);
-    
-    response_ana_char = cellfun(@char,response_ana,'UniformOutput',false);
-    response_ana_char = cellfun(@(x) reshape(x,1,[]),response_ana_char,'UniformOutput',false);
-    [response_labels_idx,ia,ic] = unique(response_ana_char,'stable');
-    mean_positions_response = zeros(length(response_labels_idx),1);
-    edge_positions_response = zeros(length(response_labels_idx),1);
-    for i = 1:length(response_labels_idx)-1
-        mean_positions_response(i) = mean(ia(i):ia(i+1))-0.5;
-        edge_positions_response(i) = ia(i)-0.5;
-    end
-    mean_positions_response(end) = mean(ia(end):length(response_ana))-0.5;
-    edge_positions_response(end) = [ia(end)-0.5];
-    response_labels = response_ana(ia);
-    
-    stim_ana_char = cellfun(@char,stim_ana,'UniformOutput',false);
-    stim_ana_char = cellfun(@(x) reshape(x,1,[]),stim_ana_char,'UniformOutput',false);
-    [stim_labels_idx,ia,ic] = unique(stim_ana_char,'stable');
-    mean_positions_stim = zeros(length(stim_labels_idx),1);
-    edge_positions_stim = zeros(length(stim_labels_idx),1);
-    for i = 1:length(stim_labels_idx)-1
-        mean_positions_stim(i) = mean(ia(i):ia(i+1))-0.5;
-        edge_positions_stim(i) = ia(i)-0.5;
-    end
-    mean_positions_stim(end) = mean(ia(end):length(stim_ana))-0.5;
-    edge_positions_stim(end) = [ia(end)-0.5];
-    stim_labels = stim_ana(ia);
-
-    
-    %{
-    [response_labels,ia,ic] = unique(response_ana,'stable');
-    mean_positions_response = zeros(length(response_labels),1);
-    for i = 1:length(response_labels)-1
-        mean_positions_response(i) = mean(ia(i):ia(i+1));
-    end
-    mean_positions_response(end) = mean(ia(end):length(response_ana));
-
-
-    [stim_labels,ia,ic] = unique(stim_ana,'stable');
-    mean_positions_stim = zeros(length(stim_labels),1);
-    for i = 1:length(stim_labels)-1
-        mean_positions_stim(i) = mean(ia(i):ia(i+1));
-    end
-    mean_positions_stim(end) = mean(ia(end):length(stim_ana));
-    %}
-end
 
 ch_info.response_chs = response_chs;
 ch_info.stim_chs = stim_chs;
@@ -164,8 +104,10 @@ ch_info.normalize = normalize;
 ch_info.response_edges = edge_positions_response;
 ch_info.stim_edges = edge_positions_stim;
 ch_info.waveform = which;
+%}
 
 
+%{
 in_degree = nansum(A,2);
 [in_degree,I] = sort(in_degree,'descend');
 in_degree_chs = chs(I);
@@ -196,7 +138,8 @@ for i = 1:min(10,length(out_degree))
         chLabels{out_degree_chs(i)},ana_word{out_degree_chs(i)},out_degree(i));
 end
 end
-
+%}
+%{
 if do_plot == 1
 %% PLot
 figure
@@ -222,5 +165,6 @@ while 1
     close(gcf)
 end
 end
+%}
 
 end

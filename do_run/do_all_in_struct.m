@@ -2,7 +2,7 @@ function do_all_in_struct
 
 %% Parameters
 overwrite = 0;
-also_validate = 1;
+also_validate = 0;
 
 %% Get various path locations
 locations = cceps_files; % Need to make a file pointing to you own path

@@ -6,12 +6,6 @@ the FC code)
 %}
 function out = cceps_struct(pt,p)
 
-%% Parameters
-% which waveform to plot (N1 is standard)
-wav = 'N1';
-how_to_normalize = 0; % should probably keep 0
-
-
 %% Probably always the same
 % Stimulation parameters
 stim.pulse_width = 300e-6; % pulse width in seconds
@@ -127,16 +121,12 @@ elecs = get_waveforms(elecs,stim);
 %% Save info
 out.name = dataName;
 out.elecs = elecs;
-out.stim = stim;
+out.other.stim = stim;
 out.chLabels = chLabels;
 out.bipolar_labels = bipolar_labels;
 out.bipolar_ch_pair = bipolar_ch_pair;
-out.waveform = wav;
-out.how_to_normalize = how_to_normalize;
-out.bad = [];
-out.bad_details = [];
-out.periods = periods;
-out.stim_elecs = stim_elecs;
+out.other.periods = periods;
+out.other.stim_elecs = stim_elecs;
 out.clinical = clinical;
 out.avg_pc = avg_pc;
 
@@ -148,10 +138,7 @@ save([outdir,sprintf('results_%s',dataName)],'out');
 
 
 %% Build a network
-[A,ch_info,details] = new_build_network(out,0);
-out.A = A;
-out.ch_info = ch_info;
-out.details = details;
+out = new_build_network(out);
 save([outdir,sprintf('results_%s',dataName)],'out');
 
 end
