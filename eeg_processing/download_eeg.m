@@ -94,7 +94,6 @@ for i = 1:nchunks
                     contains(ME.message,'502') ||  contains(ME.message,'500')
                 attempt = attempt + 1;
                 fprintf('Failed to retrieve ieeg.org data, trying again (attempt %d)\n',attempt); 
-                session.delete
             else
                 ME
                 error('Non-server error');
