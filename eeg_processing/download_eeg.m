@@ -76,9 +76,33 @@ nchs = size(channelLabels,1);
 values = zeros(end_index-start_index+1,nchs);
 nchunks = 80;
 for i = 1:nchunks
-    values(:,floor(nchs/nchunks*(i-1))+1:min(floor(nchs/nchunks*i),nchs)) =...
-        session.data.getvalues([start_index:end_index],...
-        floor(nchs/nchunks*(i-1))+1:min(floor(nchs/nchunks*i),nchs));
+    
+    attempt = 1;
+
+    % Wrap data pulling attempts in a while loop
+    while 1
+
+        try
+            values(:,floor(nchs/nchunks*(i-1))+1:min(floor(nchs/nchunks*i),nchs)) =...
+                session.data.getvalues([start_index:end_index],...
+                floor(nchs/nchunks*(i-1))+1:min(floor(nchs/nchunks*i),nchs));
+            
+            catch ME
+            % If server error, try again (this is because there are frequent random
+            % server errors).
+            if contains(ME.message,'503') || contains(ME.message,'504') || ...
+                    contains(ME.message,'502') ||  contains(ME.message,'500')
+                attempt = attempt + 1;
+                fprintf('Failed to retrieve ieeg.org data, trying again (attempt %d)\n',attempt); 
+                session.delete
+            else
+                ME
+                error('Non-server error');
+            end
+
+        end
+    
+    end
 end
 %}
 
