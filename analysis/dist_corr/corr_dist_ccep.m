@@ -1,6 +1,7 @@
 function corr_dist_ccep(out,elecs)
 
 do_log=1;
+which = 1;
 
 %% Get various path locations
 locations = cceps_files; % Need to make a file pointing to you own path
@@ -16,10 +17,9 @@ pt_name = C{1};
 addpath(genpath(script_folder));
 
 %% Get data
+ccep = out.network(which).A;
 if do_log ==1
-    ccep = log(out.A);
-else
-    ccep = out.A;
+    ccep = log(ccep);
 end
 ccep_bipolar_labels = out.bipolar_labels;
 
