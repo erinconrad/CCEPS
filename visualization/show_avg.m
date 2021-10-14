@@ -102,7 +102,7 @@ end
 xlim([elecs(ich).times(1) elecs(ich).times(2)])
 
 if save_plot
-    exportgraphics(gca,[results_folder,'plots/',name_first ,'_',chLabels{ich},'_',chLabels{jch},'.png'],'BackgroundColor','none');
+    exportgraphics(gca,[results_folder,'plots/',name_first ,'_',chLabels{ich},'_',chLabels{jch},'.gif'],'BackgroundColor','none');
     close all
     %print(gcf,[results_folder,'plots/',name_first ,'_',chLabels{ich},'_',chLabels{jch}],'-dpng');
 end

@@ -1,12 +1,10 @@
-stim = out.stim;
+stim = out.other.stim;
 elecs = out.elecs;
 chLabels = out.chLabels;
 if isfield(out,'ana')
     ana = out.ana;
 end
-wav = out.waveform;
 dataName = out.name;
-how_to_normalize = out.how_to_normalize;
 nchs = size(chLabels,1);
 if isfield(out,'clinical')
     clinical = out.clinical;
