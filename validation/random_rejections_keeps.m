@@ -110,12 +110,12 @@ for j = 1:2
         % Get the waveform
         avg = out.elecs(row).avg(:,col);
         times = out.elecs(row).times;
-        eeg_times = convert_indices_to_times(1:length(avg),out.stim.fs,times(1));
+        eeg_times = convert_indices_to_times(1:length(avg),out.other.stim.fs,times(1));
         wav =  out.elecs(row).(which)(col,:);
         stim_idx = out.elecs(row).stim_idx;
         wav_idx = wav(2)+stim_idx+1;
-        wav_time = convert_indices_to_times(wav_idx,out.stim.fs,times(1));
-        n1_idx = floor(n1_time*out.stim.fs);
+        wav_time = convert_indices_to_times(wav_idx,out.other.stim.fs,times(1));
+        n1_idx = floor(n1_time*out.other.stim.fs);
         temp_n1_idx = n1_idx + stim_idx - 1;
         
         
