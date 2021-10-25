@@ -30,13 +30,13 @@ end
 keep_chs = get_chs_to_ignore(out.bipolar_labels);
 
 %% Get rejection details arrays
-thresh = out.details.thresh;
-which = out.details.which;
+thresh = out.rejection_details.thresh;
+which = out.rejection_details.which;
 
-sig_avg = out.details.reject.sig_avg;
-pre_thresh = out.details.reject.pre_thresh;
-at_thresh = out.details.reject.at_thresh;
-keep = out.details.reject.keep;
+sig_avg = out.rejection_details.reject.sig_avg;
+pre_thresh = out.rejection_details.reject.pre_thresh;
+at_thresh = out.rejection_details.reject.at_thresh;
+keep = out.rejection_details.reject.keep;
 
 
 any_reject = sig_avg == 1| pre_thresh == 1 | at_thresh == 1;
