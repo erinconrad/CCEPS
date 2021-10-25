@@ -87,6 +87,9 @@ for i = 1:nchunks
                 session.data.getvalues([start_index:end_index],...
                 floor(nchs/nchunks*(i-1))+1:min(floor(nchs/nchunks*i),nchs));
             
+            % break out of while loop
+            break
+            
             catch ME
             % If server error, try again (this is because there are frequent random
             % server errors).
