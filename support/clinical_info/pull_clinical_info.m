@@ -15,6 +15,7 @@ for s = 1:length(sn)
     T = readtable(file_name,'Sheet',s);
     
     % Read ieeg name
+    if ~iscell((T.IeegName)), break; end
     curr_name = T.IeegName{1};
     
     if contains(curr_name,name)
