@@ -7,6 +7,7 @@ n_lines = 5;
 n1_time = [10e-3 50e-3];
 zoom_times = [-300e-3 300e-3];
 zoom_factor = 2;
+which_n = 1;
 
 %% Get various path locations
 locations = cceps_files; % Need to make a file pointing to you own path
@@ -30,13 +31,13 @@ end
 keep_chs = get_chs_to_ignore(out.bipolar_labels);
 
 %% Get rejection details arrays
-thresh = out.rejection_details.thresh;
-which = out.rejection_details.which;
+thresh = out.rejection_details(which_n).thresh;
+which = out.rejection_details(which_n).which;
 
-sig_avg = out.rejection_details.reject.sig_avg;
-pre_thresh = out.rejection_details.reject.pre_thresh;
-at_thresh = out.rejection_details.reject.at_thresh;
-keep = out.rejection_details.reject.keep;
+sig_avg = out.rejection_details(which_n).reject.sig_avg;
+pre_thresh = out.rejection_details(which_n).reject.pre_thresh;
+at_thresh = out.rejection_details(which_n).reject.at_thresh;
+keep = out.rejection_details(which_n).reject.keep;
 
 
 any_reject = sig_avg == 1| pre_thresh == 1 | at_thresh == 1;
