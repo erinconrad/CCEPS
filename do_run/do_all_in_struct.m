@@ -1,4 +1,4 @@
-function do_all_in_struct
+function do_all_in_struct(whichPts)
 
 %% Parameters
 overwrite = 1;
@@ -22,7 +22,11 @@ addpath(genpath(script_folder));
 pt = load([script_folder,'support/clinical_info/pt.mat']);
 pt = pt.pt;
 
-for p = 1:length(pt)
+if isempty(whichPts)
+    whichPts = 1:length(pt);
+end
+
+for p = whichPts
     
     fname = pt(p).ccep.file.name;
     
