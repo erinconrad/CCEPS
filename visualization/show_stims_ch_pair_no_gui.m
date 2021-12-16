@@ -28,6 +28,8 @@ name = out.name;
 fs = out.other.stim.fs;
 if ~isfield(out,'clinical')
     start_time = 1;
+elseif isnan(out.clinical.start_time)
+    start_time = 1;
 else
     start_time = out.clinical.start_time;
 end
