@@ -16,8 +16,10 @@ C = out.name;
 C = strsplit(C,'_');
 name = C{1};
 
+
 A(~response_chs,:) = [];
 A(:,~stim_chs) = [];
+
 if do_log
     A = log(A);
     ltext = '(log scale)';

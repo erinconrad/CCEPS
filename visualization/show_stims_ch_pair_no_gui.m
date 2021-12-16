@@ -1,8 +1,7 @@
-function show_stims_ch_pair(out,sch,rch)
+function show_stims_ch_pair_no_gui(out,sch,rch)
 
 %% Parameters
 do_bipolar = 1;
-stim = out.other.stim;
 stim_time = [-5e-3 15e-3];
 
 %% Get various path locations
@@ -114,19 +113,23 @@ tw = surround_times;
 pt = linspace(tw(1),tw(2),size(alt_avg,1));
 st = 1;
 
-f=figure;
-set(f,'position',[187 439 1250 359])
 
 
-subplot(1,2,2)
+nexttile
 plot(pt,alt_avg,'linewidth',2)
-set(gca,'fontsize',20)
-xlabel('Time (s)')
-ylabel('\muV')
+set(gca,'fontsize',15)
+%xlabel('Time (s)')
+%ylabel('\muV')
+xticklabels([])
+yticklabels([])
 xlim([tw(1) tw(2)])
+xl = xlim;
+yl = ylim;
+text(xl(1),yl(2),sprintf('%s->%s',chLabels{sch},chLabels{rch}),...
+    'verticalalignment','top','fontsize',15)
 
-ax = subplot(1,2,1);
 
+nexttile
 for t = 1:nt
     all_pt = linspace(tw(1),tw(2),bits(t,end)-bits(t,1)+1);
     if do_bipolar
@@ -138,9 +141,11 @@ for t = 1:nt
     plot(all_pt,vals,'color',[0.5 0.5 0.5])    
     hold on
 end
-set(gca,'fontsize',20)
-xlabel('Time (s)')
-ylabel('\muV')
+set(gca,'fontsize',15)
+%xlabel('Time (s)')
+%ylabel('\muV')
+xticklabels([])
+yticklabels([])
 xlim([tw(1) tw(2)])
 all_pt = linspace(tw(1),tw(2),bits(st,end)-bits(st,1)+1);
 if do_bipolar
@@ -149,75 +154,6 @@ else
     vals = values(bits(st,1):bits(st,end),rch);
 end
 vals = vals - mean(vals);
-hst = plot(all_pt,vals,'color','k','linewidth',2);
-htext= text(all_pt(end),median(vals),sprintf('Trial %d',st),'fontsize',20);
-gdata.hst = hst;
-gdata.ax = ax;
-gdata.htext = htext;
-gdata.values = values;
-gdata.st = st;
-gdata.bits = bits;
-gdata.rch = rch;
-gdata.tw = tw;
-gdata.do_bipolar = do_bipolar;
-gdata.chLabels = chLabels;
-guidata(f,gdata);
-set(f,'keypressfcn',@(h,evt) arrow_through(h,evt));
-    %n = input('\nEnter trial number you wish to highlight\n');
-    %st = n;
-    
-    
-    %delete(hst)
-    %delete(htext)
-end
 
-
-
-
-function arrow_through(H,E)
-
-
-str = E.Key;
-
-gdata = guidata(H);
-hst = gdata.hst;
-htext = gdata.htext;
-values = gdata.values;
-st = gdata.st;
-bits = gdata.bits;
-rch = gdata.rch;
-tw = gdata.tw;
-ax = gdata.ax;
-chLabels = gdata.chLabels;
-do_bipolar = gdata.do_bipolar;
-
-if strcmp(str,'downarrow')
-    st = max(1,st-1);
-elseif strcmp(str,'uparrow')
-    st = min(size(bits,1),st+1);
-else
-    return
-end
-
-
-% delete old
-delete(hst)
-delete(htext)
-
-% plot new
-axes(ax);
-all_pt = linspace(tw(1),tw(2),bits(st,end)-bits(st,1)+1);
-if do_bipolar
-    vals = bipolar_montage(values(bits(st,1):bits(st,end),:),rch,chLabels);
-else
-    vals = values(bits(st,1):bits(st,end),rch);
-end
-vals = vals - mean(vals);
-hst = plot(all_pt,vals,'color','k','linewidth',2);
-htext= text(all_pt(end),median(vals),sprintf('Trial %d',st),'fontsize',20);
-gdata.hst = hst;
-gdata.htext = htext;
-gdata.st = st;
-guidata(H,gdata);
 
 end
