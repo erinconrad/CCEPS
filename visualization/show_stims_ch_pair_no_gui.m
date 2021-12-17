@@ -61,7 +61,7 @@ nt = size(bits,1);
 
 % Get alt avg
 all_traces = nan(bits(1,end)-bits(1,1)+1,nt);
-
+cmap = colormap(parula(nt));
 
 for t = 1:nt
     if do_bipolar
@@ -140,7 +140,7 @@ for t = 1:nt
         vals = values(bits(t,1):bits(t,end),rch);
     end
     vals = vals - mean(vals);
-    plot(all_pt,vals,'color',[0.5 0.5 0.5])    
+    plot(all_pt,vals,'color',cmap(t,:))    
     hold on
 end
 set(gca,'fontsize',15)
