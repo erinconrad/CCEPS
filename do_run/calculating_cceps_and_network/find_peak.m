@@ -41,6 +41,6 @@ for ich = 1:nchs
 end
 
 
-peak_time = peak_idx/fs;
+peak_time = (peak_idx-stim_idx)/fs;
 
 end
