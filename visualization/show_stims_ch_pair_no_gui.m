@@ -1,4 +1,4 @@
-function show_stims_ch_pair_no_gui(out,sch,rch,t1,t2)
+function show_stims_ch_pair_no_gui(out,sch,rch,t1)
 
 %% Parameters
 do_bipolar = 1;
@@ -63,8 +63,9 @@ nt = size(bits,1);
 % Get alt avg
 all_traces = nan(bits(1,end)-bits(1,1)+1,nt);
 cmap = colormap(parula(nt));
-all_peaks = nan(nt,1);
-all_peak_times = nan(nt,1);
+all_n2s = nan(nt,1);
+all_n1s = nan(nt,1);
+%all_peak_times = nan(nt,1);
 
 for t = 1:nt
     if do_bipolar
@@ -114,9 +115,17 @@ for t = 1:nt
     stim_idx = out.elecs(sch).stim_idx;
     peak_range = [50e-3 300e-3];
     idx_before_stim = 30;
-    [peak,peak_time] = find_peak(vals,fs,stim_idx,peak_range,idx_before_stim);
-    all_peaks(t) = peak;
-    all_peak_times(t) = peak_time;
+    [peak,~] = find_peak(vals,fs,stim_idx,peak_range,idx_before_stim);
+    all_n2s(t) = peak;
+    
+    %% Get N1 peaks
+    stim_idx = out.elecs(sch).stim_idx;
+    peak_range = [15e-3 50e-3];
+    idx_before_stim = 30;
+    [peak,~] = find_peak(vals,fs,stim_idx,peak_range,idx_before_stim);
+    all_n1s(t) = peak;
+    
+
 end
 
 alt_avg = nanmean(all_traces,2);
@@ -170,12 +179,16 @@ else
     vals = values(bits(st,1):bits(st,end),rch);
 end
 vals = vals - mean(vals);
+xl = xlim;
+yl = ylim;
+text(xl(1),yl(1),sprintf('%s->%s',chLabels{sch},chLabels{rch}),...
+    'fontsize',15)
 
-nexttile(t2)
+nexttile(t1)
 %T = table(all_peaks,all_peak_times,'VariableNames',{'Amplitude','Time'});
 %h = stackedplot(T,'o','linewidth',2);
-plot(all_peaks,'o','linewidth',2)
-ylabel('N2 amplitude (uV)')
+plot(all_n1s,'o','linewidth',2)
+ylabel('N1 (uV)')
 xlabel('Trial')
 set(gca,'fontsize',15)
 xl = xlim;
@@ -183,13 +196,17 @@ yl = ylim;
 text(xl(1),yl(1),sprintf('%s->%s',chLabels{sch},chLabels{rch}),...
     'fontsize',15)
 
-nexttile(t2)
+nexttile(t1)
 %T = table(all_peaks,all_peak_times,'VariableNames',{'Amplitude','Time'});
 %h = stackedplot(T,'o','linewidth',2);
-plot(all_peak_times,'o','linewidth',2)
-ylabel('N2 time')
+plot(all_n2s,'o','linewidth',2)
+ylabel('N2 (uV)')
 xlabel('Trial')
 set(gca,'fontsize',15)
+xl = xlim;
+yl = ylim;
+text(xl(1),yl(1),sprintf('%s->%s',chLabels{sch},chLabels{rch}),...
+    'fontsize',15)
 
 
 
