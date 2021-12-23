@@ -1,4 +1,4 @@
-function show_stims_ch_pair_no_gui(out,sch,rch)
+function show_stims_ch_pair_no_gui(out,sch,rch,t1,t2)
 
 %% Parameters
 do_bipolar = 1;
@@ -129,16 +129,8 @@ pt = linspace(tw(1),tw(2),size(alt_avg,1));
 st = 1;
 
 
-nexttile
-T = table(all_peaks,all_peak_times,'VariableNames',{'Amplitude','Time'});
-h = stackedplot(T,'o','linewidth',2);
-xlabel('Trial')
-set(gca,'fontsize',15)
-ax = findobj(h.NodeChildren, 'Type','Axes');
-set([ax.YLabel],'Rotation',90,'HorizontalAlignment', 'Center', 'VerticalAlignment', 'Bottom')
-
-%{
-nexttile
+%
+nexttile(t1)
 plot(pt,alt_avg,'linewidth',2)
 set(gca,'fontsize',15)
 %xlabel('Time (s)')
@@ -153,7 +145,7 @@ text(xl(1),yl(2),sprintf('%s->%s',chLabels{sch},chLabels{rch}),...
 %}
 
 
-nexttile
+nexttile(t1)
 for t = 1:nt
     all_pt = linspace(tw(1),tw(2),bits(t,end)-bits(t,1)+1);
     if do_bipolar
@@ -178,6 +170,27 @@ else
     vals = values(bits(st,1):bits(st,end),rch);
 end
 vals = vals - mean(vals);
+
+nexttile(t2)
+%T = table(all_peaks,all_peak_times,'VariableNames',{'Amplitude','Time'});
+%h = stackedplot(T,'o','linewidth',2);
+plot(all_peaks,'o','linewidth',2)
+ylabel('N2 amplitude (uV)')
+xlabel('Trial')
+set(gca,'fontsize',15)
+xl = xlim;
+yl = ylim;
+text(xl(1),yl(1),sprintf('%s->%s',chLabels{sch},chLabels{rch}),...
+    'fontsize',15)
+
+nexttile(t2)
+%T = table(all_peaks,all_peak_times,'VariableNames',{'Amplitude','Time'});
+%h = stackedplot(T,'o','linewidth',2);
+plot(all_peak_times,'o','linewidth',2)
+ylabel('N2 time')
+xlabel('Trial')
+set(gca,'fontsize',15)
+
 
 
 end

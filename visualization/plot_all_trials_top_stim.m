@@ -42,14 +42,19 @@ for l = 1:length(listing)
     end
 
     %% Plot them
-    f=figure;
-    set(f,'position',[187 439 1400 1000])
-    tiledlayout(top_n/2,4,'tilespacing','tight','padding','tight')
+    f1=figure;
+    set(f1,'position',[187 439 1400 1000])
+    t1 = tiledlayout(f1,top_n/2,4,'tilespacing','tight','padding','tight');
+    
+    f2=figure;
+    set(f2,'position',[187 439 1400 1000])
+    t2 = tiledlayout(f2,top_n/2,4,'tilespacing','tight','padding','tight');
     for i = 1:top_n
-        show_stims_ch_pair_no_gui(out,pairs_to_plot(i,1),pairs_to_plot(i,2));
+        show_stims_ch_pair_no_gui(out,pairs_to_plot(i,1),pairs_to_plot(i,2),t1,t2);
     end
-    print([out_folder,name],'-dpng')
-    close(gcf)
+    print(f1,[out_folder,name,'_waves'],'-dpng')
+    print(f2,[out_folder,name,'_N2s'],'-dpng')
+    close all
     
 end
 
