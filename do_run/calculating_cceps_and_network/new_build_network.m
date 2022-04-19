@@ -1,4 +1,6 @@
-function out = new_build_network(out)
+function out = new_build_network(out,do_gui)
+
+if ~exist('do_gui','var'), do_gui = 0; end
 
 %% Parameters
 thresh_amp = 4;
@@ -139,12 +141,12 @@ for i = 1:min(10,length(out_degree))
 end
 end
 %}
-%{
-if do_plot == 1
+
+if do_gui == 1
 %% PLot
 figure
 set(gcf,'position',[1 11 1400 900])
-show_network(plotA,ch_info);
+show_network_no_fig(out,1,1,0)
 stim_ch_idx = find(stim_chs);
 response_ch_idx = find(response_chs);
 
@@ -159,7 +161,7 @@ while 1
     figure
     set(gcf,'position',[215 385 1226 413])
     %tight_subplot(1,1,[0.01 0.01],[0.15 0.10],[.02 .02]);
-    show_avg(out,stim_ch_idx(round(x)),response_ch_idx(round(y)),0)
+    show_avg(out,stim_ch_idx(round(x)),response_ch_idx(round(y)),0,1)
     
     pause
     close(gcf)

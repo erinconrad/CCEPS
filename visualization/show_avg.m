@@ -1,6 +1,6 @@
-function show_avg(out,ich,jch,save_plot)
+function show_avg(out,ich,jch,save_plot,details)
 
-details = 0;
+%details = 0;
 
 %% Get various path locations
 locations = cceps_files; % Need to make a file pointing to you own path
@@ -88,8 +88,8 @@ else
     xticklabels([])
     yticklabels([])
     axis off
-    set(gcf, 'Color', 'None')
-    set(gca, 'color', 'none');
+    %set(gcf, 'Color', 'None')
+    %set(gca, 'color', 'none');
 
 end
     
