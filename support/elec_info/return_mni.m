@@ -1,6 +1,7 @@
 function out = return_mni(name,elec_loc_folder)
 
 elec_file = 'electrodenames_coordinates_mni.csv';
+anat_file = 'electrodenames_native';
 
 listing = dir(elec_loc_folder);
 match_idx = [];
@@ -27,14 +28,29 @@ for i = 1:length(match_idx)
     try
         T = readtable([elec_loc_folder,listing(which_index).name,'/',elec_file]);
     catch
-        fprintf('\nWarning, no file match for %s\n',name);
         
-        out(i).folder_name = listing(which_index).name;
-        out(i).elec_names = [];
-        out(i).locs = [];
-        out(i).anatomy = [];
+        try % also try the subfolder with the patient's RID
+            folder_name = listing(which_index).name;
+            C = strsplit(folder_name,'_');
+            rid = C{1};
+            
+            T = readtable([elec_loc_folder,listing(which_index).name,'/',...
+                rid,'/',elec_file]);
+            
+        catch
+            
+            fprintf('\nWarning, no file match for %s\n',name);
         
-        continue
+            out(i).folder_name = listing(which_index).name;
+            out(i).elec_names = [];
+            out(i).locs = [];
+            out(i).anatomy = [];
+
+            continue
+            
+        end
+               
+        
     end
     
     if ~ismember(T.Properties.VariableNames,'Var1')
@@ -71,6 +87,56 @@ for i = 1:length(match_idx)
     out(i).folder_name = listing(which_index).name;
     out(i).elec_names = elec_names;
     out(i).locs = locs;
+    
+    %% Also add anatomy
+    % Load the desired file
+    try
+        T = readtable([elec_loc_folder,listing(which_index).name,'/',anat_file],...
+            'readvariablenames',false);
+    catch
+        
+        try % also try the subfolder with the patient's RID
+            folder_name = listing(which_index).name;
+            C = strsplit(folder_name,'_');
+            rid = C{1};
+            
+            T = readtable([elec_loc_folder,listing(which_index).name,'/',...
+                rid,'/',anat_file],'readvariablenames',false);
+            
+        catch
+            
+            fprintf('\nWarning, no file match for %s\n',name);
+        
+            out(i).anatomy = [];
+
+            continue
+            
+        end
+               
+        
+    end
+    
+    %% Get elec names
+    elec_names_ana = T.Var1;
+    
+    if size(T,2) >1
+        elec_ana = T.Var2;
+    else
+        elec_ana = cell(size(elec_names_ana));
+    end
+    
+    %% Reconcile two sets of electrode names
+    [lia,locb] = ismember(elec_names,elec_names_ana);
+    ana = cell(length(elec_names),1);
+    ana(lia) = elec_ana(locb(lia));
+    
+    if ~isequal(elec_names,elec_names_ana)
+        table(elec_names,elec_names_ana,ana)
+        error('look');
+    end
+    
+    out(i).anatomy = ana;
+    
 end
 
 

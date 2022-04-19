@@ -4,7 +4,11 @@ To dos
 the FC code)
 2) Ways to allow for repeated stims?
 %}
-function out = cceps_struct(pt,p)
+function out = cceps_struct(pt,p,do_ieeg,file_path)
+
+if exist('do_ieeg','var') == 0
+    do_ieeg = 1;
+end
 
 %% Probably always the same
 % Stimulation parameters
@@ -26,33 +30,48 @@ if isempty(locations.ieeg_folder) == 0
 end
 
 %% Get start time and dataname
-dataName = pt(p).ccep.file.name;
-start_time = find_first_closed_relay(pt(p).ccep.file.ann)-10;
+if do_ieeg
+    dataName = pt(p).ccep.file.name;
+    start_time = find_first_closed_relay(pt(p).ccep.file.ann)-10;
 
-%% Get EEG data
-tic
-% Get file duration
-session = IEEGSession(dataName,loginname, pwfile);
-duration = session.data.rawChannels(1).get_tsdetails.getDuration/(1e6); %convert from microseconds
-session.delete;
-times = [start_time,duration];
-%times = [start_time 18983.26];
-clinical.start_time = times(1);
-clinical.end_time = times(2);
+    %% Get EEG data
+    tic
+    % Get file duration
+    session = IEEGSession(dataName,loginname, pwfile);
+    duration = session.data.rawChannels(1).get_tsdetails.getDuration/(1e6); %convert from microseconds
+    session.delete;
+    times = [start_time,duration];
+    %times = [start_time 18983.26];
+    clinical.start_time = times(1);
+    clinical.end_time = times(2);
 
-data = download_eeg(dataName,loginname, pwfile,times);
-t = toc;
-fprintf('\nGot data in %1.1f minutes\n',t/60);
-chLabels = data.chLabels(:,1);
+    data = download_eeg(dataName,loginname, pwfile,times);
+    t = toc;
+    fprintf('\nGot data in %1.1f minutes\n',t/60);
+    chLabels = data.chLabels(:,1);
 
-% Remove leading zeros
-chLabels = remove_leading_zeros(chLabels);
-values = data.values;
-stim.fs = data.fs;
+    % Remove leading zeros
+    chLabels = remove_leading_zeros(chLabels);
+    values = data.values;
+    stim.fs = data.fs;
+    
+    % Get stim periods
+    periods = identify_stim_periods(data.layer.ann.event,chLabels,stim.fs,times);
+else
+    [hdr,record] = edfread2(file_path);
+    chLabels = hdr.label';
+    values = record';
+    periods = nan;
+    stim.fs = hdr.frequency(1);
+    clinical = [];
+    
+    % build dataname
+    startIndex = regexp(file_path,'CHOP***');
+    dataName = file_path(startIndex:startIndex+6);
+end
 
-%% Get stim periods
-periods = identify_stim_periods(data.layer.ann.event,chLabels,stim.fs,times);
-if isempty(fieldnames(periods))
+
+if isnan(periods) || isempty(fieldnames(periods))
     fprintf('\nNo machine annotations, using older method (not as good)\n');
     % Do old way to get artifacts
     periods = nan;

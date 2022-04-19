@@ -1,10 +1,10 @@
 %% Parameters
-overwrite = 0;
+overwrite = 1;
 
 %% Get various path locations
 locations = cceps_files; % Need to make a file pointing to you own path
 script_folder = locations.script_folder;
-results_folder = locations.results_folder;
+results_folder = locations.data_folder;
 box_folder = locations.box_folder;
 elec_path = [box_folder,'CNT Implant Reconstructions/'];
 
@@ -30,8 +30,10 @@ for s = 1:length(sn)
     if length(info) >= s
         if isfield(info(s),'elecs')
             if ~isempty(info(s).elecs)
-                fprintf('\nAlready did %s, skipping...\n',info(s).name);
-                continue
+                if overwrite == 0
+                    fprintf('\nAlready did %s, skipping...\n',info(s).name);
+                    continue
+                end
             end
         end
     end
