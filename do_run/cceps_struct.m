@@ -61,9 +61,15 @@ else
     edf_out = get_edf(file_path,[]);
     chLabels = edf_out.chLabels;
     values = edf_out.values;
-    periods = nan; % replace with something using annotations
     stim.fs = edf_out.fs;
+    annotations = edf_out.annotations;
+    times = edf_out.times;
+    times = [times(1) times(end)];
+    
     clinical = [];
+    
+    
+    periods = identify_stim_periods(annotations,chLabels,stim.fs,times);
     %{
     [hdr,record] = edfread2(file_path);
     chLabels = hdr.label';
