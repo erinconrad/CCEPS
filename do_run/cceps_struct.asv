@@ -58,12 +58,7 @@ if do_ieeg
     % Get stim periods
     periods = identify_stim_periods(data.layer.ann.event,chLabels,stim.fs,times);
 else
-    edf_out = get_edf(file_path,[]);
-    chLabels = edf_out.chLabels;
-    values = edf_out.values;
-    periods = nan; % replace with something using annotations
-    stim.fs = edf_out.fs;
-    clinical = [];
+    out = get_edf(file_path,[]);
     %{
     [hdr,record] = edfread2(file_path);
     chLabels = hdr.label';

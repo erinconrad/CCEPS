@@ -91,7 +91,7 @@ out.times = times;
 out.values = values;
 out.chLabels = chNames;
 out.fs = fs;
-out.annotations = ann_struct;
+out.annotations = annotations;
 
 %% Example plot
 if ~isempty(which_elec)
