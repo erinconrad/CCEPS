@@ -100,7 +100,7 @@ if ~isempty(which_elec)
         which_elec = find(ismember(chNames,which_elec));
         
     else
-        label = chNames(which_elec);
+        label = chNames{which_elec};
     end
     figure
     set(gcf,'position',[300 400 900 300])
