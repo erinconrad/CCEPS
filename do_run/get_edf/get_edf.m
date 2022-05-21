@@ -76,14 +76,18 @@ times = linspace(0,num_samples/fs,nsamples);
 % add type and description (make the same)
 % make a structure array
 n_annotations = size(annotations,1);
-for ia = 1:n_annotations
-    ann_time = seconds(annotations.Onset(ia));
-    ann_text = annotations.Annotations(ia);
-    ann_struct(ia).start = ann_time;
-    ann_struct(ia).stop = ann_time;
-    ann_struct(ia).type = ann_text;
-    ann_struct(ia).description = ann_text;
-    
+if n_annotations == 0
+    ann_struct = [];
+else
+    for ia = 1:n_annotations
+        ann_time = seconds(annotations.Onset(ia));
+        ann_text = annotations.Annotations(ia);
+        ann_struct(ia).start = ann_time;
+        ann_struct(ia).stop = ann_time;
+        ann_struct(ia).type = ann_text;
+        ann_struct(ia).description = ann_text;
+
+    end
 end
 
 %% Prep out

@@ -85,7 +85,7 @@ else
 end
 
 
-if isnan(periods) || isempty(fieldnames(periods))
+if isempty(fieldnames(periods))
     fprintf('\nNo machine annotations, using older method (not as good)\n');
     % Do old way to get artifacts
     periods = nan;
