@@ -78,7 +78,7 @@ for ich = 1:length(elecs)
         [n1_peak,I] = max(pks); % find the biggest
         n1_peak_idx = round(locs(I));
         if isempty(n1_peak)
-            n1_peak = nan;
+            n1_peak = 0;
             n1_peak_idx = nan;
         end
         
@@ -86,7 +86,7 @@ for ich = 1:length(elecs)
         [n2_peak,I] = max(pks); % find the biggest
         n2_peak_idx = round(locs(I));
         if isempty(n2_peak)
-            n2_peak = nan;
+            n2_peak = 0;
             n2_peak_idx = nan;
         end
         
