@@ -28,26 +28,28 @@ end
 
 for p = whichPts
     
-    fname = pt(p).ccep.file.name;
-    
-    if exist([out_folder,'results_',fname,'.mat'],'file') ~= 0
-        if overwrite == 0
-            fprintf('\nAlready did %s, skipping\n',fname);
+    for f = 1:length(pt(p).ccep.file)
+        fname = pt(p).ccep.file.name;
+
+        if exist([out_folder,'results_',fname,'.mat'],'file') ~= 0
+            if overwrite == 0
+                fprintf('\nAlready did %s, skipping\n',fname);
+                continue
+            end
+        end
+
+        if strcmp(pt(p).ccep.file(f).ann,'empty')
+            fprintf('\nNo annotations for %s, skipping\n',fname);
             continue
         end
-    end
-    
-    if strcmp(pt(p).ccep.file.ann,'empty')
-        fprintf('\nNo annotations for %s, skipping\n',fname);
-        continue
-    end
-    
-    fprintf('\nDoing %s\n',fname);
-    out = cceps_struct(pt,p);
-    
-    if also_validate
-        fprintf('\nValidating...\n');
-        random_rejections_keeps(out)
+
+        fprintf('\nDoing %s\n',fname);
+        out = cceps_struct(pt,p);
+
+        if also_validate
+            fprintf('\nValidating...\n');
+            random_rejections_keeps(out)
+        end
     end
     
 end

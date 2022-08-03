@@ -1,5 +1,5 @@
 %% Parameters
-overwrite = 1;
+overwrite = 0;
 
 %% Get various path locations
 locations = cceps_files; % Need to make a file pointing to you own path
