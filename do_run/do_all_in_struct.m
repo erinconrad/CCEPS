@@ -19,7 +19,7 @@ end
 addpath(genpath(script_folder));
 
 %% Load pt file
-pt = load([script_folder,'support/clinical_info/pt.mat']);
+pt = load([data_folder,'pt.mat']);
 pt = pt.pt;
 
 if isempty(whichPts)
@@ -29,7 +29,7 @@ end
 for p = whichPts
     
     for f = 1:length(pt(p).ccep.file)
-        fname = pt(p).ccep.file.name;
+        fname = pt(p).ccep.file(f).name;
 
         if exist([out_folder,'results_',fname,'.mat'],'file') ~= 0
             if overwrite == 0
