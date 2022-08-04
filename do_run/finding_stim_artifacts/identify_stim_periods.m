@@ -92,7 +92,7 @@ for i = 1:length(event)
         end
         
         % Find electrode to assign the stim to
-        stim_ch = find(strcmp(elec1,chLabels));
+        stim_ch = find(strcmpi(elec1,chLabels));
         if isempty(stim_ch)
             error('Cannot find stim channel')
         end
