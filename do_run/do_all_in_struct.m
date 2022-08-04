@@ -44,7 +44,7 @@ for p = whichPts
         end
 
         fprintf('\nDoing %s\n',fname);
-        out = cceps_struct(pt,p);
+        out = cceps_struct(pt,p,f);
 
         if also_validate
             fprintf('\nValidating...\n');

@@ -4,7 +4,7 @@ To dos
 the FC code)
 2) Ways to allow for repeated stims?
 %}
-function out = cceps_struct(pt,p,do_ieeg,file_path)
+function out = cceps_struct(pt,p,f,do_ieeg,file_path)
 
 if exist('do_ieeg','var') == 0
     do_ieeg = 1;
