@@ -31,8 +31,8 @@ end
 
 %% Get start time and dataname
 if do_ieeg
-    dataName = pt(p).ccep.file.name;
-    start_time = find_first_closed_relay(pt(p).ccep.file.ann)-10;
+    dataName = pt(p).ccep.file(f).name;
+    start_time = find_first_closed_relay(pt(p).ccep.file(f).ann)-10;
 
     %% Get EEG data
     tic
