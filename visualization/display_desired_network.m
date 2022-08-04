@@ -1,7 +1,7 @@
 
 %% Get which patient
 if ~exist('dataName','var')
-    dataName = 'HUP212_CCEP';
+    dataName = 'HUP220_CCEP';
 end
 
 
@@ -22,7 +22,8 @@ out = load(outfile);
 out = out.out;
 
 %% Unpack the structure
-stim = out.stim;
+%{
+stim = out.other.stim;
 elecs = out.elecs;
 chLabels = out.chLabels;
 %ana = out.ana;
@@ -33,6 +34,7 @@ nchs = size(chLabels,1);
 A = out.A;
 ch_info = out.ch_info;
 clear dataName
+%}
 
 
 new_build_network(out,1);

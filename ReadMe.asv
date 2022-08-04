@@ -1,5 +1,7 @@
 %% CCEPs code
 
+% this is a test
+
 %{
 This code takes data from cortical stimulation sessions and measures
 cortico-cortical evoked potentials (CCEPs).
@@ -50,7 +52,6 @@ correct dataName of the patient you wish to visualize.
 
 Then run
 >> display_desired_network
-You will first need to define the dataName for which file to run.
 
 This will display the CCEPs network, and you can click different pairs of
 stimulation-response electrodes to see the CCEPs waveform for that pair.
