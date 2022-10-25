@@ -1,7 +1,7 @@
 function do_all_in_struct(whichPts)
 
 %% Parameters
-overwrite = 1;
+overwrite = 0;
 also_validate = 1;
 
 %% Get various path locations

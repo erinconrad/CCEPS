@@ -1,7 +1,7 @@
 
 %% Get which patient
 if ~exist('dataName','var')
-    dataName = 'HUP220_CCEP';
+    dataName = 'HUP229_CCEP';
 end
 
 

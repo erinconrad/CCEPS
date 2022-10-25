@@ -1,6 +1,7 @@
 function random_rejections_keeps(out)
 
 %% Parameters
+pretty = 1;
 n_to_plot = 25; % how many total to show
 n_per_line = 5;
 n_lines = 5;
@@ -123,11 +124,13 @@ for j = 1:2
         nexttile
         plot(eeg_times,avg,'k','linewidth',2);
         hold on
-        plot([0 0],ylim,'k--');
+        
         if ~isnan(wav(1))
-            plot(wav_time,avg(wav_idx),'bX','markersize',10,'linewidth',4);
+            plot(wav_time,avg(wav_idx),'bX','markersize',15,'linewidth',4);
+            if ~pretty
             text(wav_time+0.01,avg(wav_idx),sprintf('%s z-score: %1.1f',...
                 which,wav(1)), 'fontsize',15)
+            end
         end
         %xlim([eeg_times(1) eeg_times(end)])
         xlim([zoom_times(1) zoom_times(2)]);
@@ -146,18 +149,36 @@ for j = 1:2
         pause(0.1)
         xl = xlim;
         yl = ylim;
-        text(xl(1),yl(2),sprintf('Stim: %s\nResponse: %s',stim_label,resp_label),...
-            'horizontalalignment','left',...
-            'verticalalignment','top','fontsize',10);
+        if ~pretty
+            text(xl(1),yl(2),sprintf('Stim: %s\nResponse: %s',stim_label,resp_label),...
+                'horizontalalignment','left',...
+                'verticalalignment','top','fontsize',10);
+        end
+        plot([0 0],ylim,'k--');
+        set(gca,'fontsize',20)
+        if pretty
+            yticklabels([])
+            %xticklabels([])
+            xtl = xticklabels;
+            xtlc = cellfun(@(x) sprintf('%s s',x),xtl,'uniformoutput',false);
+            %xlabel('Time (s)')
+            xticklabels(xtlc)
+        end
         if j == 2
             title(why)
         end
     end
     
-    title(t,sprintf('%s %s z-score threshold %1.1f',cat,which,thresh));
+    if pretty == 0
+        title(t,sprintf('%s %s z-score threshold %1.1f',cat,which,thresh));
+    end
     
     % Save the figure
-    fname = sprintf('%s_%sthresh_%d',cat,which,thresh);
+    if pretty
+        fname = sprintf('%s_%sthresh_%d_pretty',cat,which,thresh);
+    else
+        fname = sprintf('%s_%sthresh_%d',cat,which,thresh);
+    end
     print(gcf,[out_folder,fname],'-dpng');
     
 
