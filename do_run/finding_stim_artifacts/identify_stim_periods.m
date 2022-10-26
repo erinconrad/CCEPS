@@ -61,7 +61,8 @@ for i = 1:length(event)
         
         % sanity checks
         if elec1_contact ~= elec2_contact - 1
-            error('Expecting lower number contact - one higher number contact');
+            fprintf('\nExpecting lower number contact - one higher number contact, skipping\n');
+            continue
         end
         
         if ~strcmp(elec1_name,elec2_name)
