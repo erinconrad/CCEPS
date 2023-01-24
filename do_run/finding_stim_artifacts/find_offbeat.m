@@ -9,7 +9,7 @@ as our candidate s.
 %}
 goal_diff = stim.stim_freq * stim.fs;
 max_num_repeat = 31;
-max_off = 20e-3*stim.fs;
+max_off = 20e-3*stim.fs; % narrow this???
 allowable_nums = [stim.train_duration:-1:stim.train_duration-2];
 
 final_arts = [];

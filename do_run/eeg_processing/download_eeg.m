@@ -74,7 +74,7 @@ end_index = round(times(2)*fs);
 nchs = size(channelLabels,1);
 %error('look');
 values = zeros(end_index-start_index+1,nchs);
-nchunks = 80;
+nchunks = min([80,nchs]);
 for i = 1:nchunks
     
     attempt = 1;
@@ -83,6 +83,8 @@ for i = 1:nchunks
     while 1
 
         try
+
+            
             values(:,floor(nchs/nchunks*(i-1))+1:min(floor(nchs/nchunks*i),nchs)) =...
                 session.data.getvalues([start_index:end_index],...
                 floor(nchs/nchunks*(i-1))+1:min(floor(nchs/nchunks*i),nchs));
