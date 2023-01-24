@@ -32,7 +32,13 @@ end
 %% Get start time and dataname
 if do_ieeg
     dataName = pt(p).ccep.file(f).name;
-    start_time = find_first_closed_relay(pt(p).ccep.file(f).ann)-10;
+
+    if isfield(pt(p).ccep.file(f),'ann')
+        start_time = find_first_closed_relay(pt(p).ccep.file(f).ann)-10;
+    else
+        fprintf('\nNo machine annotations, assuming start time is 1\n');
+        start_time = 1;
+    end
 
     %% Get EEG data
     tic
