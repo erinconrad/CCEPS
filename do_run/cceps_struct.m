@@ -35,8 +35,9 @@ if do_ieeg
 
     if isfield(pt(p).ccep.file(f),'ann') && isfield(pt(p).ccep.file(f).ann,'event')
         start_time = find_first_closed_relay(pt(p).ccep.file(f).ann)-10;
-        pt(p).ccep.file(f).ann.event = [];
+        
     else
+        pt(p).ccep.file(f).ann.event = [];
         fprintf('\nNo machine annotations, assuming start time is 1\n');
         start_time = 1;
     end
