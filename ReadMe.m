@@ -60,6 +60,7 @@ Erin Conrad
 Brittany Scheid
 Caren Armstrong
 Eli Cornblath
+Joshua Larocque
 University of PA, 2020
 
 %}
