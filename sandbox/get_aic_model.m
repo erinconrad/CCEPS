@@ -7,7 +7,7 @@ cT = readtable('steve.csv');
 var_names = cT.Properties.VariableNames;
 
 %% Get the waveform you want
-for iv = 1:2%length(var_names)
+for iv = 1:length(var_names)
     curr_var = var_names{iv};
 
     voltage_old = cT.(curr_var); % change Varn to try different ccep waveforms
