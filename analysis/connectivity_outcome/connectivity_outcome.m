@@ -1,4 +1,5 @@
 %% relate connectivity to outcome
+clear
 
 % pick a single stim electrode
 stim_elec = 'LA1';
