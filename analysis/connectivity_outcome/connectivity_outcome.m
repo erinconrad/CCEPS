@@ -1,7 +1,7 @@
 %% relate connectivity to outcome
 
 % pick a single stim electrode
-stim_elec = 'LB1';
+stim_elec = 'LA1';
 
 % file locs
 locations = cceps_files;
@@ -47,3 +47,5 @@ for i = 1:nfiles
     avg_n2 = [avg_n2;nanmean(n2)];
     
 end
+
+table(name,avg_n1,avg_n2)
