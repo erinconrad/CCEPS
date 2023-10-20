@@ -1,0 +1,27 @@
+%% relate connectivity to outcome
+
+% pick a single stim electrode
+stim_elec = 'LB1';
+
+% file locs
+locations = cceps_files;
+
+% point to ccep files
+ccep_folder = [locations.results_folder,'out_files/'];
+listing = dir([ccep_folder,'*HUP*.mat']); % hup patients
+
+nfiles = length(listing);
+
+% prepare variables
+name = {};
+avg_n1 = [];
+
+for i = 1:nfiles
+    
+    % load the file
+    out = load([ccep_folder,listing(i).name]);
+    out = out.out;
+
+
+
+end
