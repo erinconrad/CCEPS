@@ -30,6 +30,11 @@ for p = whichPts
     for f = 1:length(pt(p).ccep.file)
         fname = pt(p).ccep.file(f).name;
 
+        if strcmp(fname,'HUP237_CCEP_02')
+            fprintf('\nSkipping the 2nd file of HUP237 because this is HFS\n');
+            continue
+        end
+
         if exist([out_folder,'results_',fname,'.mat'],'file') ~= 0
             if overwrite == 0
                 fprintf('\nAlready did %s, skipping\n',fname);

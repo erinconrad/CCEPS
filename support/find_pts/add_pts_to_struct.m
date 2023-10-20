@@ -51,7 +51,11 @@ for i = ieeg_nums
     end
     
     %% Attempt to find it on ieeg.org and get the number of files
-    base_ieeg_name = sprintf('HUP%d_CCEP',i);
+    if i == 248
+        base_ieeg_name = sprintf('HUP%d_CCEPS_revised_V2',i);
+    else
+        base_ieeg_name = sprintf('HUP%d_CCEP',i);
+    end
     ieeg_names = {};
     try session = IEEGSession(base_ieeg_name,login_name,pwfile);
         nfiles = 1;
