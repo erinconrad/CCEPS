@@ -2,7 +2,7 @@
 clear
 
 % pick a stim electrode of interest
-stim_elecs = {'LA','LB','LC'};
+stim_elecs = {'LA','LB','LC';'RA','RB','RC'};
 
 % file locs
 locations = cceps_files;
@@ -15,8 +15,8 @@ nfiles = length(listing);
 
 % prepare variables
 name = cell(nfiles,1);
-avg_n1 = nan(nfiles,1);
-avg_n2 = nan(nfiles,1);
+avg_n1 = nan(nfiles,2);
+avg_n2 = nan(nfiles,2);
 
 for i = 1:nfiles
     
@@ -27,33 +27,41 @@ for i = 1:nfiles
     % patient name
     C = strsplit(out.name,'_');
     hup_name = C{1};
-    name = [name;hup_name];
+    name{i} = hup_name;
 
     % loop over electrodes
-    n1s = cell(length(stim_elecs),1);
-    n2s = cell(length(stim_elecs),1);
-    for is = 1:length(stim_elecs)
+    n1s = cell(size(stim_elecs,1),size(stim_elecs,2));
+    n2s = cell(size(stim_elecs,1),size(stim_elecs,2));
 
-        % find all contacts on that electrode
-        idx = contains(out.chLabels,stim_elecs{is});
+    % Loop over left vs rihgt
+    for is = 1:size(stim_elecs,1)
 
-        % get the avg connectivity
-        n1s{is} = out.network(1).A(idx,idx);
-        n2s{is} = out.network(2).A(idx,idx);
-
+        % Loop over different electrodes on that side
+        for js = 1:size(stim_elecs,2)
+    
+            % find all contacts on that electrode
+            idx = contains(out.chLabels,stim_elecs{is,js});
+    
+            % get the avg connectivity
+            n1s{is,js} = out.network(1).A(idx,idx);
+            n2s{is,js} = out.network(2).A(idx,idx);
+    
+        end
     end
 
     % flatten the arrays
-    all_n1s = [];
-    all_n2s = [];
-    for is = 1:length(stim_elecs)
-        all_n1s = [all_n1s;reshape(n1s{is},size(n1s{is},1)*size(n1s{is},1),1)];
-        all_n2s = [all_n2s;reshape(n2s{is},size(n2s{is},1)*size(n2s{is},1),1)];
+    for is = 1:size(stim_elecs,1)
+        all_n1s = [];
+        all_n2s = [];
+        for js = 1:size(stim_elecs,2)
+            all_n1s = [all_n1s;reshape(n1s{is,js},size(n1s{is,js},1)*size(n1s{is,js},1),1)];
+            all_n2s = [all_n2s;reshape(n2s{is,js},size(n2s{is,js},1)*size(n2s{is,js},1),1)];
+        end
+       
+        % take average across all of them
+        avg_n1(i,is) = nanmean(all_n1s);
+        avg_n2(i,is) = nanmean(all_n2s);
     end
-   
-
-    avg_n1 = [avg_n1;nanmean(all_n1s)];
-    avg_n2 = [avg_n2;nanmean(all_n2s)];
     
 end
 
