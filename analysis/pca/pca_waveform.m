@@ -1,4 +1,3 @@
-function out = pca_waveform(out)
 
 %% Get various path locations
 locations = cceps_files; % Need to make a file pointing to you own path
@@ -55,7 +54,8 @@ if 0
 end
 
 %% Do PCA
-[coeff,score,latent] = pca(eeg,'rows','pairwise');
+eeg_norm = (eeg-nanmean(eeg,1))./nanstd(eeg,[],1);
+[coeff,score,latent] = pca(eeg,'rows','complete');
 %{
 Coeff(:,i) is what the ith principle component looks like
 Score(:,i) is how much each observation fits the ith score
@@ -81,20 +81,20 @@ figure
 tiledlayout(2,2)
 
 nexttile
-turn_nans_white(n1)
+turn_nans_white_ccep(n1)
 
 nexttile
-turn_nans_white(n2)
+turn_nans_white_ccep(n2)
 
 nexttile
-turn_nans_white(score(:,:,1)')
+turn_nans_white_ccep(score(:,:,1)')
 
 nexttile
-turn_nans_white(score(:,:,2)')
+turn_nans_white_ccep(score(:,:,2)')
 
 
 % correlation of n1 with score
-s1 = score(:,:,1)';
+s1 = score(:,:,3)';
 r = corr(n2(:),s1(:),'rows','pairwise','type','spearman');
 figure
 plot(n1(:),s1(:),'o')
@@ -110,4 +110,3 @@ out.pca.coeff = coeff(:,1:5);
 out.pca.latent = latent;
 
 
-end

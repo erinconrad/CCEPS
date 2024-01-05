@@ -157,8 +157,23 @@ end
 %% Perform signal averaging (of bipolar montage values)
 elecs = signal_average(bipolar_values,elecs,stim);
 
+%% Implement Rudy/Caren pre-processing
+
+% interpolates over stim artifact
+elecs = rudy_filters(elecs,chLabels);
+
+% test - removes everything???
+if 0
+    figure
+    ich = 77;
+    jch = 75;
+    plot(elecs(ich).avg(:,jch))
+    hold on
+    plot(elecs(ich).deriv(:,jch))
+end
+
 %% Identify CCEP waveforms
-elecs = get_waveforms(elecs,stim);
+elecs = get_waveforms(elecs,stim,stim.fs);
 
 %% Save info
 out.name = dataName;

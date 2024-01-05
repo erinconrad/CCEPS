@@ -83,6 +83,7 @@ for w = 1:length(wavs)
     
     out.network(w).which = which;
     out.network(w).A = A;
+    out.network(w).A0 = A0;
 
 end
 

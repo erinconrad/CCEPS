@@ -38,3 +38,6 @@ ylim([0 1.1])
 title('Accuracy of automated CCEP detection')
 set(gca,'fontsize',20)
 print(gcf,[locations.results_folder,'validation/ppv_npv_plot'],'-dpng');
+
+fprintf('\nThe median PPV is %1.3f and NPV is %1.3f.\n',median(ppv,1,'omitmissing'),...
+    median(npv,1,'omitmissing'))
