@@ -160,7 +160,7 @@ elecs = signal_average(bipolar_values,elecs,stim);
 %% Implement Rudy/Caren pre-processing
 
 % interpolates over stim artifact
-elecs = rudy_filters(elecs,chLabels);
+%elecs = rudy_filters(elecs,chLabels);
 
 % test - removes everything???
 if 0
