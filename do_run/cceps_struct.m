@@ -173,7 +173,7 @@ if 0
 end
 
 %% Identify CCEP waveforms
-elecs = get_waveforms(elecs,stim,stim.fs);
+elecs = get_waveforms(elecs,stim);
 
 %% Save info
 out.name = dataName;
