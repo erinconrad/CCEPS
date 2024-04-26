@@ -1,4 +1,4 @@
-function random_rejections_keeps(out)
+function random_rejections_keeps(out,out_folder)
 
 %% Parameters
 pretty = 1;
@@ -23,7 +23,7 @@ if isempty(locations.ieeg_folder) == 0
     addpath(genpath(locations.ieeg_folder));
 end
 name = out.name;
-out_folder = [results_folder,'validation/',name,'/'];
+%out_folder = [results_folder,'validation/',name,'/'];
 if ~exist(out_folder,'dir')
     mkdir(out_folder)
 end
