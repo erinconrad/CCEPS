@@ -48,7 +48,7 @@ for i = 1:height(ptT)
             fprintf('Overwriting %s\n',name);
         end
     else
-        fprint('Doing %s for the first time\n',name);
+        fprintf('Doing %s for the first time\n',name);
     end
 
     
