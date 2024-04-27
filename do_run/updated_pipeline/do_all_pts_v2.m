@@ -1,3 +1,5 @@
+overwrite = 0;
+
 %% Updated pipeline to run through all patients in an csv file
 
 locations = cceps_files;
@@ -34,17 +36,32 @@ end
 %% Loop through patients
 for i = 1:height(ptT)
     fprintf('\nDoing patient %d of %d...\n',i,height(ptT));
-    tic
-
     name = ptT.HUPID{i};
     filenames = ptT.ieeg_filename{i};
+    out_file_name =[name,'.mat'];
+
+    if exist([out_folder,out_file_name],'file') ~= 0
+        if overwrite == 0
+            fprintf('Skipping %s\n',name);
+            continue
+        else
+            fprintf('Overwriting %s\n',name);
+        end
+    else
+        fprint('Doing %s for the first time\n',name);
+    end
+
+    
+    tic
+
+    
     
     % Do the patient-level function
     pt_out = pt_pipeline_v2(filenames,login_name,pwfile);
     pt_out.name = name;
 
     % Save the patient output file
-    out_file_name =[name,'.mat'];
+    
     save([out_folder,out_file_name],'pt_out')
 
     % do validation code
