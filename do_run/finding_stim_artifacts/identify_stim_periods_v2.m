@@ -79,8 +79,8 @@ for i = 1:size(aT,1)
         % Find the next open relay
         end_time = nan;
         for j = i+1:size(aT,1)
-            type = aT.Type{j};
-            if strcmp(type,'Opened relay') || contains(type,'Closed relay to')
+            type2 = aT.Type{j};
+            if strcmp(type2,'Opened relay') || contains(type2,'Closed relay to')
                 
                 if aT.Start(j) > times(2)
                     end_time = times(2) - 0.5;
