@@ -19,23 +19,23 @@ for i = 1:size(aT,1)
         
         if length(C) == 6 && strcmp(C{5},'and')
             % expected order
-            elec1 = C(end-2);
-            elec2 = C(end);
+            elec1_cell = C(end-2);
+            elec2_cell = C(end);
         elseif length(C) == 8 && strcmp(C{6},'and') && ...
                 (strcmp(C{4},'L') || strcmp(C{4},'R'))
             % split up L/R and rest of electrode name
-            elec1 = {[C{4},C{5}]};
-            elec2 = {[C{7},C{8}]};
+            elec1_cell = {[C{4},C{5}]};
+            elec2_cell = {[C{7},C{8}]};
         elseif length(C) == 8 && strcmp(C{6},'and') && ...
             strcmp(C{4}(1),'L') || strcmp(C{4}(1),'R') % format is "RA" "1"
             % combine RA and number
-            elec1 = {[C{4},C{5}]};
-            elec2 = {[C{7},C{8}]};
+            elec1_cell = {[C{4},C{5}]};
+            elec2_cell = {[C{7},C{8}]};
         elseif length(C) == 10 && strcmp(C{7},'and') && ...
                 (strcmp(C{4},'L') || strcmp(C{4},'R'))
             % split up L/R and rest of electrode name
-            elec1 = {[C{4},C{5},C{6}]};
-            elec2 = {[C{8},C{9},C{10}]};
+            elec1_cell = {[C{4},C{5},C{6}]};
+            elec2_cell = {[C{8},C{9},C{10}]};
         else
             error('Surprising closed relay text');
             
@@ -43,8 +43,8 @@ for i = 1:size(aT,1)
         
         
         
-        elec1 = elec1{1};
-        elec2 = elec2{1};
+        elec1 = elec1_cell{1};
+        elec2 = elec2_cell{1};
         
         % index of first number in name
         elec1_num_idx = regexp(elec1,'\d*');
