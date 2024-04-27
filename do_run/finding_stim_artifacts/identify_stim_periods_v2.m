@@ -27,7 +27,7 @@ for i = 1:size(aT,1)
             elec1_cell = {[C{4},C{5}]};
             elec2_cell = {[C{7},C{8}]};
         elseif length(C) == 8 && strcmp(C{6},'and') && ...
-            strcmp(C{4}(1),'L') || strcmp(C{4}(1),'R') % format is "RA" "1"
+            (strcmp(C{4}(1),'L') || strcmp(C{4}(1),'R')) % format is "RA" "1"
             % combine RA and number
             elec1_cell = {[C{4},C{5}]};
             elec2_cell = {[C{7},C{8}]};
