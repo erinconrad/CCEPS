@@ -17,7 +17,7 @@ for ich = 1:length(chLabels)
     end
 
     % fix for HUP266
-    if strcmp(label_num(end-1),'0')
+    if length(label_num) >1 && strcmp(label_num(end-1),'0')
         label_num(end-1) = [];
     end
     
