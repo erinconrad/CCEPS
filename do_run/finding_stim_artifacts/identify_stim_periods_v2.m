@@ -104,6 +104,7 @@ for i = 1:size(aT,1)
             if ~ismember(elec1,ignore_elecs)
                 error('Cannot find stim channel')
             end
+            continue;
         end
         stim(stim_ch).start_time = start_time;
         stim(stim_ch).end_time = end_time;
