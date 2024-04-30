@@ -1,4 +1,4 @@
-function stim =  identify_stim_periods_v2(aT,chLabels,fs,times)
+function stim =  identify_stim_periods_v2(aT,chLabels,fs,times,ignore_elecs)
 
 stim(length(chLabels)) = struct();
 
@@ -101,7 +101,9 @@ for i = 1:size(aT,1)
         % Find electrode to assign the stim to
         stim_ch = find(strcmpi(elec1,chLabels));
         if isempty(stim_ch)
-            error('Cannot find stim channel')
+            if ~ismember(elec1,ignore_elecs)
+                error('Cannot find stim channel')
+            end
         end
         stim(stim_ch).start_time = start_time;
         stim(stim_ch).end_time = end_time;

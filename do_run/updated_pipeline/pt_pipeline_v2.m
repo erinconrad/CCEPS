@@ -1,4 +1,4 @@
-function pt_out = pt_pipeline_v2(filenames,login_name,pwfile)
+function pt_out = pt_pipeline_v2(filenames,login_name,pwfile,ignore_elecs)
 
 % tell if it's multiple files or 1
 if iscell(filenames)
@@ -19,7 +19,7 @@ for f = 1:nfiles
     end
 
     % Do the file loop
-    all_out{f} = filename_pipeline_v2(filename,login_name,pwfile);
+    all_out{f} = filename_pipeline_v2(filename,login_name,pwfile,ignore_elecs);
 
 
 end

@@ -1,4 +1,4 @@
-function out = filename_pipeline_v2(filename,login_name,pwfile)
+function out = filename_pipeline_v2(filename,login_name,pwfile,ignore_elecs)
 
 %% Stimulation parameters
 stim.train_duration = 30; % train duration (# stims) in seconds
@@ -116,7 +116,7 @@ session.delete;
 
 %% Identify stim periods
 % Get stim periods
-periods = identify_stim_periods_v2(aT,chLabels,fs,times);
+periods = identify_stim_periods_v2(aT,chLabels,fs,times,ignore_elecs);
 
 %% Get artifacts within periods
 elecs = identify_artifacts_within_periods(periods,values,stim,chLabels);

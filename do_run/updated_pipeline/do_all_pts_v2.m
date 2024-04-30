@@ -38,6 +38,7 @@ for i = 1:height(ptT)
     fprintf('\nDoing patient %d of %d...\n',i,height(ptT));
     name = ptT.HUPID{i};
     filenames = ptT.ieeg_filename{i};
+    ignore_elecs = ptT.ignore_elecs;
     out_file_name =[name,'.mat'];
 
     if exist([out_folder,out_file_name],'file') ~= 0
@@ -57,7 +58,7 @@ for i = 1:height(ptT)
     
     
     % Do the patient-level function
-    pt_out = pt_pipeline_v2(filenames,login_name,pwfile);
+    pt_out = pt_pipeline_v2(filenames,login_name,pwfile,ignore_elecs);
     pt_out.name = name;
 
     % Save the patient output file
