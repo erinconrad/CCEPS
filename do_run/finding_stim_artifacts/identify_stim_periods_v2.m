@@ -6,41 +6,58 @@ for i = 1:size(aT,1)
     type = aT.Type{i};
     
     % See if it's a close relay
-    if contains(type,'Closed relay to')
+    if contains(type,'Closed relay to') || contains(type, 'Start Stimulation')
         
         if aT.Start(i) < times(1) || aT.Start(i) > times(2)
             continue
         end
+
+        if contains(type,'Closed relay to')
         
-        % find the electrodes
-        C = strsplit(type);
-        
-        % fix for surprising text
-        
-        if length(C) == 6 && strcmp(C{5},'and')
-            % expected order
-            elec1_cell = C(end-2);
-            elec2_cell = C(end);
-        elseif length(C) == 8 && strcmp(C{6},'and') && ...
-                (strcmp(C{4},'L') || strcmp(C{4},'R'))
-            % split up L/R and rest of electrode name
-            elec1_cell = {[C{4},C{5}]};
-            elec2_cell = {[C{7},C{8}]};
-        elseif length(C) == 8 && strcmp(C{6},'and') && ...
-            (strcmp(C{4}(1),'L') || strcmp(C{4}(1),'R')) % format is "RA" "1"
-            % combine RA and number
-            elec1_cell = {[C{4},C{5}]};
-            elec2_cell = {[C{7},C{8}]};
-        elseif length(C) == 10 && strcmp(C{7},'and') && ...
-                (strcmp(C{4},'L') || strcmp(C{4},'R'))
-            % split up L/R and rest of electrode name
-            elec1_cell = {[C{4},C{5},C{6}]};
-            elec2_cell = {[C{8},C{9},C{10}]};
-        else
-            error('Surprising closed relay text');
+            % find the electrodes
+            C = strsplit(type);
             
+            % fix for surprising text
+            
+            if length(C) == 6 && strcmp(C{5},'and')
+                % expected order
+                elec1_cell = C(end-2);
+                elec2_cell = C(end);
+            elseif length(C) == 8 && strcmp(C{6},'and') && ...
+                    (strcmp(C{4},'L') || strcmp(C{4},'R'))
+                % split up L/R and rest of electrode name
+                elec1_cell = {[C{4},C{5}]};
+                elec2_cell = {[C{7},C{8}]};
+            elseif length(C) == 8 && strcmp(C{6},'and') && ...
+                (strcmp(C{4}(1),'L') || strcmp(C{4}(1),'R')) % format is "RA" "1"
+                % combine RA and number
+                elec1_cell = {[C{4},C{5}]};
+                elec2_cell = {[C{7},C{8}]};
+            elseif length(C) == 10 && strcmp(C{7},'and') && ...
+                    (strcmp(C{4},'L') || strcmp(C{4},'R'))
+                % split up L/R and rest of electrode name
+                elec1_cell = {[C{4},C{5},C{6}]};
+                elec2_cell = {[C{8},C{9},C{10}]};
+            else
+                error('Surprising closed relay text');
+                
+            end
+        elseif contains(type, 'Start Stimulation')
+
+            C = strsplit(type);
+
+            if strcmp(C{3},'from') && strcmp(C{5},'to')
+                elec1_cell = C(4);
+                elec2_cell = C(6);
+            else
+    
+                error('surprising start stimulation text')
+    
+            end
+
+        else
+            error('what')
         end
-        
         
         
         elec1 = elec1_cell{1};
@@ -80,7 +97,8 @@ for i = 1:size(aT,1)
         end_time = nan;
         for j = i+1:size(aT,1)
             type2 = aT.Type{j};
-            if strcmp(type2,'Opened relay') || contains(type2,'Closed relay to')
+            if strcmp(type2,'Opened relay') || contains(type2,'Closed relay to') ...
+                    || contains(type2,'Start Stimulation') || contains(type2,'De-block end')
                 
                 if aT.Start(j) > times(2)
                     end_time = times(2) - 0.5;
@@ -112,8 +130,7 @@ for i = 1:size(aT,1)
         stim(stim_ch).end_index = round((end_time-times(1))*fs);
         stim(stim_ch).name = elec1;
         
-            
-        
+           
     end
 end
 

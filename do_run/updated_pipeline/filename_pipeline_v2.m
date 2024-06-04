@@ -70,7 +70,7 @@ stim.fs = fs;
 %% Get the EEG data
 % Get the start time of stim by finding the first closed relay annotation
 % and looking 10 seconds before
-index = startsWith(aT.Type, 'Closed relay');
+index = startsWith(aT.Type, 'Closed relay') || startsWith(aT.Type,'Start Stimulation');
 filteredStartTimes = aT.Start(index);
 [minTime, idx] = min(filteredStartTimes); % Find the minimum start time from the filtered data
 start_time = minTime - 10;
