@@ -83,7 +83,7 @@ for i = 1:size(aT,1)
         start_time = aT.Start(i);
         
         % sanity checks
-        if elec1_contact ~= elec2_contact - 1
+        if elec1_contact ~= elec2_contact - 1 &&  elec2_contact ~= elec1_contact - 1
             fprintf('\nExpecting lower number contact - one higher number contact, skipping\n');
             continue
         end
