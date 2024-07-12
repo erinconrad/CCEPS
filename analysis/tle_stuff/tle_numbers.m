@@ -15,6 +15,9 @@ results_folder = locations.results_folder;
 % add paths
 addpath(genpath(script_folder));
 
+%% Load patient list
+ptT = readtable([data_folder,'master_pt_list.xlsx']);
+
 %% Define left and right temporal elecs
 letters = {'LA', 'LB', 'LC'};
 numRange = 1:12;
@@ -43,7 +46,7 @@ for i = 1:length(letters)
 end
 
 %% Initialize table
-variableNames = {'name', 'n_lt_stim_elecs', 'n_rt_stim_elecs'};
+variableNames = {'name', 'n_lt_stim_elecs', 'n_rt_stim_elecs','soz_lat','soz_loc'};
 emptyCells = cell(0, length(variableNames));  % 0 rows, and columns equal to the number of variables
 
 % Create the table from the cell array
@@ -65,6 +68,11 @@ for l = 1:length(listing)
     labels = out.chLabels;
     stim_chs = out.stim_chs;
 
+    % Get the corresponding loc and lat from master table
+    row = find(strcmp(ptT.HUPID,name));
+    assert(~isempty(row))
+    soz_loc = ptT.SOZ_loc{row};
+    soz_lat = ptT.SOZ_lat{row};
    
     % find the temporal ones
     % Flatten the 'cellArray'
@@ -85,7 +93,8 @@ for l = 1:length(listing)
     rt_elecs = labels(isMatch);
 
     % Populate array
-    T = [T;cell2table({name,length(lt_elecs),length(rt_elecs)},'VariableNames', variableNames)];
+    T = [T;cell2table({name,length(lt_elecs),length(rt_elecs),soz_lat,soz_loc},...
+        'VariableNames', variableNames)];
 
     % populate struct
     tle(l).name = name;
@@ -94,6 +103,8 @@ for l = 1:length(listing)
     tle(l).rt_elecs = rt_elecs;
     tle(l).stim_chs = stim_chs;
     tle(l).labels = labels;
+    tle(l).soz_loc = soz_loc;
+    tle(l).soz_lat = soz_lat;
 
 end
 
