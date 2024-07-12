@@ -38,7 +38,7 @@ for i = 1:height(ptT)
     fprintf('\nDoing patient %d of %d...\n',i,height(ptT));
     name = ptT.HUPID{i};
     filenames = ptT.ieeg_filename{i};
-    ignore_elecs = ptT.ignore_elecs;
+    ignore_elecs = ptT.ignore_elecs{i};
     out_file_name =[name,'.mat'];
 
     if exist([out_folder,out_file_name],'file') ~= 0
