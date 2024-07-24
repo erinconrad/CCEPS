@@ -1,6 +1,8 @@
 %% compare sides
 
-show_nets = 0;
+show_nets = 1;
+only_unilat_tle = 1;
+f_climits = [0 50];
 
 %% locs
 locations = cceps_files;
@@ -21,9 +23,12 @@ tle = tle.tle;
 % also load file with soz locs and lats
 piT = readtable([data_folder,'master_pt_list.xlsx']);
 
+% Load summary
+summT = readtable([inter_folder,'tle_summary.csv']);
+
 %%
-stim_chs = 6:9;
-resp_chs = 1:3;
+stim_chs = 5:10;
+resp_chs = 1:10;
 
 soz_locs = piT.SOZ_loc;
 soz_lats = piT.SOZ_lat;
@@ -37,7 +42,19 @@ npts = length(tle);
 net_comp = nan(npts,2,2);
 for ip = 1:npts
     names(end+1) = {tle(ip).name};
-    for in = 1:2
+    if only_unilat_tle == 1
+        if ~strcmp(tle(ip).soz_loc,'temporal') || strcmp(tle(ip).soz_lat,'bilateral')
+            continue
+        end
+
+        r = find(strcmp(summT.name,tle(ip).name));
+        nleft = summT.n_lt_stim_elecs(r);
+        nright = summT.n_rt_stim_elecs(r);
+        if nleft == 0 || nright == 0
+            continue
+        end
+    end
+    for in = 2
         labels = tle(ip).labels;
         labels(cellfun(@isempty,labels)) = {'x'};
         
@@ -81,7 +98,7 @@ for ip = 1:npts
             y_labels(lower_num_idx) = cellfun(@(x) [x,'***'],y_labels(lower_num_idx),'UniformOutput',false);
 
             nexttile(1)
-            clim(climits)
+            
             if ~isempty(tle(ip).network(in).A(left_idx,...
                 left_idx))
                 turn_nans_gray(tle(ip).network(in).A(left_idx,...
@@ -94,13 +111,15 @@ for ip = 1:npts
                 plot(1)
             end
             
+            
             colorbar
+            clim(f_climits)
             title(sprintf('%s: soz %s %s Left stim network',...
                 tle(ip).name,soz_lats{ip},soz_locs{ip}))
             hold off
     
             nexttile(2)
-            clim(climits)
+            
             if ~isempty(tle(ip).network(in).A(right_idx,...
                 right_idx))
                 turn_nans_gray(tle(ip).network(in).A(right_idx,...
@@ -114,6 +133,7 @@ for ip = 1:npts
             end
             
             colorbar
+            clim(f_climits)
             title(sprintf('%s: soz %s %s Right stim network',...
                 tle(ip).name,soz_lats{ip},soz_locs{ip}))
     
