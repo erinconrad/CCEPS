@@ -5,8 +5,10 @@ This code takes data from cortical stimulation sessions and measures
 cortico-cortical evoked potentials (CCEPs).
 
 Before running the code, you will need to:
+1) download the ieeg.org toolbox to be able to interface with ieeg.org
 
-1) create a file called cceps_files
+
+2) create a file called cceps_files
 somewhere in your path, that will output a structure with the following
 elements:
 -locations.script_folder (containing the path to the folder containing the
@@ -22,12 +24,12 @@ output results)
 See the script cceps_files_example.m for an example of how to structure
 this file.
 
-2) put a file called master_pt_list.xlsx in the path of the data folder.
+3) put a file called master_pt_list.xlsx in the path of the data folder.
 This should contain a list of ieeg.org files to run. Here is an example:
 https://docs.google.com/spreadsheets/d/1qXCDxgi9CC3ZN--OxNMukBWiGDBvhyxok_9VuzP0CD4/edit?usp=sharing
 
 
-2) Then, navigate to the folder do_run/updated_pipeline/
+4) Then, navigate to the folder do_run/updated_pipeline/
 >> do_all_pts_v2
 
 The code works according to the following pipeline
