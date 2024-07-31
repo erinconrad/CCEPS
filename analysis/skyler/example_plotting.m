@@ -39,6 +39,8 @@ also earlier)? Check both N1 and N2.
     weird exception handling
     - don't run AA_distance_vs_amp_and_lat or AA_modify_analysisdata
     - DO run AA_random_rejections_keeps(out);
+    - plot the validation plots, and then eventually we'll need to do
+    visual validation of both the presence and location of N1 and N2
 
 
 %}
