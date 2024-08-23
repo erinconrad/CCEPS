@@ -1,4 +1,4 @@
-overwrite = 0;
+overwrite = 1;
 
 %% Updated pipeline to run through all patients in an csv file
 
@@ -37,6 +37,15 @@ end
 for i = 1:height(ptT)
     fprintf('\nDoing patient %d of %d...\n',i,height(ptT));
     name = ptT.HUPID{i};
+
+    if exist("specific_pt",'var')
+        if ~strcmp(name,specific_pt)
+            fprintf('\nSkipping %s as not the target patient %s\n',name,specific_pt)
+            continue
+        end
+    end
+
+
     filenames = ptT.ieeg_filename{i};
     ignore_elecs = ptT.ignore_elecs{i};
     out_file_name =[name,'.mat'];
