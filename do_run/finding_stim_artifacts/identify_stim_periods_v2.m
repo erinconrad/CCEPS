@@ -71,7 +71,7 @@ for i = 1:size(aT,1)
             elec1_num_idx = elec1_num_idx(2);
         end
 
-        if length(elec1_num_idx) > 1
+        if length(elec2_num_idx) > 1
             elec2_num_idx = elec2_num_idx(2);
         end
         
