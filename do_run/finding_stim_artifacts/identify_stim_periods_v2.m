@@ -67,11 +67,11 @@ for i = 1:size(aT,1)
         elec1_num_idx = regexp(elec1,'\d*');
         elec2_num_idx = regexp(elec2,'\d*');
 
-        if size(elec1_num_idx) > 1
+        if length(elec1_num_idx) > 1
             elec1_num_idx = elec1_num_idx(2);
         end
 
-        if size(elec2_num_idx) > 1
+        if length(elec1_num_idx) > 1
             elec2_num_idx = elec2_num_idx(2);
         end
         
