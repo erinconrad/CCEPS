@@ -1,5 +1,7 @@
 function pretty_random_keeps(out)
 
+rng(0)
+
 %% Parameters
 pretty = 1;
 n_to_plot = 25; % how many total to show
@@ -140,7 +142,7 @@ for j = 1
         % time period
         height = max(abs(avg(temp_n1_idx(1):temp_n1_idx(2))-median(avg)));
         if ~any(isnan(avg))
-            ylim([median(avg)-zoom_factor*height,median(avg)+zoom_factor*height]);
+            %ylim([median(avg)-zoom_factor*height,median(avg)+zoom_factor*height]);
         end
         
         
