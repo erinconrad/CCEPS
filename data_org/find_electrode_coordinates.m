@@ -13,6 +13,8 @@ output_folder = '../../cceps_results/elec_info/';
 % Load the patient list file
 T = readtable(patient_list_file);
 
+missing_rids = [];
+
 % Loop over patients
 for r = 1:size(T,1)
 
@@ -30,6 +32,7 @@ for r = 1:size(T,1)
 
     if length(listing) == 0
         fprintf('\nWarning, can''t find file for rid %d\n',rid);
+        missing_rids = [missing_rids,rid];
     elseif length(listing) == 1
         copyfile([listing(1).folder,'/',listing(1).name],output_folder);
     else
@@ -37,3 +40,5 @@ for r = 1:size(T,1)
         
     end
 end
+
+writematrix(missing_rids,[output_folder,'missing.txt'])
