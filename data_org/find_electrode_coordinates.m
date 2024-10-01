@@ -36,7 +36,7 @@ for r = 1:size(T,1)
     elseif length(listing) == 1
         copyfile([listing(1).folder,'/',listing(1).name],output_folder);
     else
-        error('what')
+        copyfile([listing(2).folder,'/',listing(2).name],output_folder);
         
     end
 end
