@@ -31,7 +31,7 @@ for r = 1:size(T,1)
     if length(listing) == 0
         fprintf('\nWarning, can''t find file for rid %d\n',rid);
     elseif length(listing) == 1
-        copyfile([listing(1).folder,listing(1).name],output_folder);
+        copyfile([listing(1).folder,'/',listing(1).name],output_folder);
     else
         error('what')
         
