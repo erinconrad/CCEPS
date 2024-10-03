@@ -34,7 +34,7 @@ for r = 1:size(T,1)
 
     sub_dir2 = [parent_dir2,'sub-RID',rids,'/derivatives/ieeg_recon/module3/'];
     full_file2 = [sub_dir2,coor_file];
-    listing2 = dir(full_file1);
+    listing2 = dir(full_file2);
 
     if length(listing1) >0
         listing = listing1;
