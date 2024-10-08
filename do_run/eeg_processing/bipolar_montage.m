@@ -1,5 +1,10 @@
 function [out,bipolar_labels,bipolar_ch_pair] = bipolar_montage(values,chs,chLabels)
     
+
+if size(chLabels,1) ~=1
+    chLabels = chLabels(:,1);
+end
+
 if isempty(chs)
     chs = 1:size(values,2);
 end
@@ -18,7 +23,9 @@ for i = 1:length(chs)
 
     % get the non numerical portion
     label_num_idx = regexp(label,'\d');
+    if isempty(label_num_idx), continue; end
     label_non_num = label(1:label_num_idx-1);
+
 
     % get numerical portion
     label_num = str2num(label(label_num_idx:end));
@@ -26,8 +33,8 @@ for i = 1:length(chs)
     % see if there exists one higher
     label_num_higher = label_num + 1;
     higher_label = [label_non_num,sprintf('%d',label_num_higher)];
-    if sum(strcmp(chLabels(:,1),higher_label)) > 0
-        higher_ch = find(strcmp(chLabels(:,1),higher_label));
+    if sum(strcmp(chLabels,higher_label)) > 0
+        higher_ch = find(strcmp(chLabels,higher_label));
         
         out(:,i) = values(:,ch)-values(:,higher_ch);
         bipolar_labels{i} = [label,'-',higher_label];

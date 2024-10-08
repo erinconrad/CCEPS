@@ -37,7 +37,7 @@ ylim([0.2 1.05])
 ylabel('Accuracy')
 set(gca,'fontsize',25)
 set(gcf,'renderer','painters')
-print(gcf,[locations.results_folder,'validation/ppv_npv_plot'],'-dpng');
+print(gcf,[locations.results_folder,'validation/ppv_npv_plot2'],'-dpng');
 
 
 fprintf('\nThe median PPV is %1.3f and NPV is %1.3f.\n',median(ppv,1,'omitmissing'),...

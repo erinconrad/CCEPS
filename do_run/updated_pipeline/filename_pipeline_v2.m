@@ -1,5 +1,7 @@
 function out = filename_pipeline_v2(filename,login_name,pwfile,ignore_elecs)
 
+% 
+
 %% Stimulation parameters
 stim.train_duration = 30; % train duration (# stims) in seconds
 stim.stim_freq = 1; % frequency (in Hz) of stimulation
