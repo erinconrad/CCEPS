@@ -18,6 +18,11 @@ end
 %% Loop over the mat files and run the pipeline
 listing = dir([data_folder,'*.mat']);
 for i = 1:length(listing)
+
+    if strcmp(listing(i).name{1:2},'._')
+        continue
+    end
+
     fpath = [listing(i).folder,'/',listing(i).name];
     dat = load(fpath);
     fname = fieldnames(dat);
