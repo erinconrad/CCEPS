@@ -128,7 +128,7 @@ for i = 1:size(aT,1)
         % LOWER NUMBER (could do LA10-LA9 or LA9-LA10, regardless, call it
         % LA9)
         
-        if elec2_contact>elec_contact_1
+        if elec2_contact>elec1_contact
             stim_elec = elec1;
         else
             stim_elec = elec2;
