@@ -69,7 +69,7 @@ for w = 1:length(wavs)
     stim_chs = nansum(A,2) > 0;
     response_chs = keep_chs;
     A(:,~response_chs) = nan;
-    A = A';
+    A = A'; % transverse!!
     A0 = A;
 
     %% Normalize

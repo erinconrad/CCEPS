@@ -134,9 +134,9 @@ for i = 1:size(aT,1)
             stim_elec = elec2;
         end
 
-        stim_ch = find(strcmpi(stim_elec,chLabels));
+        stim_ch = find(strcmpi(elec1,chLabels));
         if isempty(stim_ch)
-            if ~ismember(stim_elec,ignore_elecs)
+            if ~ismember(elec1,ignore_elecs)
                 error('Cannot find stim channel')
             end
             continue;
@@ -145,7 +145,7 @@ for i = 1:size(aT,1)
         stim(stim_ch).end_time = end_time;
         stim(stim_ch).start_index = round((start_time-times(1))*fs);
         stim(stim_ch).end_index = round((end_time-times(1))*fs);
-        stim(stim_ch).name = stim_elec;
+        stim(stim_ch).name = elec1;
         
            
     end
