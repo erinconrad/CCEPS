@@ -113,9 +113,16 @@ for i = 1:height(ptT)
         chLabels = session.data.channelLabels(:,1);
         chLabels = remove_leading_zeros(chLabels);
         nchs = size(chLabels,1);
+        duration = session.data.rawChannels(1).get_tsdetails.getDuration/(1e6);
+
+        index = startsWith(aT.Type, 'Closed relay') | startsWith(aT.Type,'Start Stimulation');
+        filteredStartTimes = aT.Start(index);
+        [minTime, idx] = min(filteredStartTimes); % Find the minimum start time from the filtered data
+        start_time = minTime - 10;
+        relevant_times = [start_time,duration]; % full
 
         %% Get stim channels
-        [stim_anns,stim_chs] = get_stim_anns(aT);
+        [stim_anns,stim_chs] = get_stim_anns(aT,relevant_times);
         curr_stim_anns = [curr_stim_anns;stim_anns];
         curr_stim_chs = [curr_stim_chs;stim_chs];
         curr_all_chs = [curr_all_chs;chLabels];

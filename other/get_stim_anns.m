@@ -1,4 +1,4 @@
-function [anns,stim_chs] = get_stim_anns(aT)
+function [anns,stim_chs] = get_stim_anns(aT,relevant_times)
 
 anns = {};
 stim_chs = {};
@@ -10,7 +10,7 @@ for i = 1:size(aT,1)
     % See if it's a close relay
     if contains(type,'Closed relay to') || contains(type, 'Start Stimulation')
         
-        if aT.Start(i) < times(1) || aT.Start(i) > times(2)
+        if aT.Start(i) < relevant_times(1) || aT.Start(i) > relevant_times(2)
             continue
         end
 
@@ -110,8 +110,8 @@ for i = 1:size(aT,1)
             if strcmp(type2,'Opened relay') || contains(type2,'Closed relay to') ...
                     || contains(type2,'Start Stimulation') || contains(type2,'De-block end')
                 
-                if aT.Start(j) > times(2)
-                    end_time = times(2) - 0.5;
+                if aT.Start(j) > relevant_times(2)
+                    end_time = relevant_times(2) - 0.5;
                     fprintf('\nWarning, setting end stim time to be time break\n');
                 else                
                     end_time = aT.Start(j);
@@ -123,7 +123,7 @@ for i = 1:size(aT,1)
         if isnan(end_time)
             fprintf(['\nWarning: Never found subsequent open or closed relay after %s\n'...
                 'will use last time as the end stim time\n'],aT.Type{i});
-            end_time = times(2)-0.5; % subtract half second to deal with rounding errors
+            end_time = relevant_times(2)-0.5; % subtract half second to deal with rounding errors
         end
         
         % Find electrode to assign the stim to - always assign it to the
