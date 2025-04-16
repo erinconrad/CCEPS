@@ -138,8 +138,11 @@ for i = 1:height(ptT)
     stim_chs = unique(curr_stim_chs);
     all_chs = unique(curr_all_chs);
     got_stim = ismember(all_chs,stim_chs);
-    nchs = length(all_chs);
     nstim = length(stim_chs);
+
+    %% Find non intracranial
+    non_intracranial = find_non_intracranial(all_chs);
+    intracranial_chs = all_chs(~non_intracranial);
 
     %% Add to structure
     pt(i).name = name;
@@ -147,11 +150,14 @@ for i = 1:height(ptT)
     pt(i).stim_anns = stim_anns;
     pt(i).stim_chs = stim_chs;
     pt(i).got_stim = got_stim;
-    pt(i).nchs = nchs;
+    pt(i).all_chs = all_chs;
+    pt(i).nchs = length(intracranial_chs);
     pt(i).nstim = nstim;
+    pt(i).non_intracranial = non_intracranial;
+    pt(i).intracranial_chs = intracranial_chs;
 
+    %% Save structure
+    save([out_folder,'stim_info.mat'],'pt');
 
 end
 
-%% Save structure
-save([out_folder,"stim_info.mat"],"pt");
