@@ -127,6 +127,9 @@ for i = 1:height(ptT)
         curr_stim_chs = [curr_stim_chs;stim_chs];
         curr_all_chs = [curr_all_chs;chLabels];
 
+        % delete the ieeg session
+        session.delete;
+
     end
 
     %% Reconcile across files
