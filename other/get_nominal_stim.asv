@@ -38,8 +38,7 @@ if do_chop == 1
             chop_names{i} = sprintf('CHOPCCEP_0%d',i);
         end
     end
-    ptT = table(chop_names,chop_names,'VariableNames',{'HUPID','ieeg_filename'});
-
+    ptT.ieeg_file
 else
     ptT = readtable([data_folder,'master_pt_list.xlsx']);
 end
@@ -80,7 +79,6 @@ for i = 1:height(ptT)
 
         %% Load ieeg file
         server_count = 0;
-        failed = 0;
         % while loop in case of random server errors
         while 1
             server_count = server_count + 1;
@@ -98,17 +96,13 @@ for i = 1:height(ptT)
                     continue
                 else
                     ME
-                    failed = 1;
+                    error('Non-server error');
                     
                 end
                 
             end
         
             break
-        end
-        if failed == 1
-            fprintf('\nSkipping %s\n',name);
-            continue;
         end
 
         %% Get metadata
