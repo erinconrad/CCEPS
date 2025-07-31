@@ -1,162 +1,156 @@
-function plot_ccep_grid(pt_out, stimPairs, respPairs)
+function plot_ccep_grid(pt_out, stimPairs, respPairs, useStored)
 % plot_ccep_grid  –  Grid of trial‑averaged CCEP waveforms
 %
-%   Rows   = stim pairs  (Stim: xxx‑xxx)
-%   Columns= response pairs (Resp: xxx‑xxx)
+%   plot_ccep_grid(pt_out, stimPairs, respPairs)
+%   plot_ccep_grid(pt_out, stimPairs, respPairs, useStored)
 %
-% Features
-%   • Handles empty / unequal‑length waveforms gracefully
-%   • Uniform y‑axis across all tiles
-%   • Uniform x‑axis (based on global min/max time across plotted waves)
-%   • N1 marker  ●,  N2 marker  ▲   (dashed vertical lines at latencies)
-%   • Outer‑edge axes labelled with "Stim:" and "Resp:"
+% INPUTS
+%   pt_out     : structure from pipeline_v4/v5 or GUI‑edited copy
+%   stimPairs  : cell array of bipolar stim labels (row order)
+%   respPairs  : cell array of bipolar response labels (col order)
+%   useStored  : logical (default false)
+%                • false → ignore pt_out.elecs.*.N1/N2, auto‑detect peaks
+%                • true  → use stored latencies if finite, else auto
 %
-% Usage
-%   plot_ccep_grid(pt_out, {'LG1-LG2','LF1-LF2'}, {'LG5-LG6','LG6-LG7'})
+% FEATURES
+%   • Blue N1 ● / line, red N2 ▲ / line, matching GUI colours
+%   • Baseline window (‑100 to ‑5 ms) dotted at axis top
+%   • z‑scores (relative to baseline) annotated per tile
+%   • Legend showing N1 vs N2 markers below grid
+
+if nargin < 4, useStored = false; end
+plot_markers = true;      %
 
 % ----------------------------------------------------------------------
-% 1) Build a bipolar‑label → column index map (skip empties)
-% ----------------------------------------------------------------------
-raw = pt_out.bipolar_labels(:);
-keys = {}; vals = [];
-for c = 1:numel(raw)
-    lbl = raw{c};
-    if iscell(lbl) && ~isempty(lbl), lbl = lbl{1}; end
-    if isstring(lbl),   lbl = char(lbl); end
-    if ischar(lbl) && ~isempty(lbl)
-        keys{end+1} = lbl; %#ok<AGROW>
-        vals(end+1) = c;   %#ok<AGROW>
-    end
-end
-[uniqKeys, ia] = unique(keys,'stable');
-respMap = containers.Map(uniqKeys, vals(ia));
-
-% helper: stim index = first contact of pair
-chLab   = pt_out.chLabels;
-fs      = pt_out.other.stim.fs;
-
-stimIdx = nan(numel(stimPairs),1);
-for k = 1:numel(stimPairs)
-    stimIdx(k) = find(strcmp(chLab, strtok(stimPairs{k},'-')), 1);
-end
-respIdx = nan(numel(respPairs),1);
-for k = 1:numel(respPairs)
-    if respMap.isKey(respPairs{k})
-        respIdx(k) = respMap(respPairs{k});
-    end
-end
+% Colour constants (MATLAB defaults)
+blue = [0    0.45 0.74];    % N1
+red  = [0.85 0.33 0.10];    % N2
 
 % ----------------------------------------------------------------------
-% 2) Gather waveforms, time vectors, and global axes limits
+fs = pt_out.other.stim.fs;
+
+% map bipolar label → index
+labMap = containers.Map( ...
+            cellfun(@char, pt_out.bipolar_labels(:),'Uni',0), ...
+            1:numel(pt_out.bipolar_labels));
+
+stimIdx = cellfun(@(sp) find(strcmp(pt_out.chLabels, strtok(sp,'-')),1), ...
+                  stimPairs,'Uni',1);
+respIdx = cellfun(@(rp) labMap(rp), respPairs,'Uni',1);
+
 % ----------------------------------------------------------------------
-allW  = cell(numel(stimPairs), numel(respPairs));
-allT  = cell(size(allW));
-yMin  =  inf;  yMax = -inf;
-xMin  =  inf;  xMax = -inf;
+% Gather waveforms & time vectors
+allW = cell(numel(stimPairs), numel(respPairs));
+allT = cell(size(allW));
+yMin=inf; yMax=-inf; xMin=inf; xMax=-inf;
 
 for s = 1:numel(stimPairs)
     if isnan(stimIdx(s)), continue; end
+    elec = pt_out.elecs(stimIdx(s));
 
-    % use times vector if present, else build from fs
-    if isfield(pt_out.elecs(stimIdx(s)), 'times') && ...
-            ~isempty(pt_out.elecs(stimIdx(s)).times)
-        base_t = pt_out.elecs(stimIdx(s)).times(:)';        % row vector
+    base_t = (0:size(elec.avg,1)-1)/fs;           % seconds
+    if isfield(elec,'times') && ~isempty(elec.times)
+        base_t = base_t + elec.times(1);
     else
-        nSamp  = size(pt_out.elecs(stimIdx(s)).avg,1);
-        base_t = (0:nSamp-1)/fs;
+        base_t = base_t - 0.5;                     % default start -500 ms
     end
-    base_t_ms = base_t*1000;   % convert once here
+    t_ms = base_t*1000;
 
     for r = 1:numel(respPairs)
         if isnan(respIdx(r)), continue; end
-
-        w = pt_out.elecs(stimIdx(s)).avg(:, respIdx(r));
-        if isempty(w), continue; end
-
-        len = numel(w);
-        if numel(base_t_ms) >= len
-        % full timeline stored – just truncate
-        t_local = base_t_ms(1:len);
-    else
-        % only start/end stored – synthesize timeline from fs
-        t_start = base_t_ms(1);
-        t_local = t_start + (0:len-1)/fs*1000;   % ms
-    end
-
-
-        allW{s,r} = w;
-        allT{s,r} = t_local;
-
-        yMin = min(yMin, min(w));
-        yMax = max(yMax, max(w));
-        xMin = min(xMin, t_local(1));
-        xMax = max(xMax, t_local(end));
+        w = elec.avg(:, respIdx(r));
+        allW{s,r}=w; allT{s,r}=t_ms;
+        yMin=min(yMin,min(w)); yMax=max(yMax,max(w));
+        xMin=min(xMin,t_ms(1)); xMax=max(xMax,t_ms(end));
     end
 end
-yLim = [yMin yMax];
+
+yLim = [-300 300];
 xLim = [xMin xMax];
 
 % ----------------------------------------------------------------------
-% 3) Plot grid
+% Plot grid
 % ----------------------------------------------------------------------
-tiledlayout(numel(stimPairs), numel(respPairs), ...
-            'TileSpacing','compact','Padding','compact');
+figure('Position',[79 60 1350 800]);
+tl = tiledlayout(numel(stimPairs), numel(respPairs), ...
+                 'TileSpacing','compact','Padding','compact');
 
 for s = 1:numel(stimPairs)
     for r = 1:numel(respPairs)
+
         ax = nexttile;
-        if isempty(allW{s,r})
-            axis off; continue;
-        end
+        lat1_in = pt_out.elecs(stimIdx(s)).N1(respIdx(r));
+        lat2_in = pt_out.elecs(stimIdx(s)).N2(respIdx(r));
+        fprintf('GRID INPUT  %s ↔ %s   N1 %.1f   N2 %.1f\n', ...
+                stimPairs{s}, respPairs{r}, lat1_in, lat2_in);
+
+
+        if isempty(allW{s,r}), axis off; continue; end
 
         w = allW{s,r};
         t = allT{s,r};
-        plot(t, w, 'LineWidth',1); hold on
-        xline(0,'k:');  yline(0,'k:');
-        ylim(yLim); xlim(xLim);
 
-        % ---------- N1 marker ---------------------------------------------------
-        n1_val = pt_out.elecs(stimIdx(s)).N1(respIdx(r));   % could be index *or* ms
-        if ~isnan(n1_val) && n1_val > 0
-            if abs(n1_val - round(n1_val)) < 1e-6 && n1_val <= numel(w)
-                % stored as sample index
-                idx   = round(n1_val);
-                x_n1  = t(idx);      y_n1 = w(idx);
-            else
-                % stored as latency in ms
-                x_n1  = n1_val;
-                [~,idx] = min(abs(t - x_n1));   % nearest point for y‑value
-                y_n1  = w(idx);
-            end
-            plot(x_n1, y_n1, 'ko', 'MarkerFaceColor','k', 'MarkerSize',4);
-            xline(x_n1, 'k--', 'LineWidth',0.5);
-        end
-        
-        % ---------- N2 marker ---------------------------------------------------
-        n2_val = pt_out.elecs(stimIdx(s)).N2(respIdx(r));
-        if ~isnan(n2_val) && n2_val > 0
-            if abs(n2_val - round(n2_val)) < 1e-6 && n2_val <= numel(w)
-                idx   = round(n2_val);
-                x_n2  = t(idx);      y_n2 = w(idx);
-            else
-                x_n2  = n2_val;
-                [~,idx] = min(abs(t - x_n2));
-                y_n2  = w(idx);
-            end
-            plot(x_n2, y_n2, 'k^', 'MarkerFaceColor','k', 'MarkerSize',4);
-            xline(x_n2, 'k--', 'LineWidth',0.5);
+        plot(t,w,'LineWidth',2,'Color','k'); hold on
+        xline(0,'k:','LineWidth',2); yline(0,'k:','LineWidth',2);
+        ylim(yLim); xlim(xLim); set(gca,'FontSize',20)
+
+        % Baseline stats & indicator
+        bl_idx = t>=-100 & t<=-5;
+        mu  = mean(w(bl_idx),'omitnan');
+        sig = std( w(bl_idx),'omitnan');
+        y_vis = yLim(2)-0.05*range(yLim);
+        plot([-100 -5],[y_vis y_vis],'k:','LineWidth',1.2);
+
+        % ----- choose N1 latency ---------------------------------------
+        lat1 = pt_out.elecs(stimIdx(s)).N1(respIdx(r));
+        if ~(useStored && isfinite(lat1))
+            win = find(t>=15 & t<50);
+            [~,ii]=max(abs(w(win)-mu)); lat1=t(win(ii));
         end
 
+        % ----- choose N2 latency ---------------------------------------
+        lat2 = pt_out.elecs(stimIdx(s)).N2(respIdx(r));
+        if ~(useStored && isfinite(lat2))
+            win = find(t>=50 & t<=200);
+            [~,ii]=max(abs(w(win)-mu)); lat2=t(win(ii));
+        end
 
-        % --- outer labels only ----------------------------------------
-        if s == numel(stimPairs)
-            xlabel(['Resp: ' respPairs{r}], 'Interpreter','none');
+        fprintf('PRE PLOT  %s ↔ %s   N1 %.1f   N2 %.1f\n', ...
+                stimPairs{s}, respPairs{r}, lat1, lat2);
+
+        % ----- plot markers + z‑scores ---------------------------------
+        if plot_markers
+            [~,i1]=min(abs(t-lat1)); z1=(w(i1)-mu)/sig;
+            [~,i2]=min(abs(t-lat2)); z2=(w(i2)-mu)/sig;
+
+            plot(lat1,w(i1),'o','MarkerFaceColor',blue,'MarkerEdgeColor','k','MarkerSize',5);
+            plot(lat2,w(i2),'^','MarkerFaceColor',red ,'MarkerEdgeColor','k','MarkerSize',5);
+            xline(lat1,'--','Color',blue,'LineWidth',0.8);
+            xline(lat2,'--','Color',red ,'LineWidth',0.8);
+
+            txt = sprintf('N1 z=%.1f, %1.0f ms\\newlineN2 z=%.1f, %1.0f ms',z1,lat1,z2,lat2);
+            text(0.98,0.94, txt, 'Units','normalized', ...
+                 'HorizontalAlign','right','VerticalAlign','top', ...
+                 'FontSize',20);
         end
-        if r == 1
-            ylabel(['Stim: ' stimPairs{s}], 'Interpreter','none');
-        end
+
+        % outer labels
+        if s==numel(stimPairs), xlabel(['Resp: ' respPairs{r}],'Interpreter','none'); end
+        if r==1, ylabel(['Stim: ' stimPairs{s}],'Interpreter','none'); end
         set(ax,'TickDir','out','Box','off');
     end
 end
-sgtitle('Trial‑averaged CCEP waveforms');
+xlabel(tl,'Time (ms)','FontSize',20);
+ylabel(tl,'Amplitude (\muV)','FontSize',20);
+
+% ----------------------------------------------------------------------
+% Legend (blue N1, red N2) beneath grid
+% ----------------------------------------------------------------------
+hN1 = plot(nan,nan,'o','MarkerFaceColor',blue,'MarkerEdgeColor','k','MarkerSize',6);
+hN2 = plot(nan,nan,'^','MarkerFaceColor',red,'MarkerEdgeColor','k','MarkerSize',7);
+
+lgd = legend([hN1 hN2], {'N1 (15–50 ms)','N2 (50–200 ms)'}, ...
+             'Orientation','horizontal', 'Location','southoutside');
+lgd.Box = 'off';
+
 end
