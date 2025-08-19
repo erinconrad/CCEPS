@@ -3,19 +3,48 @@ function ccep_viewer_gui(pt_in, stimPairs, respPairs)
 pt = recompute_peaks(pt_in, stimPairs, respPairs);
 
 % 2) Viewer ------------------------------------------------------------
-ui  = uifigure('Name','CCEP Grid','Position',[60 60 1250 860]);
-uibutton(ui,'Text','Adjust Peaks','Position',[540 30 170 40], ...
-         'ButtonPushedFcn',@(~,~) openEditor());
+ui = uifigure('Name','CCEP Grid','Position',[60 60 1250 860]);
+
+mainLayout = uigridlayout(ui, [2 1]);  % 2 rows: grid + button
+mainLayout.RowHeight = {'1x', 50};     % top resizes, bottom is 50 px
+mainLayout.ColumnWidth = {'1x'};
+
+% Row 1: Grid panel
+panel = uipanel(mainLayout);
+panel.Layout.Row = 1;
+panel.Layout.Column = 1;
+
+nS = numel(stimPairs);
+nR = numel(respPairs);
+%{
+grid = uigridlayout(panel, [nS nR], ...
+    'RowHeight', repmat({"1x"}, 1, nS), ...
+    'ColumnWidth', repmat({"1x"}, 1, nR));
+%}
+
+% Row 2: Button
+btn = uibutton(mainLayout, ...
+    'Text', 'Adjust Peaks', ...
+    'ButtonPushedFcn', @(~,~) openEditor());
+
+btn.Layout.Row = 2;
+btn.Layout.Column = 1;
+
+
+grid = uigridlayout(panel);
 drawGrid();
 
     function drawGrid()
-        close(findall(0,'Tag','GRID'));        % close previous grid
+        delete(grid.Children);  % clear old axes but keep layout
+        nS = numel(stimPairs);
+        nR = numel(respPairs);
     
-        plot_ccep_grid(pt, stimPairs, respPairs, true);  % draws its own fig
+        grid.RowHeight = repmat({"1x"},1,nS);
+        grid.ColumnWidth = repmat({"1x"},1,nR);
     
-        set(gcf,'Tag','GRID', ...              % tag & title the new figure
-                'Name','CCEP Grid','NumberTitle','off');
+        plot_ccep_grid(pt, stimPairs, respPairs, true, grid);
     end
+
 
 
     function openEditor()

@@ -9,13 +9,10 @@ addpath(genpath(script_folder));
 gap = 0.08;
 bump = 0.12;
 
-stim = out.stim;
-elecs = out.elecs;
 chLabels = out.chLabels;
-A = out.A;
-ch_info = out.ch_info;
+%A = out.A;
+%ch_info = out.ch_info;
 ana = out.ana;
-wav = out.waveform;
 
 if ischar(stim_ch)
     stim_ch_idx = find(strcmp(stim_ch,chLabels));
@@ -51,7 +48,7 @@ lp_pos = get(lp,'position');
 set(lp,'position',[0.05,pos{1}(2)+bump+gap+0.02,lp_pos(3),lp_pos(4)])
 %}
 
-
+%{
 axes(ha(2))
 set(ha(2),'position',[pos{2}(1),pos{2}(2),pos{2}(3),pos{2}(4)+bump])
 show_network(A,ch_info);
@@ -61,6 +58,7 @@ annotation('textbox',[0,pos{1}(2)+pos{1}(4)-0.06,0.1,0.1],'String','A',...
 
 annotation('textbox',[0,pos{2}(2)+pos{2}(4)+bump,0.1,0.1],'String','B',...
     'linestyle','none','fontsize',35);
+%}
 
 
 print(gcf,[results_folder,'plots/figure1'],'-dpng');

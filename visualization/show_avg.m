@@ -40,8 +40,8 @@ n1_idx = stim_idx+n1_arr(jch,2) + 1;
 n2_idx = stim_idx+n2_arr(jch,2) + 1;
 
 if save_plot
-    figure
-    set(gcf,'position',[168 424 1273 374]);
+    %figure
+    %set(gcf,'position',[168 424 1273 374]);
 end
 
 n1_time = convert_indices_to_times(n1_idx,stim.fs,elecs(ich).times(1));
@@ -85,9 +85,14 @@ if details
 
 plot([0 0],ylim,'k--','linewidth',2);
 else
-    xticklabels([])
-    yticklabels([])
-    axis off
+    %xticklabels([])
+    %yticklabels([])
+    xlim([-0.2 0.6])
+    xlabel('seconds')
+    ylabel('microvolts')
+    yl = ylim;
+    ylim([yl(1)-0.1*diff(yl),yl(2)+0.1*diff(yl)])
+    %axis off
     %set(gcf, 'Color', 'None')
     %set(gca, 'color', 'none');
 
@@ -99,12 +104,12 @@ end
 
 %}
 
-xlim([elecs(ich).times(1) elecs(ich).times(2)])
+%xlim([elecs(ich).times(1) elecs(ich).times(2)])
 
 if save_plot
-    exportgraphics(gca,[results_folder,'plots/',name_first ,'_',chLabels{ich},'_',chLabels{jch},'.gif'],'BackgroundColor','none');
-    close all
-    %print(gcf,[results_folder,'plots/',name_first ,'_',chLabels{ich},'_',chLabels{jch}],'-dpng');
+    %exportgraphics(gca,[results_folder,'plots/',name_first ,'_',chLabels{ich},'_',chLabels{jch},'.gif'],'BackgroundColor','none');
+    %close all
+    print(gcf,[results_folder,'plots/',name_first ,'_',chLabels{ich},'_',chLabels{jch}],'-depsc');
 end
 
 end
