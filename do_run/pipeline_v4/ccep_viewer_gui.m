@@ -115,10 +115,11 @@ draw(); uiwait(fig);  % blocks
             (~isfield(elec,'times')||isempty(elec.times))*-500;
         w=elec.avg(:,rIdx(ri))'; t=t0+(0:numel(w)-1)/fs*1000;
         cla(ax); plot(ax,t,w,'k','LineWidth',2); xline(ax,0,'k:'); yline(ax,0,'k:');
-        ylim(ax,[-300 300]); xlim(ax,[min(t) max(t)]);
+        ylim(ax,[-100 100]); %xlim(ax,[min(t) max(t)]);
+        xlim(ax,[-200 500])
         n1=N1(si,ri); n2=N2(si,ri);
-        ln1=drawline(ax,'Position',[n1 -300; n1 300],'Color',[0 0.45 0.74]);
-        ln2=drawline(ax,'Position',[n2 -300; n2 300],'Color',[0.85 0.33 0.10]);
+        ln1=drawline(ax,'Position',[n1 -100; n1 100],'Color',[0 0.45 0.74]);
+        ln2=drawline(ax,'Position',[n2 -100; n2 100],'Color',[0.85 0.33 0.10]);
         % capture current indices so the callback uses the right cell
         iS = si;   iR = ri;
         

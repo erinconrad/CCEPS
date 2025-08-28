@@ -27,7 +27,7 @@ respIdx = cellfun(@(rp) labMap(rp), respPairs, 'UniformOutput', true);
 
 nS = numel(stimPairs);
 nR = numel(respPairs);
-yLim = [-300 300];
+yLim = [-100 100];
 
 % Time and waveform data
 allW = cell(nS, nR);
@@ -79,8 +79,9 @@ for s = 1:nS
         xline(ax, 0, 'k:', 'LineWidth', 1);
         yline(ax, 0, 'k:', 'LineWidth', 1);
         ylim(ax, yLim);
-        xlim(ax, xLim);
-
+        %xlim(ax, xLim);
+        %xlim(ax,[-0.2 0.5])
+        xlim(ax,[-200 500])
         % Baseline stats
         bl_idx = t >= -100 & t <= -5;
         mu = mean(w(bl_idx), 'omitnan');
@@ -115,7 +116,7 @@ for s = 1:nS
         txt = sprintf('N1 z=%.1f, %.0f ms\\newlineN2 z=%.1f, %.0f ms', z1, lat1, z2, lat2);
         text(ax, 0.98, 0.94, txt, 'Units', 'normalized', ...
             'HorizontalAlignment', 'right', 'VerticalAlignment', 'top', ...
-            'FontSize', 20);
+            'FontSize', 15);
 
         % Axis labels
         if s == nS
