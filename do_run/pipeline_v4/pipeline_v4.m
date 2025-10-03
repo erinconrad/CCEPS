@@ -22,7 +22,7 @@ This should contain:
    and output the processed data in your results folder
 %}
 
-overwrite = 0; % 1 or 0 indicating whether to overwrite old patients
+overwrite = 1; % 1 or 0 indicating whether to overwrite old patients
 
 %% Updated pipeline to run through all patients in an csv file
 
@@ -58,7 +58,7 @@ for i = 1:height(ptT)
 end
 
 % Loop through patients
-for i = height(ptT)
+for i = 1%height(ptT)
 
     %% Decide if skipping
     fprintf('\nDoing patient %d of %d...\n',i,height(ptT));
@@ -1407,6 +1407,29 @@ for ich = 1:length(chLabels)
     label = [label_non_num,label_num];
     
     chLabels{ich} = label;
+end
+
+end
+
+function [elecs,contacts] = return_contact_and_electrode(labels)
+
+elecs = cell(length(labels),1);
+contacts = nan(length(labels),1);
+
+for i = 1:length(labels)
+    curr = labels{i};
+    a = regexp(curr,'\d*');
+    
+    num = str2num(curr(a:end));
+    name = curr(1:a-1);
+    
+    elecs{i} = name;
+    
+    if ~isempty(num)
+        contacts(i) = num;
+    end
+    
+    
 end
 
 end

@@ -1,6 +1,6 @@
-function show_avg(out,ich,jch,save_plot,details)
+function show_avg(out,ich,jch,save_plot)
 
-%details = 0;
+details = 0;
 
 %% Get various path locations
 locations = cceps_files; % Need to make a file pointing to you own path
@@ -63,6 +63,8 @@ set(gca,'fontsize',25)
 set(gca,'fontname','Monospac821 BT')
 ylim([min(eeg) max(eeg)])
 yl = get(gca,'ylim');
+hold on
+
 if details
     
     if ~isnan(n1_idx)
@@ -98,7 +100,7 @@ else
 
 end
     
-
+plot([0,0],ylim,'k--','LineWidth',2)
 
 %
 
@@ -109,7 +111,7 @@ end
 if save_plot
     %exportgraphics(gca,[results_folder,'plots/',name_first ,'_',chLabels{ich},'_',chLabels{jch},'.gif'],'BackgroundColor','none');
     %close all
-    print(gcf,[results_folder,'plots/',name_first ,'_',chLabels{ich},'_',chLabels{jch}],'-depsc');
+    print(gcf,[results_folder,'plots/',name_first ,'_',chLabels{ich},'_',chLabels{jch},'_pretty'],'-depsc');
 end
 
 end
