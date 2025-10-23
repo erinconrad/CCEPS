@@ -189,43 +189,124 @@ end_index   = round(times(2)*fs);
 TT = edfread(edf_path);  % timetable; rows ~ samples, vars ~ channels
 
 % Build numeric matrix [samples x channels] even if variables are cell arrays
-nchs = numel(chLabels);
-nrows = height(TT);
+% --- FIXED extraction from EDF timetable that stores per-record cell arrays ---
 
-% If the precomputed end_index exceeds data length, cap it
-end_index = min(end_index, nrows);
+nchs  = numel(chLabels);
+nrecs = height(TT);
 
-values = nan(end_index - start_index + 1, nchs);
+% Per-channel samples-per-record can differ in EDF; compute per-channel SPR.
+spr = zeros(nchs,1);  % samples per record for each channel
 for k = 1:nchs
-    % Variable names in TT are the signal labels; ensure valid fieldname
     varName = matlab.lang.makeValidName(chLabels{k});
     if ~ismember(varName, TT.Properties.VariableNames)
-        % If label didn't match exactly, try original label
         if ismember(chLabels{k}, TT.Properties.VariableNames)
             varName = chLabels{k};
         else
             error('Channel %s not found in EDF timetable variables.', chLabels{k});
         end
     end
-
-    col = TT.(varName);
-    if isnumeric(col)
-        seg = col(start_index:end_index);
-    elseif iscell(col)
-        % Some MATLAB versions store samples per record; concatenate then slice
-        segAll = vertcat(col{:});
-        seg = segAll(start_index:end_index);
+    col0 = TT.(varName);
+    % Handle empty/malformed columns gracefully
+    if isempty(col0) || ~iscell(col0) || isempty(col0{1})
+        spr(k) = 0;
     else
-        % Last resort try deref
-        try
-            seg = vertcat(col{:});
-            seg = seg(start_index:end_index);
-        catch
-            error('Unhandled EDF variable storage for channel %s.', chLabels{k});
+        spr(k) = size(col0{1},1);
+    end
+end
+
+% Total samples per channel
+tot_samps_ch = spr * nrecs;
+
+% Global cap for end_index (use the shortest channel to keep a rectangular matrix),
+% but do NOT let this go below start_index.
+max_end_global = max(start_index, min(tot_samps_ch));  % min across channels
+end_index      = min(end_index, max_end_global);
+
+% Preallocate output [samples x channels]
+nsamps_out = max(0, end_index - start_index + 1);
+values = nan(nsamps_out, nchs, 'double');
+
+for k = 1:nchs
+    varName = matlab.lang.makeValidName(chLabels{k});
+    if ~ismember(varName, TT.Properties.VariableNames)
+        if ismember(chLabels{k}, TT.Properties.VariableNames)
+            varName = chLabels{k};
+        else
+            error('Channel %s not found in EDF timetable variables.', chLabels{k});
         end
     end
-    values(:,k) = double(seg);
+    col = TT.(varName);  % cell array, each row is one data record (e.g., 2048x1 double)
+
+    % Extract only the requested sample range from this column, streaming over records.
+    values(:,k) = extract_segment_from_records(col, start_index, end_index);
 end
+
+% ---------- helper (place at end of file or as a local function) ----------
+function seg = extract_segment_from_records(col, start_idx, end_idx)
+% col: cell array where each cell is a [spr x 1] double vector for that data record
+% start_idx, end_idx: 1-based sample indices (global, across records)
+%
+% Returns seg: [end_idx - start_idx + 1 x 1] double, NaN-padded if out of range.
+
+    if isempty(col) || ~iscell(col) || isempty(col{1})
+        seg = nan(max(0, end_idx - start_idx + 1), 1, 'double');
+        return
+    end
+
+    spr = size(col{1},1);           % samples per record
+    nrecs = numel(col);
+    total = spr * nrecs;            % total samples for this channel
+
+    if start_idx > total
+        seg = nan(max(0, end_idx - start_idx + 1), 1, 'double');
+        return
+    end
+
+    % Cap end within available samples for this channel
+    end_eff = min(end_idx, total);
+    L = end_idx - start_idx + 1;
+    seg = nan(L, 1, 'double');
+
+    % Compute record indices and offsets (1-based)
+    rec_start = floor((start_idx - 1) / spr) + 1;
+    off_start = mod(start_idx - 1, spr) + 1;
+
+    rec_end   = floor((end_eff   - 1) / spr) + 1;
+    off_end   = mod(end_eff   - 1, spr) + 1;
+
+    write_pos = 1;
+
+    if rec_start == rec_end
+        % All within a single record
+        x = col{rec_start};
+        seg(1:(end_eff - start_idx + 1)) = double(x(off_start:off_end));
+        return
+    end
+
+    % First (partial) record
+    x = col{rec_start};
+    take = x(off_start:end);
+    len_take = numel(take);
+    seg(write_pos:write_pos+len_take-1) = double(take);
+    write_pos = write_pos + len_take;
+
+    % Full middle records
+    for r = (rec_start+1):(rec_end-1)
+        x = col{r};
+        len_take = numel(x);
+        seg(write_pos:write_pos+len_take-1) = double(x);
+        write_pos = write_pos + len_take;
+    end
+
+    % Last (partial) record up to off_end
+    x = col{rec_end};
+    take = x(1:off_end);
+    len_take = numel(take);
+    seg(write_pos:write_pos+len_take-1) = double(take);
+
+    % If end_idx exceeded channel length, the tail of seg remains NaN (by design).
+end
+
 
 % -----------------------------
 % Identify stim periods (existing logic)
