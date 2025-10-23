@@ -4,21 +4,16 @@
 Readme:
 1. You first need the following dependencies:
   - The cceps code base: https://github.com/erinconrad/CCEPS/tree/main
-  - master_pt_list.xlsx: a list of ieeg.org files to run (ask Erin for
-  this)
-  - ieeg.org account and toolbox
+  - master_pt_list_edf.xlsx: a list of edf paths to run
 2. You will first need to put a file called cceps_files.m in your path.
 This should contain:
    - locations.data_folder  - the path to the list of patients to run
    - locations.resuls_folder - the path to where you will output results
-   - locations.pwfile - the path to the file containing your ieeg.org
-   password
-   - locations.ieeg_folder - the path to the ieeg.org toolbox
    - locations.script_folder - the path to the CCEPs github codebase
 3. Navigate to do_run/pipeline_v4/ and run
   >> pipeline_v4
    - This will loop through the list of patients in master_pt_list.xlsx,
-   download the data from ieeg.org, and run the CCEP processing pipeline,
+   load the edf file, and run the CCEP processing pipeline,
    and output the processed data in your results folder
 %}
 
