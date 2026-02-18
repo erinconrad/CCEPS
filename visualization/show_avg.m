@@ -1,5 +1,5 @@
 function show_avg(out,ich,jch,save_plot)
-
+% Nishant plot HUP211 186 190
 details = 0;
 
 %% Get various path locations
@@ -54,7 +54,7 @@ else
     plot(eeg_times,eeg,'k','linewidth',2);
 end
 hold on
-
+%plot(n1_time,eeg(n1_idx),'go','markersize',20,'linewidth',4);
 %plot(n2_time,eeg(n2_idx),'go','markersize',20,'linewidth',4);
 
 

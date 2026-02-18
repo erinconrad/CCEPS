@@ -58,7 +58,7 @@ for i = 1:height(ptT)
 end
 
 % Loop through patients
-for i = 1%height(ptT)
+for i = 8%height(ptT)
 
     %% Decide if skipping
     fprintf('\nDoing patient %d of %d...\n',i,height(ptT));

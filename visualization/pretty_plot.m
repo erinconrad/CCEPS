@@ -61,6 +61,6 @@ annotation('textbox',[0,pos{2}(2)+pos{2}(4)+bump,0.1,0.1],'String','B',...
 %}
 
 
-print(gcf,[results_folder,'plots/figure1'],'-dpng');
+print(gcf,[results_folder,'plots/figure_nishant'],'-dpng');
 
 end
